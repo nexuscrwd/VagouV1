@@ -19,7 +19,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur border-t border-slate-200/80 px-4 flex items-center justify-around z-30">
+    <nav className="sticky bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-4 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive =
@@ -33,8 +33,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             key={tab.id}
             id={`nav-${tab.id}`}
             onClick={() => onSelectScreen(tab.id)}
-            className={`flex flex-col items-center gap-1 py-1 px-3 transition ${
-              isActive ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600'
+            className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 transition active:scale-95 ${
+              isActive ? 'text-[#20C933]' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
@@ -44,6 +44,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           </button>
         );
       })}
-    </div>
+    </nav>
   );
 };

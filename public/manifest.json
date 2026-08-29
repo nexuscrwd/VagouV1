@@ -1,0 +1,20 @@
+{
+  "name": "Vagou - Vagas Imediatas de Beleza e Barbearia",
+  "short_name": "Vagou",
+  "description": "Aplicativo de agendamento de vagas e horários imediatos em salões de beleza, barbearias e estética.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#20C933",
+  "categories": ["lifestyle", "beauty", "shopping"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
