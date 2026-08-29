@@ -35,13 +35,13 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
         </svg>
 
         {/* Green Zones / Parks */}
-        <div className="absolute top-28 left-8 w-24 h-32 bg-emerald-200/50 rounded-3xl -rotate-12" />
-        <div className="absolute top-80 right-6 w-32 h-40 bg-emerald-200/40 rounded-full" />
+        <div className="absolute top-28 left-8 w-24 h-32 bg-emerald-200/50 rounded-2xl -rotate-12" />
+        <div className="absolute top-80 right-6 w-32 h-40 bg-emerald-200/40 rounded-3xl" />
       </div>
 
       {/* Top Floating Search Bar */}
       <div className="relative z-10 p-4 pt-4">
-        <div className="bg-white rounded-full shadow-lg px-4 py-2.5 flex items-center gap-2 border border-slate-100">
+        <div className="bg-white rounded-lg shadow-md px-4 py-2.5 flex items-center gap-2 border border-slate-100">
           <Search className="w-4 h-4 text-emerald-600 shrink-0" />
           <span className="text-xs font-semibold text-slate-800">Corte masculino perto de mim</span>
         </div>
@@ -54,7 +54,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
           onClick={() => setSelectedOffer(offers[0])}
           className="absolute top-[40%] left-[55%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group transition transform hover:scale-110 active:scale-95"
         >
-          <div className="px-3 py-1 bg-emerald-700 text-white rounded-full text-xs font-extrabold shadow-lg flex items-center gap-1 border-2 border-white ring-4 ring-emerald-500/20">
+          <div className="px-3 py-1 bg-emerald-700 text-white rounded-lg text-xs font-extrabold shadow-lg flex items-center gap-1 border-2 border-white ring-4 ring-emerald-500/20">
             <span>R$45</span>
           </div>
           <div className="w-2 h-2 bg-emerald-700 rotate-45 -mt-1" />
@@ -65,7 +65,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
           onClick={() => setSelectedOffer(offers[1])}
           className="absolute top-[32%] left-[28%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group transition transform hover:scale-110"
         >
-          <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md border-2 border-white">
+          <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-md border-2 border-white">
             <Scissors className="w-4 h-4" />
           </div>
         </button>
@@ -75,7 +75,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
           onClick={() => setSelectedOffer(offers[2])}
           className="absolute top-[58%] left-[72%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group transition transform hover:scale-110"
         >
-          <div className="px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[11px] font-bold shadow-md border-2 border-white">
+          <div className="px-2.5 py-0.5 bg-emerald-600 text-white rounded-md text-[11px] font-bold shadow-md border-2 border-white">
             <span>R$35</span>
           </div>
         </button>
@@ -83,9 +83,9 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
 
       {/* Bottom Floating Info Card Sheet */}
       <div className="relative z-10 p-4 pb-20">
-        <div className="bg-white rounded-2xl p-4 shadow-xl border border-slate-100 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4">
+        <div className="bg-white rounded-lg p-4 shadow-xl border border-slate-100 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4">
           <div className="flex gap-3">
-            <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+            <div className="w-16 h-16 rounded-md overflow-hidden bg-slate-100 shrink-0">
               <img
                 src={selectedOffer.imageUrl}
                 alt={selectedOffer.salonName}
@@ -120,7 +120,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
             <button
               id="btn-ver-oferta-mapa"
               onClick={() => onSelectOffer(selectedOffer)}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm uppercase tracking-wide"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-sm uppercase tracking-wide"
             >
               VER OFERTA
             </button>

@@ -25,7 +25,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
         <h1 className="text-xl font-black text-slate-900">Minha Agenda</h1>
         <button
           onClick={onNewBookingClick}
-          className="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition flex items-center gap-1 text-xs font-bold"
+          className="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 text-xs font-bold"
         >
           <Plus className="w-4 h-4" />
           <span>Nova</span>
@@ -33,10 +33,10 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
       </div>
 
       {/* Segmented Control */}
-      <div className="mt-4 p-1 bg-slate-100 rounded-xl flex">
+      <div className="mt-4 p-1 bg-slate-100 rounded-lg flex">
         <button
           onClick={() => setTab('proximos')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-md transition ${
             tab === 'proximos' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -44,7 +44,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
         </button>
         <button
           onClick={() => setTab('historico')}
-          className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
+          className={`flex-1 py-1.5 text-xs font-bold rounded-md transition ${
             tab === 'historico' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -65,7 +65,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
                 {grp.items.map((item, idx) => (
                   <div
                     key={item.protocolCode + idx}
-                    className={`border rounded-2xl p-3.5 flex items-center justify-between transition cursor-pointer hover:shadow-md ${
+                    className={`border rounded-lg p-3.5 flex items-center justify-between transition cursor-pointer hover:shadow-md ${
                       item.status === 'EM ANDAMENTO'
                         ? 'border-emerald-500/60 bg-emerald-50/20 ring-1 ring-emerald-500/20'
                         : 'border-slate-200 bg-white hover:border-slate-300'
@@ -88,7 +88,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
                         </p>
                         <div className="mt-1.5 flex items-center gap-2">
                           <span
-                            className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                            className={`text-[9px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider ${
                               item.status === 'EM ANDAMENTO'
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                 : 'bg-slate-100 text-slate-700'

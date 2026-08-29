@@ -1,13 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Download,
-  Smartphone,
-  Share2,
-  X,
-  PlusSquare,
-  CheckCircle2,
-  Sparkles,
-} from 'lucide-react';
 import { ScreenId, ServiceOffer, BookingAppointment } from './types';
 import { MOCK_OFFERS, INITIAL_BOOKINGS } from './data';
 import { HomeScreen } from './components/HomeScreen';
@@ -18,6 +9,7 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AgendaScreen } from './components/AgendaScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
+import { InstallModal } from './components/InstallModal';
 
 export const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('home');
@@ -31,21 +23,17 @@ export const App: React.FC = () => {
   const [isInstallable, setIsInstallable] = useState<boolean>(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(false);
   const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
-  const [isIOS, setIsIOS] = useState<boolean>(false);
 
   useEffect(() => {
-    // Detect standalone mode (already installed as PWA)
+    // Detect standalone mode (already installed and opened from home screen)
     const isStandaloneMode =
       window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true;
+      window.matchMedia('(display-mode: fullscreen)').matches ||
+      (window.navigator as any).standalone === true ||
+      document.referrer.includes('android-app://');
     setIsStandalone(isStandaloneMode);
 
-    // Detect iOS
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(isIosDevice);
-
-    // Listen for PWA beforeinstallprompt on Chromium browsers
+    // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -54,7 +42,7 @@ export const App: React.FC = () => {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    // Listen for appinstalled
+    // Listen for app installed event
     window.addEventListener('appinstalled', () => {
       setIsStandalone(true);
       setIsInstallable(false);
@@ -67,19 +55,24 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  const handleInstallApp = async () => {
+  const handleNativeInstall = async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setIsStandalone(true);
-        setShowInstallModal(false);
+      try {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          setIsStandalone(true);
+          setShowInstallModal(false);
+        }
+      } catch (err) {
+        console.log('Error triggering prompt:', err);
       }
       setDeferredPrompt(null);
-    } else {
-      // Show guide modal for iOS or manual browsers
-      setShowInstallModal(true);
     }
+  };
+
+  const handleOpenInstallModal = () => {
+    setShowInstallModal(true);
   };
 
   // Handle Booking creation
@@ -118,6 +111,8 @@ export const App: React.FC = () => {
                 setCurrentScreen('detalhe-oferta');
               }}
               onNavigateToMap={() => setCurrentScreen('mapa')}
+              onOpenInstallModal={handleOpenInstallModal}
+              isStandalone={isStandalone}
             />
           )}
 
@@ -166,8 +161,8 @@ export const App: React.FC = () => {
 
           {currentScreen === 'perfil' && (
             <ProfileScreen
-              onInstallClick={handleInstallApp}
-              isInstallable={isInstallable || isIOS}
+              onInstallClick={handleOpenInstallModal}
+              isInstallable={true}
               isStandalone={isStandalone}
             />
           )}
@@ -179,72 +174,13 @@ export const App: React.FC = () => {
           onSelectScreen={(screen) => setCurrentScreen(screen)}
         />
 
-        {/* PWA Install Modal Guide */}
-        {showInstallModal && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
-            <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4 animate-in slide-in-from-bottom-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-green-400 flex items-center justify-center text-white font-black text-xl shadow-md">
-                    V
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black text-slate-900">Instalar o App Vagou</h3>
-                    <p className="text-xs text-slate-500">Acesso rápido na tela inicial do seu celular</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowInstallModal(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {isIOS ? (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 text-xs text-slate-700">
-                  <p className="font-bold text-slate-900 flex items-center gap-1.5">
-                    <Smartphone className="w-4 h-4 text-emerald-600" />
-                    Como instalar no iPhone / iPad (Safari):
-                  </p>
-                  <ol className="space-y-2 list-decimal list-inside pl-1 text-slate-600 leading-relaxed">
-                    <li>
-                      Toque no botão de <strong>Compartilhar</strong> <Share2 className="w-3.5 h-3.5 inline text-blue-600 mx-1" /> na barra inferior do Safari.
-                    </li>
-                    <li>
-                      Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong> <PlusSquare className="w-3.5 h-3.5 inline text-slate-700 mx-1" />.
-                    </li>
-                    <li>
-                      Toque em <strong>"Adicionar"</strong> no canto superior direito.
-                    </li>
-                  </ol>
-                </div>
-              ) : (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 text-xs text-slate-700">
-                  <p className="font-bold text-slate-900 flex items-center gap-1.5">
-                    <Smartphone className="w-4 h-4 text-emerald-600" />
-                    Como instalar no Android (Chrome):
-                  </p>
-                  <ol className="space-y-2 list-decimal list-inside pl-1 text-slate-600 leading-relaxed">
-                    <li>
-                      Toque nos <strong>três pontinhos ⋮</strong> no canto superior do Chrome.
-                    </li>
-                    <li>
-                      Selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.
-                    </li>
-                  </ol>
-                </div>
-              )}
-
-              <button
-                onClick={() => setShowInstallModal(false)}
-                className="w-full py-3 bg-[#20C933] hover:bg-[#087A2A] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-md transition"
-              >
-                Entendi
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Universal Multi-Browser Install Modal */}
+        <InstallModal
+          isOpen={showInstallModal}
+          onClose={() => setShowInstallModal(false)}
+          onNativeInstall={handleNativeInstall}
+          hasNativePrompt={!!deferredPrompt}
+        />
       </main>
     </div>
   );

@@ -14,9 +14,9 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
   return (
     <div className="flex flex-col min-h-full pb-20 bg-white p-5 justify-between">
       <div className="space-y-6 pt-4">
-        {/* Big Check Success Icon */}
+        {/* Check Success Icon */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xl shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
+          <div className="w-16 h-16 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
             <Check className="w-9 h-9 stroke-[3]" />
           </div>
           <h1 className="text-xl font-black text-slate-900 mt-4">Reserva confirmada!</h1>
@@ -26,10 +26,10 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         </div>
 
         {/* Summary Card */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4.5 space-y-3.5 shadow-sm">
+        <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-4.5 space-y-3.5 shadow-sm">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200">
             <span className="text-xs font-bold text-slate-500">Código Protocolo</span>
-            <span className="text-xs font-mono font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+            <span className="text-xs font-mono font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
               {booking.protocolCode}
             </span>
           </div>
@@ -70,7 +70,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-ver-agenda-confirmacao"
           onClick={onNavigateToAgenda}
-          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-xs rounded-2xl transition shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-xs rounded-lg transition shadow-md shadow-emerald-600/20 uppercase tracking-wider flex items-center justify-center gap-2"
         >
           <span>VER AGENDA</span>
           <ArrowRight className="w-4 h-4" />

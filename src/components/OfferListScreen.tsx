@@ -28,12 +28,12 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onBack}
-            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-xl px-3.5 py-2">
+          <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-lg px-3.5 py-2">
             <span className="text-xs font-bold text-slate-900">Corte masculino • Hoje</span>
             <button className="text-slate-400 hover:text-slate-600">
               <XCircle className="w-4 h-4 fill-slate-300 text-white" />
@@ -43,13 +43,13 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
 
         {/* Filter Pills */}
         <div className="flex items-center gap-2 mt-3 overflow-x-auto no-scrollbar">
-          <button className="p-2 bg-slate-100 rounded-xl text-slate-700 text-xs font-semibold flex items-center gap-1 shrink-0">
+          <button className="p-2 bg-slate-100 rounded-lg text-slate-700 text-xs font-semibold flex items-center gap-1 shrink-0">
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span>Filtros</span>
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'distancia' ? 'todos' : 'distancia')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${
               activeFilter === 'distancia' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
@@ -57,7 +57,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'preco' ? 'todos' : 'preco')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${
               activeFilter === 'preco' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
@@ -65,7 +65,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
           </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'avaliacao' ? 'todos' : 'avaliacao')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${
               activeFilter === 'avaliacao' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
             }`}
           >
@@ -80,9 +80,9 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
           <div
             key={off.id}
             onClick={() => onSelectOffer(off)}
-            className="border border-slate-100 hover:border-emerald-500/40 rounded-2xl p-3 bg-white shadow-sm hover:shadow-md transition cursor-pointer flex gap-3.5 group"
+            className="border border-slate-100 hover:border-emerald-500/40 rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition cursor-pointer flex gap-3.5 group"
           >
-            <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+            <div className="w-20 h-20 rounded-md overflow-hidden bg-slate-100 shrink-0">
               <img
                 src={off.imageUrl}
                 alt={off.salonName}
@@ -107,7 +107,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
               </div>
 
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/60">
-                <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md flex items-center gap-1">
+                <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-sm flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {off.timeSlot}
                 </span>

@@ -37,7 +37,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <h2 className="text-base font-black text-slate-900">Anderson Silva</h2>
           <p className="text-xs text-slate-500 font-medium">+55 (11) 98765-4321</p>
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md border border-emerald-200">
               Cliente VIP
             </span>
           </div>
@@ -46,9 +46,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* PWA Install Banner */}
       {!isStandalone && (
-        <div className="bg-gradient-to-r from-emerald-600 to-green-500 text-white rounded-2xl p-4 shadow-md space-y-3">
+        <div className="bg-gradient-to-r from-emerald-600 to-green-500 text-white rounded-lg p-4 shadow-md space-y-3">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-md bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
               <Smartphone className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
@@ -60,7 +60,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
           <button
             onClick={onInstallClick}
-            className="w-full py-2.5 bg-white text-emerald-800 font-bold text-xs rounded-xl shadow hover:bg-emerald-50 active:scale-[0.98] transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-white text-emerald-800 font-bold text-xs rounded-lg shadow hover:bg-emerald-50 active:scale-[0.98] transition flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4 text-emerald-600" />
             <span>Instalar Aplicativo Agora</span>
@@ -69,7 +69,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       )}
 
       {isStandalone && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center gap-3 text-emerald-800">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3.5 flex items-center gap-3 text-emerald-800">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <div className="text-xs font-semibold">
             Você está usando o app Vagou instalado no celular!
@@ -81,7 +81,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       <div className="space-y-3 pt-1">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Configurações da Conta</h3>
         
-        <div className="bg-slate-50 rounded-2xl border border-slate-100 overflow-hidden divide-y divide-slate-100">
+        <div className="bg-slate-50 rounded-lg border border-slate-100 overflow-hidden divide-y divide-slate-100">
           <div className="p-3.5 flex items-center justify-between hover:bg-slate-100/60 transition cursor-pointer">
             <div className="flex items-center gap-3">
               <MapPin className="w-4 h-4 text-emerald-600" />
@@ -118,7 +118,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Refer & Earn */}
       <div className="pt-1">
-        <div className="bg-[#151A1E] text-white rounded-2xl p-4 flex items-center gap-3 shadow-sm">
+        <div className="bg-[#151A1E] text-white rounded-lg p-4 flex items-center gap-3 shadow-sm">
           <Award className="w-8 h-8 text-amber-400 shrink-0" />
           <div className="flex-1">
             <h4 className="text-xs font-black text-white">Indique e Ganhe R$ 10</h4>
@@ -136,7 +136,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 }).catch(() => {});
               }
             }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
           >
             <Share2 className="w-4 h-4" />
           </button>
