@@ -1,17 +1,21 @@
 import React from 'react';
-import { ArrowLeft, Share2, Star, ShieldCheck, Clock, Calendar, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Share2, Star, ShieldCheck, Clock, Calendar, CheckCircle2, Heart } from 'lucide-react';
 import { ServiceOffer } from '../types';
 
 interface OfferDetailScreenProps {
   offer: ServiceOffer;
   onBack: () => void;
   onConfirmBooking: (offer: ServiceOffer) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: string) => void;
 }
 
 export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
   offer,
   onBack,
   onConfirmBooking,
+  isFavorite = false,
+  onToggleFavorite,
 }) => {
   return (
     <div className="flex flex-col min-h-full pb-20 bg-white">
@@ -32,9 +36,35 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <button className="w-10 h-10 rounded-lg bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition">
-            <Share2 className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {onToggleFavorite && (
+              <button
+                onClick={() => onToggleFavorite(offer.id)}
+                className="w-10 h-10 rounded-lg bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition"
+                aria-label="Favoritar"
+              >
+                <Heart
+                  className={`w-5 h-5 ${
+                    isFavorite ? 'fill-rose-500 text-rose-500' : 'text-slate-700'
+                  }`}
+                />
+              </button>
+            )}
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: `${offer.serviceTitle} no Vagou`,
+                    text: `Vaga rápida em ${offer.salonName} por R$ ${offer.price}`,
+                    url: window.location.href,
+                  }).catch(() => {});
+                }
+              }}
+              className="w-10 h-10 rounded-lg bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 

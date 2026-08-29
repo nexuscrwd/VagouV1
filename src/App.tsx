@@ -10,6 +10,7 @@ import { AgendaScreen } from './components/AgendaScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
 import { InstallModal } from './components/InstallModal';
+import { scheduleAppointmentReminder } from './utils/notifications';
 
 export const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('home');
@@ -18,6 +19,29 @@ export const App: React.FC = () => {
   const [bookings, setBookings] = useState<BookingAppointment[]>(INITIAL_BOOKINGS);
   const [lastBooking, setLastBooking] = useState<BookingAppointment>(INITIAL_BOOKINGS[0]);
 
+  // Global Favorites State with LocalStorage
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('vagou_favorites');
+      return saved ? JSON.parse(saved) : ['1', '3'];
+    } catch {
+      return ['1', '3'];
+    }
+  });
+
+  const handleToggleFavorite = (offerId: string) => {
+    setFavorites((prev) => {
+      const exists = prev.includes(offerId);
+      const next = exists ? prev.filter((id) => id !== offerId) : [...prev, offerId];
+      try {
+        localStorage.setItem('vagou_favorites', JSON.stringify(next));
+      } catch (err) {
+        console.warn('Erro ao salvar favoritos:', err);
+      }
+      return next;
+    });
+  };
+
   // PWA Install State
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState<boolean>(false);
@@ -25,7 +49,7 @@ export const App: React.FC = () => {
   const [showInstallModal, setShowInstallModal] = useState<boolean>(false);
 
   useEffect(() => {
-    // Detect standalone mode (already installed and opened from home screen)
+    // Detect standalone mode
     const isStandaloneMode =
       window.matchMedia('(display-mode: standalone)').matches ||
       window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -33,7 +57,6 @@ export const App: React.FC = () => {
       document.referrer.includes('android-app://');
     setIsStandalone(isStandaloneMode);
 
-    // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -42,7 +65,6 @@ export const App: React.FC = () => {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    // Listen for app installed event
     window.addEventListener('appinstalled', () => {
       setIsStandalone(true);
       setIsInstallable(false);
@@ -92,7 +114,26 @@ export const App: React.FC = () => {
 
     setBookings([newBooking, ...bookings]);
     setLastBooking(newBooking);
+
+    // Trigger PWA reminder notification
+    scheduleAppointmentReminder(
+      offer.serviceTitle,
+      offer.salonName,
+      offer.timeSlot
+    );
+
     setCurrentScreen('confirmacao');
+  };
+
+  // Handle Booking Cancellation
+  const handleCancelBooking = (protocolCode: string) => {
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.protocolCode === protocolCode
+          ? { ...b, status: 'CANCELADO' as const }
+          : b
+      )
+    );
   };
 
   return (
@@ -113,6 +154,8 @@ export const App: React.FC = () => {
               onNavigateToMap={() => setCurrentScreen('mapa')}
               onOpenInstallModal={handleOpenInstallModal}
               isStandalone={isStandalone}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
 
@@ -123,6 +166,8 @@ export const App: React.FC = () => {
                 setSelectedOffer(off);
                 setCurrentScreen('detalhe-oferta');
               }}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
 
@@ -134,6 +179,8 @@ export const App: React.FC = () => {
                 setSelectedOffer(off);
                 setCurrentScreen('detalhe-oferta');
               }}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
 
@@ -142,6 +189,8 @@ export const App: React.FC = () => {
               offer={selectedOffer}
               onBack={() => setCurrentScreen('home')}
               onConfirmBooking={handleConfirmBooking}
+              isFavorite={favorites.includes(selectedOffer.id)}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
 
@@ -156,6 +205,7 @@ export const App: React.FC = () => {
             <AgendaScreen
               bookings={bookings}
               onNewBookingClick={() => setCurrentScreen('home')}
+              onCancelBooking={handleCancelBooking}
             />
           )}
 
@@ -164,6 +214,13 @@ export const App: React.FC = () => {
               onInstallClick={handleOpenInstallModal}
               isInstallable={true}
               isStandalone={isStandalone}
+              offers={offers}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+              onSelectOffer={(off) => {
+                setSelectedOffer(off);
+                setCurrentScreen('detalhe-oferta');
+              }}
             />
           )}
         </div>

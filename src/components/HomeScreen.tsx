@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, MapPin, Search, Star, Clock } from 'lucide-react';
+import { Sparkles, MapPin, Search, Star, Clock, Heart } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 
@@ -10,6 +10,8 @@ interface HomeScreenProps {
   offers: ServiceOffer[];
   onOpenInstallModal?: () => void;
   isStandalone?: boolean;
+  favorites?: string[];
+  onToggleFavorite?: (id: string) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -19,6 +21,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   offers,
   onOpenInstallModal,
   isStandalone = false,
+  favorites = [],
+  onToggleFavorite,
 }) => {
   const featuredOffer = offers.find((o) => o.featured) || offers[0];
   const categories = [
@@ -108,7 +112,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {featuredOffer && (
           <div
             onClick={() => onNavigateToOfferDetail(featuredOffer)}
-            className="border-2 border-emerald-500/40 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition cursor-pointer group"
+            className="border-2 border-emerald-500/40 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition cursor-pointer group relative"
           >
             <div className="relative h-36 bg-slate-200 overflow-hidden">
               <img
@@ -121,6 +125,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Clock className="w-3 h-3 text-emerald-600" />
                 <span>{featuredOffer.timeSlot}</span>
               </div>
+
+              {/* Heart Button */}
+              {onToggleFavorite && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(featuredOffer.id);
+                  }}
+                  className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-slate-700 hover:text-rose-600 transition shadow-sm"
+                  aria-label="Favoritar"
+                >
+                  <Heart
+                    className={`w-4 h-4 ${
+                      favorites.includes(featuredOffer.id)
+                        ? 'fill-rose-500 text-rose-500'
+                        : 'text-slate-600'
+                    }`}
+                  />
+                </button>
+              )}
             </div>
 
             <div className="p-3.5 space-y-2">
@@ -170,7 +194,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div
               key={off.id}
               onClick={() => onNavigateToOfferDetail(off)}
-              className="border border-slate-100 rounded-lg overflow-hidden bg-white hover:border-slate-300 transition cursor-pointer group"
+              className="border border-slate-100 rounded-lg overflow-hidden bg-white hover:border-slate-300 transition cursor-pointer group relative"
             >
               <div className="h-20 bg-slate-100 relative">
                 <img
@@ -179,6 +203,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   className="w-full h-full object-cover group-hover:scale-105 transition"
                   referrerPolicy="no-referrer"
                 />
+                {onToggleFavorite && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite(off.id);
+                    }}
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 flex items-center justify-center transition shadow-sm"
+                  >
+                    <Heart
+                      className={`w-3 h-3 ${
+                        favorites.includes(off.id)
+                          ? 'fill-rose-500 text-rose-500'
+                          : 'text-slate-600'
+                      }`}
+                    />
+                  </button>
+                )}
               </div>
               <div className="p-2.5">
                 <h4 className="text-xs font-bold text-slate-900 truncate">{off.salonName}</h4>

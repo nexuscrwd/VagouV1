@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   User,
   Phone,
@@ -13,19 +13,56 @@ import {
   Smartphone,
   Share2,
   CheckCircle2,
+  Heart,
+  Trash2,
+  Clock,
+  Star,
 } from 'lucide-react';
+import { ServiceOffer } from '../types';
+import { requestNotificationPermission, sendLocalNotification } from '../utils/notifications';
 
 interface ProfileScreenProps {
   onInstallClick?: () => void;
   isInstallable?: boolean;
   isStandalone?: boolean;
+  offers?: ServiceOffer[];
+  favorites?: string[];
+  onToggleFavorite?: (id: string) => void;
+  onSelectOffer?: (offer: ServiceOffer) => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onInstallClick,
   isInstallable = true,
   isStandalone = false,
+  offers = [],
+  favorites = [],
+  onToggleFavorite,
+  onSelectOffer,
 }) => {
+  const [notificationStatus, setNotificationStatus] = useState<string>(
+    typeof Notification !== 'undefined' ? Notification.permission : 'default'
+  );
+  const [notifSuccessMessage, setNotifSuccessMessage] = useState<string>('');
+
+  const favoriteOffers = offers.filter((o) => favorites.includes(o.id));
+
+  const handleEnableNotifications = async () => {
+    const perm = await requestNotificationPermission();
+    setNotificationStatus(perm);
+
+    if (perm === 'granted') {
+      sendLocalNotification('🔔 Notificações Ativadas!', {
+        body: 'O Vagou agora enviará alertas e lembretes 30 min antes do seu horário.',
+      });
+      setNotifSuccessMessage('Notificações ativadas com sucesso! Enviamos um teste.');
+      setTimeout(() => setNotifSuccessMessage(''), 4000);
+    } else {
+      setNotifSuccessMessage('Permissão não concedida no navegador.');
+      setTimeout(() => setNotifSuccessMessage(''), 4000);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-full pb-24 bg-white p-5 space-y-5">
       {/* User Header */}
@@ -42,6 +79,107 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </span>
           </div>
         </div>
+      </div>
+
+      {/* PWA Notification Control Box */}
+      <div className="bg-slate-900 text-white rounded-lg p-4 shadow-md space-y-2.5">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <Bell className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-white">Lembretes 30 min antes</h4>
+              <p className="text-[11px] text-slate-400">Notificações PWA no celular</p>
+            </div>
+          </div>
+
+          <span
+            className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+              notificationStatus === 'granted'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+            }`}
+          >
+            {notificationStatus === 'granted' ? 'ATIVADO' : 'DESATIVADO'}
+          </span>
+        </div>
+
+        {notifSuccessMessage && (
+          <div className="p-2 bg-emerald-950/80 border border-emerald-500/40 rounded text-[11px] text-emerald-300">
+            {notifSuccessMessage}
+          </div>
+        )}
+
+        <button
+          onClick={handleEnableNotifications}
+          className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-md transition shadow-sm flex items-center justify-center gap-1.5"
+        >
+          <Bell className="w-3.5 h-3.5" />
+          <span>{notificationStatus === 'granted' ? 'Testar Notificação Agora' : 'Ativar Notificações de Vagas'}</span>
+        </button>
+      </div>
+
+      {/* Meus Favoritos Section */}
+      <div className="space-y-3 pt-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+              Meus Favoritos ({favoriteOffers.length})
+            </h3>
+          </div>
+        </div>
+
+        {favoriteOffers.length === 0 ? (
+          <div className="p-4 bg-slate-50 border border-slate-100 rounded-lg text-center space-y-1">
+            <Heart className="w-6 h-6 text-slate-300 mx-auto" />
+            <p className="text-xs font-semibold text-slate-700">Nenhum salão favoritado ainda</p>
+            <p className="text-[11px] text-slate-400">
+              Toque no coração dos estabelecimentos para salvá-los aqui.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {favoriteOffers.map((off) => (
+              <div
+                key={off.id}
+                onClick={() => onSelectOffer && onSelectOffer(off)}
+                className="p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between shadow-sm hover:border-slate-300 transition cursor-pointer"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={off.imageUrl}
+                    alt={off.salonName}
+                    className="w-12 h-12 rounded-md object-cover shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">{off.salonName}</h4>
+                    <p className="text-[11px] text-slate-500 truncate">{off.serviceTitle} • {off.professionalName}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
+                        R$ {off.price}
+                      </span>
+                      <span className="text-[10px] text-slate-400">{off.distance}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite && onToggleFavorite(off.id);
+                  }}
+                  className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition shrink-0"
+                  title="Remover dos favoritos"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* PWA Install Banner */}
@@ -100,14 +238,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
           <div className="p-3.5 flex items-center justify-between hover:bg-slate-100/60 transition cursor-pointer">
             <div className="flex items-center gap-3">
-              <Bell className="w-4 h-4 text-emerald-600" />
-              <span className="text-xs font-bold text-slate-800">Notificações WhatsApp & Push</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-          </div>
-
-          <div className="p-3.5 flex items-center justify-between hover:bg-slate-100/60 transition cursor-pointer">
-            <div className="flex items-center gap-3">
               <Shield className="w-4 h-4 text-emerald-600" />
               <span className="text-xs font-bold text-slate-800">Privacidade & Termos de Uso</span>
             </div>
@@ -144,7 +274,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </div>
 
       <div className="pt-2 text-center">
-        <span className="text-[11px] text-slate-400">Vagou App v1.0.0 • PWA Mobile</span>
+        <span className="text-[11px] text-slate-400">Vagou App v1.2.0 • PWA Mobile</span>
       </div>
     </div>
   );

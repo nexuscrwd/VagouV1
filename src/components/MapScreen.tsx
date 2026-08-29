@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
-import { Search, Scissors, Star, Navigation } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Scissors, Star, Navigation, Heart } from 'lucide-react';
 import { ServiceOffer } from '../types';
+import { MapSkeleton } from './SkeletonLoader';
 
 interface MapScreenProps {
   offers: ServiceOffer[];
   onSelectOffer: (offer: ServiceOffer) => void;
+  favorites?: string[];
+  onToggleFavorite?: (id: string) => void;
 }
 
-export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) => {
+export const MapScreen: React.FC<MapScreenProps> = ({
+  offers,
+  onSelectOffer,
+  favorites = [],
+  onToggleFavorite,
+}) => {
   const [selectedOffer, setSelectedOffer] = useState<ServiceOffer>(offers[0]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <MapSkeleton />;
+  }
 
   return (
     <div className="relative w-full h-[700px] bg-[#d9ebd9] overflow-hidden flex flex-col justify-between select-none">
@@ -97,9 +117,28 @@ export const MapScreen: React.FC<MapScreenProps> = ({ offers, onSelectOffer }) =
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-slate-900 truncate">{selectedOffer.salonName}</h3>
-                <div className="flex items-center gap-1 text-xs font-bold text-slate-800">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  <span>{selectedOffer.rating}</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-xs font-bold text-slate-800">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <span>{selectedOffer.rating}</span>
+                  </div>
+                  {onToggleFavorite && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite(selectedOffer.id);
+                      }}
+                      className="p-1 text-slate-400 hover:text-rose-500 transition"
+                    >
+                      <Heart
+                        className={`w-4 h-4 ${
+                          favorites.includes(selectedOffer.id)
+                            ? 'fill-rose-500 text-rose-500'
+                            : 'text-slate-400'
+                        }`}
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
               <p className="text-xs text-slate-600 mt-0.5">
