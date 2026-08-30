@@ -7,6 +7,60 @@ export type ScreenId =
   | 'agenda'
   | 'perfil';
 
+export type PartnerScreenId =
+  | 'partner-agenda'
+  | 'partner-publish'
+  | 'partner-schedule-config'
+  | 'partner-profile';
+
+export type AppMode = 'client' | 'partner';
+
+export interface TimeBreak {
+  id: string;
+  label: string;
+  start: string; // e.g. "12:00"
+  end: string;   // e.g. "13:00"
+}
+
+export interface DayScheduleConfig {
+  dayOfWeek: number; // 0 = Domingo, 1 = Segunda ... 6 = Sábado
+  dayName: string;
+  active: boolean;
+  openTime: string; // "09:00"
+  closeTime: string; // "19:00"
+  breaks: TimeBreak[];
+}
+
+export interface PartnerProfessional {
+  id: string;
+  name: string;
+  role: string;
+  avatar?: string;
+  phone?: string;
+  specialties: string[];
+  color: string;
+  slotDurationMinutes: number;
+  useCustomSchedule: boolean;
+  schedule: DayScheduleConfig[];
+}
+
+export interface PartnerAppointmentItem {
+  id: string;
+  protocolCode: string;
+  professionalId: string;
+  professionalName: string;
+  clientName: string;
+  clientPhone: string;
+  serviceTitle: string;
+  serviceCategory: 'cabelo' | 'barba' | 'unhas' | 'beleza' | 'estetica';
+  price: number;
+  dateStr: string; // "2026-08-29"
+  startTime: string; // "14:30"
+  endTime: string;   // "15:15"
+  status: 'CONFIRMADO' | 'EM_ATENDIMENTO' | 'CONCLUIDO' | 'CANCELADO' | 'NO_SHOW' | 'VAGA_PUBLICADA' | 'HORARIO_LIVRE';
+  notes?: string;
+}
+
 export interface ServiceOffer {
   id: string;
   salonName: string;

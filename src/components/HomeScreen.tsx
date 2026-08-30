@@ -12,6 +12,7 @@ interface HomeScreenProps {
   isStandalone?: boolean;
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
+  onSwitchToPartnerMode?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -23,6 +24,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   isStandalone = false,
   favorites = [],
   onToggleFavorite,
+  onSwitchToPartnerMode,
 }) => {
   const featuredOffer = offers.find((o) => o.featured) || offers[0];
   const categories = [
@@ -42,13 +44,25 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <h1 className="text-xl font-bold text-slate-900 leading-tight">Olá, Anderson!</h1>
           </div>
 
-          <button
-            onClick={onNavigateToMap}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
-          >
-            <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Itaquera, SP</span>
-          </button>
+          <div className="flex items-center gap-2">
+            {onSwitchToPartnerMode && (
+              <button
+                onClick={onSwitchToPartnerMode}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold transition border border-emerald-200"
+                title="Acessar Painel do Estabelecimento"
+              >
+                <span>🏢 Painel Salão</span>
+              </button>
+            )}
+
+            <button
+              onClick={onNavigateToMap}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+            >
+              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Itaquera</span>
+            </button>
+          </div>
         </div>
 
         {/* Search Bar */}

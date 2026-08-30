@@ -29,6 +29,7 @@ interface ProfileScreenProps {
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
   onSelectOffer?: (offer: ServiceOffer) => void;
+  onSwitchToPartnerMode?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -39,6 +40,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   favorites = [],
   onToggleFavorite,
   onSelectOffer,
+  onSwitchToPartnerMode,
 }) => {
   const [notificationStatus, setNotificationStatus] = useState<string>(
     typeof Notification !== 'undefined' ? Notification.permission : 'default'
@@ -80,6 +82,31 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Switch to Partner / Business Mode Banner */}
+      {onSwitchToPartnerMode && (
+        <div className="bg-slate-900 text-white rounded-xl p-4 shadow-md border border-slate-800 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-sm">
+                🏢
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-white">É dono de salão ou barbearia?</h4>
+                <p className="text-[11px] text-slate-400">Acesse a agenda, grade e publique vagas</p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={onSwitchToPartnerMode}
+            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-bold text-xs rounded-lg transition flex items-center justify-center gap-2 shadow-sm"
+          >
+            <span>Acessar Painel do Estabelecimento</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* PWA Notification Control Box */}
       <div className="bg-slate-900 text-white rounded-lg p-4 shadow-md space-y-2.5">

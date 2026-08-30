@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ScreenId, ServiceOffer, BookingAppointment } from './types';
-import { MOCK_OFFERS, INITIAL_BOOKINGS } from './data';
+import {
+  ScreenId,
+  PartnerScreenId,
+  AppMode,
+  ServiceOffer,
+  BookingAppointment,
+  PartnerProfessional,
+  PartnerAppointmentItem,
+  DayScheduleConfig,
+} from './types';
+import {
+  MOCK_OFFERS,
+  INITIAL_BOOKINGS,
+  INITIAL_PROFESSIONALS,
+  INITIAL_PARTNER_APPOINTMENTS,
+} from './data';
 import { HomeScreen } from './components/HomeScreen';
 import { MapScreen } from './components/MapScreen';
 import { OfferListScreen } from './components/OfferListScreen';
@@ -10,14 +24,36 @@ import { AgendaScreen } from './components/AgendaScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
 import { InstallModal } from './components/InstallModal';
+import { PartnerAgendaScreen } from './components/PartnerAgendaScreen';
+import { PartnerScheduleConfigScreen } from './components/PartnerScheduleConfigScreen';
+import { PartnerProfileScreen } from './components/PartnerProfileScreen';
+import { PartnerPublishModal } from './components/PartnerPublishModal';
+import { PartnerBottomNav } from './components/PartnerBottomNav';
 import { scheduleAppointmentReminder } from './utils/notifications';
 
 export const App: React.FC = () => {
+  // App Mode: 'client' (User looking for appointment) or 'partner' (Salon Owner / Professional)
+  const [appMode, setAppMode] = useState<AppMode>('client');
+
+  // Client Navigation State
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('home');
-  const [offers] = useState<ServiceOffer[]>(MOCK_OFFERS);
+  const [offers, setOffers] = useState<ServiceOffer[]>(MOCK_OFFERS);
   const [selectedOffer, setSelectedOffer] = useState<ServiceOffer>(MOCK_OFFERS[0]);
   const [bookings, setBookings] = useState<BookingAppointment[]>(INITIAL_BOOKINGS);
   const [lastBooking, setLastBooking] = useState<BookingAppointment>(INITIAL_BOOKINGS[0]);
+
+  // Partner Navigation State
+  const [partnerScreen, setPartnerScreen] = useState<PartnerScreenId>('partner-agenda');
+  const [professionals, setProfessionals] = useState<PartnerProfessional[]>(INITIAL_PROFESSIONALS);
+  const [partnerAppointments, setPartnerAppointments] = useState<PartnerAppointmentItem[]>(
+    INITIAL_PARTNER_APPOINTMENTS
+  );
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState<boolean>(false);
+  const [publishPrefill, setPublishPrefill] = useState<{
+    professionalId?: string;
+    time?: string;
+    date?: string;
+  } | undefined>(undefined);
 
   // Global Favorites State with LocalStorage
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -97,10 +133,11 @@ export const App: React.FC = () => {
     setShowInstallModal(true);
   };
 
-  // Handle Booking creation
+  // Handle Client Booking creation
   const handleConfirmBooking = (offer: ServiceOffer) => {
+    const newProtocol = `#VGA-${Math.floor(10000 + Math.random() * 90000)}`;
     const newBooking: BookingAppointment = {
-      protocolCode: `#VGA-${Math.floor(10000 + Math.random() * 90000)}`,
+      protocolCode: newProtocol,
       service: offer.serviceTitle,
       professional: offer.professionalName,
       salonName: offer.salonName,
@@ -115,6 +152,27 @@ export const App: React.FC = () => {
     setBookings([newBooking, ...bookings]);
     setLastBooking(newBooking);
 
+    // Also mirror to Partner Agenda if it's the partner's salon!
+    const todayIso = new Date().toISOString().split('T')[0];
+    const matchingProf = professionals.find((p) => p.name.includes(offer.professionalName)) || professionals[0];
+    const newPartnerAppt: PartnerAppointmentItem = {
+      id: `partner-appt-${Date.now()}`,
+      protocolCode: newProtocol,
+      professionalId: matchingProf.id,
+      professionalName: matchingProf.name,
+      clientName: 'Anderson Silva (Você)',
+      clientPhone: '+5511987654321',
+      serviceTitle: offer.serviceTitle,
+      serviceCategory: offer.serviceCategory,
+      price: offer.price,
+      dateStr: todayIso,
+      startTime: offer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', ''),
+      endTime: '15:15',
+      status: 'CONFIRMADO',
+      notes: 'Reserva feita através do app do cliente.',
+    };
+    setPartnerAppointments((prev) => [newPartnerAppt, ...prev]);
+
     // Trigger PWA reminder notification
     scheduleAppointmentReminder(
       offer.serviceTitle,
@@ -125,7 +183,7 @@ export const App: React.FC = () => {
     setCurrentScreen('confirmacao');
   };
 
-  // Handle Booking Cancellation
+  // Handle Client Booking Cancellation
   const handleCancelBooking = (protocolCode: string) => {
     setBookings((prev) =>
       prev.map((b) =>
@@ -134,6 +192,117 @@ export const App: React.FC = () => {
           : b
       )
     );
+    // Also update partner side
+    setPartnerAppointments((prev) =>
+      prev.map((b) =>
+        b.protocolCode === protocolCode
+          ? { ...b, status: 'CANCELADO' as const }
+          : b
+      )
+    );
+  };
+
+  // Handle Partner Schedule & Breaks Save
+  const handleSavePartnerSchedule = (
+    targetId: string | 'all',
+    schedule: DayScheduleConfig[],
+    slotDuration: number
+  ) => {
+    setProfessionals((prev) =>
+      prev.map((prof) => {
+        if (targetId === 'all' || prof.id === targetId) {
+          return {
+            ...prof,
+            schedule: JSON.parse(JSON.stringify(schedule)),
+            slotDurationMinutes: slotDuration,
+            useCustomSchedule: targetId !== 'all',
+          };
+        }
+        return prof;
+      })
+    );
+  };
+
+  // Handle Partner Add New Professional
+  const handleAddProfessional = (newProfData: Omit<PartnerProfessional, 'id'>) => {
+    const newProf: PartnerProfessional = {
+      ...newProfData,
+      id: `prof-${Date.now()}`,
+    };
+    setProfessionals((prev) => [...prev, newProf]);
+  };
+
+  // Handle Partner Appointment Status Update (Check-in, Concluido, No-Show, etc.)
+  const handleUpdatePartnerAppointmentStatus = (
+    id: string,
+    status: PartnerAppointmentItem['status']
+  ) => {
+    setPartnerAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status } : a))
+    );
+  };
+
+  // Handle Partner Publishing a Quick Flash Offer
+  const handlePublishOffer = (newOfferData: {
+    professionalId: string;
+    professionalName: string;
+    serviceTitle: string;
+    serviceCategory: 'cabelo' | 'barba' | 'unhas' | 'beleza' | 'estetica';
+    price: number;
+    originalPrice: number;
+    timeSlot: string;
+    dayLabel: string;
+    duration: string;
+    dateIso: string;
+  }) => {
+    const newOfferId = `off-flash-${Date.now()}`;
+    const newServiceOffer: ServiceOffer = {
+      id: newOfferId,
+      salonName: 'Salão & Barbearia Xpress',
+      professionalName: newOfferData.professionalName,
+      serviceTitle: newOfferData.serviceTitle,
+      serviceCategory: newOfferData.serviceCategory,
+      price: newOfferData.price,
+      originalPrice: newOfferData.originalPrice,
+      rating: 4.9,
+      ratingCount: 128,
+      distance: '650 metros de você',
+      neighborhood: 'Itaquera, São Paulo',
+      timeSlot: newOfferData.timeSlot,
+      dayLabel: newOfferData.dayLabel,
+      duration: newOfferData.duration,
+      imageUrl:
+        newOfferData.serviceCategory === 'barba'
+          ? 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80'
+          : newOfferData.serviceCategory === 'unhas'
+          ? 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80'
+          : 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
+      lat: -23.535,
+      lng: -46.452,
+      featured: true,
+    };
+
+    // Add to Client offers list
+    setOffers((prev) => [newServiceOffer, ...prev]);
+
+    // Add to Partner appointment list as VAGA_PUBLICADA
+    const newPartnerAppt: PartnerAppointmentItem = {
+      id: `appt-flash-${Date.now()}`,
+      protocolCode: `#VGA-FLASH-${Math.floor(100 + Math.random() * 900)}`,
+      professionalId: newOfferData.professionalId,
+      professionalName: newOfferData.professionalName,
+      clientName: 'Vaga Aberta no Vagou',
+      clientPhone: '',
+      serviceTitle: newOfferData.serviceTitle,
+      serviceCategory: newOfferData.serviceCategory,
+      price: newOfferData.price,
+      dateStr: newOfferData.dateIso,
+      startTime: newOfferData.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', ''),
+      endTime: '16:15',
+      status: 'VAGA_PUBLICADA',
+      notes: 'Oferta relâmpago publicada!',
+    };
+    setPartnerAppointments((prev) => [newPartnerAppt, ...prev]);
   };
 
   return (
@@ -141,95 +310,173 @@ export const App: React.FC = () => {
       {/* Real Fullscreen Mobile Container */}
       <main className="w-full max-w-md min-h-[100dvh] bg-white text-slate-900 flex flex-col relative shadow-2xl overflow-x-hidden font-sans">
         
-        {/* Main Screen Content */}
-        <div className="flex-1 w-full relative overflow-y-auto">
-          {currentScreen === 'home' && (
-            <HomeScreen
-              offers={offers}
-              onNavigateToOffers={(q, cat) => setCurrentScreen('lista-ofertas')}
-              onNavigateToOfferDetail={(off) => {
-                setSelectedOffer(off);
-                setCurrentScreen('detalhe-oferta');
+        {/* CLIENT MODE SCREENS */}
+        {appMode === 'client' && (
+          <div className="flex-1 w-full relative overflow-y-auto">
+            {currentScreen === 'home' && (
+              <HomeScreen
+                offers={offers}
+                onNavigateToOffers={(q, cat) => setCurrentScreen('lista-ofertas')}
+                onNavigateToOfferDetail={(off) => {
+                  setSelectedOffer(off);
+                  setCurrentScreen('detalhe-oferta');
+                }}
+                onNavigateToMap={() => setCurrentScreen('mapa')}
+                onOpenInstallModal={handleOpenInstallModal}
+                isStandalone={isStandalone}
+                favorites={favorites}
+                onToggleFavorite={handleToggleFavorite}
+                onSwitchToPartnerMode={() => {
+                  setAppMode('partner');
+                  setPartnerScreen('partner-agenda');
+                }}
+              />
+            )}
+
+            {currentScreen === 'mapa' && (
+              <MapScreen
+                offers={offers}
+                onSelectOffer={(off) => {
+                  setSelectedOffer(off);
+                  setCurrentScreen('detalhe-oferta');
+                }}
+                favorites={favorites}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            )}
+
+            {currentScreen === 'lista-ofertas' && (
+              <OfferListScreen
+                offers={offers}
+                onBack={() => setCurrentScreen('home')}
+                onSelectOffer={(off) => {
+                  setSelectedOffer(off);
+                  setCurrentScreen('detalhe-oferta');
+                }}
+                favorites={favorites}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            )}
+
+            {currentScreen === 'detalhe-oferta' && (
+              <OfferDetailScreen
+                offer={selectedOffer}
+                onBack={() => setCurrentScreen('home')}
+                onConfirmBooking={handleConfirmBooking}
+                isFavorite={favorites.includes(selectedOffer.id)}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            )}
+
+            {currentScreen === 'confirmacao' && (
+              <ConfirmationScreen
+                booking={lastBooking}
+                onNavigateToAgenda={() => setCurrentScreen('agenda')}
+              />
+            )}
+
+            {currentScreen === 'agenda' && (
+              <AgendaScreen
+                bookings={bookings}
+                onNewBookingClick={() => setCurrentScreen('home')}
+                onCancelBooking={handleCancelBooking}
+              />
+            )}
+
+            {currentScreen === 'perfil' && (
+              <ProfileScreen
+                onInstallClick={handleOpenInstallModal}
+                isInstallable={true}
+                isStandalone={isStandalone}
+                offers={offers}
+                favorites={favorites}
+                onToggleFavorite={handleToggleFavorite}
+                onSelectOffer={(off) => {
+                  setSelectedOffer(off);
+                  setCurrentScreen('detalhe-oferta');
+                }}
+                onSwitchToPartnerMode={() => {
+                  setAppMode('partner');
+                  setPartnerScreen('partner-agenda');
+                }}
+              />
+            )}
+
+            {/* Client Bottom Navigation */}
+            <BottomNav
+              currentScreen={currentScreen}
+              onSelectScreen={(screen) => setCurrentScreen(screen)}
+            />
+          </div>
+        )}
+
+        {/* PARTNER / ESTABELECIMENTO MODE SCREENS */}
+        {appMode === 'partner' && (
+          <div className="flex-1 w-full relative overflow-y-auto">
+            {partnerScreen === 'partner-agenda' && (
+              <PartnerAgendaScreen
+                appointments={partnerAppointments}
+                professionals={professionals}
+                onOpenPublishModal={(prefill) => {
+                  setPublishPrefill(prefill);
+                  setIsPublishModalOpen(true);
+                }}
+                onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
+                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+              />
+            )}
+
+            {partnerScreen === 'partner-publish' && (
+              <PartnerAgendaScreen
+                appointments={partnerAppointments}
+                professionals={professionals}
+                onOpenPublishModal={(prefill) => {
+                  setPublishPrefill(prefill);
+                  setIsPublishModalOpen(true);
+                }}
+                onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
+                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+              />
+            )}
+
+            {partnerScreen === 'partner-schedule-config' && (
+              <PartnerScheduleConfigScreen
+                professionals={professionals}
+                onSaveSchedule={handleSavePartnerSchedule}
+                onAddProfessional={handleAddProfessional}
+                onBack={() => setPartnerScreen('partner-agenda')}
+              />
+            )}
+
+            {partnerScreen === 'partner-profile' && (
+              <PartnerProfileScreen
+                professionals={professionals}
+                onSwitchToClientMode={() => {
+                  setAppMode('client');
+                  setCurrentScreen('home');
+                }}
+                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+                onOpenPublishModal={() => {
+                  setPublishPrefill(undefined);
+                  setIsPublishModalOpen(true);
+                }}
+              />
+            )}
+
+            {/* Partner Bottom Navigation */}
+            <PartnerBottomNav
+              currentScreen={partnerScreen}
+              onSelectScreen={(screen) => {
+                if (screen === 'partner-publish') {
+                  setPublishPrefill(undefined);
+                  setIsPublishModalOpen(true);
+                } else {
+                  setPartnerScreen(screen);
+                }
               }}
-              onNavigateToMap={() => setCurrentScreen('mapa')}
-              onOpenInstallModal={handleOpenInstallModal}
-              isStandalone={isStandalone}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
             />
-          )}
-
-          {currentScreen === 'mapa' && (
-            <MapScreen
-              offers={offers}
-              onSelectOffer={(off) => {
-                setSelectedOffer(off);
-                setCurrentScreen('detalhe-oferta');
-              }}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
-
-          {currentScreen === 'lista-ofertas' && (
-            <OfferListScreen
-              offers={offers}
-              onBack={() => setCurrentScreen('home')}
-              onSelectOffer={(off) => {
-                setSelectedOffer(off);
-                setCurrentScreen('detalhe-oferta');
-              }}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
-
-          {currentScreen === 'detalhe-oferta' && (
-            <OfferDetailScreen
-              offer={selectedOffer}
-              onBack={() => setCurrentScreen('home')}
-              onConfirmBooking={handleConfirmBooking}
-              isFavorite={favorites.includes(selectedOffer.id)}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          )}
-
-          {currentScreen === 'confirmacao' && (
-            <ConfirmationScreen
-              booking={lastBooking}
-              onNavigateToAgenda={() => setCurrentScreen('agenda')}
-            />
-          )}
-
-          {currentScreen === 'agenda' && (
-            <AgendaScreen
-              bookings={bookings}
-              onNewBookingClick={() => setCurrentScreen('home')}
-              onCancelBooking={handleCancelBooking}
-            />
-          )}
-
-          {currentScreen === 'perfil' && (
-            <ProfileScreen
-              onInstallClick={handleOpenInstallModal}
-              isInstallable={true}
-              isStandalone={isStandalone}
-              offers={offers}
-              favorites={favorites}
-              onToggleFavorite={handleToggleFavorite}
-              onSelectOffer={(off) => {
-                setSelectedOffer(off);
-                setCurrentScreen('detalhe-oferta');
-              }}
-            />
-          )}
-        </div>
-
-        {/* Global Bottom Navigation */}
-        <BottomNav
-          currentScreen={currentScreen}
-          onSelectScreen={(screen) => setCurrentScreen(screen)}
-        />
+          </div>
+        )}
 
         {/* Universal Multi-Browser Install Modal */}
         <InstallModal
@@ -238,9 +485,19 @@ export const App: React.FC = () => {
           onNativeInstall={handleNativeInstall}
           hasNativePrompt={!!deferredPrompt}
         />
+
+        {/* Quick Flash Offer Publish Modal (Partner) */}
+        <PartnerPublishModal
+          isOpen={isPublishModalOpen}
+          onClose={() => setIsPublishModalOpen(false)}
+          professionals={professionals}
+          onPublishOffer={handlePublishOffer}
+          initialPrefill={publishPrefill}
+        />
       </main>
     </div>
   );
 };
 
 export default App;
+
