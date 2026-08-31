@@ -2,7 +2,9 @@ export type ScreenId =
   | 'home'
   | 'mapa'
   | 'lista-ofertas'
+  | 'ofertas'
   | 'detalhe-oferta'
+  | 'detalhe'
   | 'confirmacao'
   | 'agenda'
   | 'perfil';
@@ -11,6 +13,7 @@ export type PartnerScreenId =
   | 'partner-agenda'
   | 'partner-publish'
   | 'partner-schedule-config'
+  | 'partner-config'
   | 'partner-profile';
 
 export type AppMode = 'client' | 'partner';
@@ -65,6 +68,7 @@ export interface ServiceOffer {
   id: string;
   salonName: string;
   professionalName: string;
+  professionalAvatar?: string;
   serviceTitle: string;
   serviceCategory: 'cabelo' | 'barba' | 'unhas' | 'beleza' | 'estetica';
   price: number;
@@ -72,6 +76,7 @@ export interface ServiceOffer {
   rating: number;
   ratingCount: number;
   distance: string;
+  distanceMeters?: number;
   neighborhood: string;
   timeSlot: string;
   dayLabel: string;
@@ -80,6 +85,21 @@ export interface ServiceOffer {
   lat: number;
   lng: number;
   featured?: boolean;
+
+  // Radar de Vagas - Extensões
+  mediaLevel?: 1 | 2 | 3; // 1 = Fallback animado, 2 = Carrossel de fotos, 3 = Vídeo vertical
+  videoUrl?: string;
+  galleryImages?: string[];
+  expiresInMinutes?: number;
+  expiresTimestamp?: number;
+  activeViewers?: number;
+  isFlashDeal?: boolean;
+  isRecurring?: boolean;
+  recurringCount?: number;
+  brandColor?: string;
+  brandGradient?: string;
+  categoryIconKey?: 'cabelo' | 'barba' | 'unhas' | 'sobrancelha' | 'estetica' | 'beleza';
+  description?: string;
 }
 
 export interface BookingAppointment {
@@ -88,10 +108,10 @@ export interface BookingAppointment {
   professional: string;
   salonName: string;
   dateTime: string;
-  dayGroup: 'HOJE, 26 DE JAN' | 'AMANHÃ, 27 DE JAN' | 'HISTÓRICO';
+  dayGroup: string;
   time: string;
   totalPrice: number;
-  status: 'EM ANDAMENTO' | 'AGENDADO' | 'CONCLUÍDO' | 'CANCELADO';
+  status: 'EM ANDAMENTO' | 'CONFIRMADO' | 'AGENDADO' | 'CONCLUÍDO' | 'CANCELADO';
   address: string;
   qrCodeMock?: string;
 }

@@ -40,13 +40,16 @@ O **VAGOU** é uma solução completa em dois lados (*Two-Sided Platform*) focad
 
 ## 3. Módulo do Cliente (App Mobile / PWA)
 
-### 3.1. Tela Inicial (`HomeScreen`)
-* **Header Personalizado:** Saudação, localização do usuário (Itaquera, SP) e botão de alternância rápida para o **Painel do Estabelecimento**.
-* **Barra de Pesquisa com Filtros:** Busca por serviços ou estabelecimentos.
-* **Carrossel de Categorias:** Cabelo, Barba, Unhas, Sobrancelhas e Estética.
-* **Card em Destaque:** Exibição da melhor oferta do momento com badge de desconto e distância.
-* **Lista de Vagas Rápidas:** Cards com foto do salão, profissional, avaliação, horário e preço.
-* **Sistema de Favoritos:** Toque no ícone de coração com salvamento imediato.
+### 3.1. Tela Inicial & Radar de Vagas (`HomeScreen`, `RadarStoryBar`, `RadarOfferCard`, `RadarStoryModal`)
+* **Radar ao Vivo & Stories 9:16:** Barra superior interativa no formato stories com anel gradiente animado e abertura em tela cheia com barra de progresso sequencial e botão de reserva rápida em 1 toque.
+* **3 Níveis de Mídia Adaptativa:**
+  - **Nível 3 (Vídeo Vertical):** Reprodução automática em loop com controle de áudio (*Mute/Unmute*) e playback.
+  - **Nível 2 (Carrossel de Fotos):** Navegação entre múltiplas fotos com indicadores circulares.
+  - **Nível 1 (Fallback Animado):** Ilustrações dinâmicas vetorizadas por categoria (`cabelo`, `barba`, `unhas`, `beleza`) com partículas e gradiente de marca exclusivo para salões sem fotos cadastradas.
+* **Contador de Urgência em Tempo Real (`CountdownTimer`):** Barra de progresso visual com contagem regressiva de expiração da vaga e alerta de *Vaga Relâmpago*.
+* **Prova Social & Retenção:** Indicador de *"X pessoas vendo agora"* e badge de histórico *"Você já frequentou"*.
+* **Filtros e Ordenação Inteligente:** Filtro por categorias e ordenação por Urgência (tempo restante), Proximidade (distância) e Menor Preço.
+* **Header:** Indicador de Radar Ativo, busca em tempo real e atalho direto para o modo Salão Parceiro.
 
 ### 3.2. Mapa Vetorial Interativo (`MapScreen`)
 * Mapa vetorial estilizado e leve.

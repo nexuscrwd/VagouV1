@@ -326,6 +326,7 @@ export const App: React.FC = () => {
                 isStandalone={isStandalone}
                 favorites={favorites}
                 onToggleFavorite={handleToggleFavorite}
+                onConfirmBooking={handleConfirmBooking}
                 onSwitchToPartnerMode={() => {
                   setAppMode('partner');
                   setPartnerScreen('partner-agenda');
