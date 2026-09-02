@@ -15,14 +15,19 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
-### [2026-09-02] — Filtro Dinâmico do Feed ao Clicar no Story do Salão & Expansão de Mocks
-- **Tipo:** `[Feat]` / `[UX]` / `[UI]` / `[Data]`
-- **Motivo:** O usuário solicitou que o clique no ícone do Story no topo filtre dinamicamente o feed para exibir exclusivamente os serviços/vagas abertas daquele salão/profissional selecionado, com novos mocks ricos de serviços para demonstrar múltiplos itens por estabelecimento.
+### [2026-09-02] — Integração da Ferramenta de Ordenação e Badge no Botão Todas as Vagas
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou que a ferramenta de ordenação e a contagem de vagas fizessem parte do botão "Todas as Vagas" e da barra de categorias, eliminando a div solta intermediária.
 - **Arquivos Impactados:**
-  - `src/data.ts` (Expansão dos mocks para múltiplos serviços por salão: *Salão X Prime*, *Barbearia Primo*, *Studio Mabe Nails*, *Don Studio Facial* e *Espaço Glamour VIP*)
-  - `src/components/RadarStoryBar.tsx` (Agrupamento único por salão com contagem de vagas, anel Verde Vagou `#20C933` no salão ativo, botão de "Todos / Feed Geral" e opacidade suave nos demais)
-  - `src/components/HomeScreen.tsx` (Controle de estado `selectedSalonFilter`, filtro reativo do feed e fita indicadora *"Filtrando por estabelecimento: [Nome]"* com botão *"Ver todos"*)
-- **Resumo Técnico:** Clean code total, tipagem estrita sem erros de TypeScript e compilação de produção 100% validada.
+  - `src/components/HomeScreen.tsx`:
+    - Adicionado badge numérico dinâmico no botão **"Todas as Vagas"** exibindo o total de vagas ativas.
+    - Integrado o seletor compacto de ordenação (`⚡ Mais Urgentes`, `📍 Mais Próximos`, `🏷️ Menor Preço`) diretamente na barra de navegação/categorias.
+    - Removida a div solta intermediária para aproximar o feed de vagas do cabeçalho.
+- **Resumo Técnico:** Clean code total, sem erros de TypeScript e compilação de produção 100% validada.
+
+---
+
+### [2026-09-02] — Expansão de Mocks de Serviços & Estabelecimentos
 
 ---
 
