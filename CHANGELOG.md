@@ -15,6 +15,25 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Remoção do Botão Superior "Agendar Horário na Agenda" no Perfil do Salão
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Remoção do botão redundante de agendamento no topo do perfil do salão conforme seleção no modo Focus do usuário, mantendo os atalhos limpos de *"WhatsApp Direto"* e *"Como Chegar"* e os agendamentos concentrados no cardápio de serviços e avisos.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o botão de agendamento do bloco de ações rápidas no topo do perfil do salão.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Reestruturação do Agendamento em Etapas (Calendário Mensal -> Profissional -> Horário -> Serviço na Confirmação)
+- **Tipo:** `[Refactor]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou a evolução do fluxo de agendamento em etapas guiadas: 1ª etapa com Calendário Mensal em grade, 2ª etapa com seleção de profissionais (incluindo a opção *"Qualquer um"*), 3ª etapa com horários disponíveis e 4ª etapa final com a confirmação e exibição dos detalhes do serviço. Além disso, todas as menções textuais a *"60 dias"* foram ocultadas/removidas.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Reformulado o modal para um Stepper/Wizard de 4 etapas (`date` -> `professional` -> `time` -> `confirmation`), com suporte a navegação por mês no calendário mensal em grade, transições fluidas e apresentação dos detalhes do serviço na tela final de confirmação.
+  - `src/components/SalonProfileView.tsx`: Ocultadas todas as referências do texto *"com 60 dias"* dos botões e banners.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
 ### [2026-09-02] — Implementação do Sistema de Agendamento da Agenda do Salão (Até 60 Dias)
 - **Tipo:** `[Feat]` / `[UX]` / `[Clean Code]`
 - **Motivo:** O usuário solicitou um fluxo completo de agendamento na seção de serviços do salão/profissional: ao clicar em "Agendar", o cliente é direcionado à agenda do estabelecimento, onde escolhe a data (com restrição máxima de até 2 meses / 60 dias) e, sucessivamente, um horário disponível.

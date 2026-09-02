@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   X, Calendar, Clock, User, CheckCircle2, ChevronLeft, ChevronRight, 
-  Sparkles, Star, MapPin, ShieldCheck, Scissors, AlertCircle
+  Sparkles, Star, Scissors, ArrowLeft, Building2, MapPin
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 
@@ -43,6 +43,8 @@ interface SalonBookingModalProps {
   }) => void;
 }
 
+type Step = 'date' | 'professional' | 'time' | 'confirmation';
+
 export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   isOpen,
   onClose,
@@ -54,7 +56,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   baseOffer,
   onConfirmAppointment,
 }) => {
-  // 1. Service Selection State
+  // Step state: 'date' -> 'professional' -> 'time' -> 'confirmation'
+  const [currentStep, setCurrentStep] = useState<Step>('date');
+
+  // 1. Selected Service State
   const [selectedService, setSelectedService] = useState<CatalogServiceItem>(
     initialService || services[0] || {
       id: 'srv-1',
@@ -66,68 +71,115 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
     }
   );
 
-  // 2. Professional Selection State ('any' or professional name)
-  const [selectedProfessional, setSelectedProfessional] = useState<string>('any');
-
-  // 3. Date Selection State (Restricted to Max 2 months / 60 days)
-  const today = useMemo(() => new Date(), []);
-  const maxDate = useMemo(() => {
+  // 2. Date Selection State (Monthly Calendar)
+  const today = useMemo(() => {
     const d = new Date();
-    d.setDate(d.getDate() + 60); // Maximum 2 months / 60 days
+    d.setHours(0, 0, 0, 0);
     return d;
   }, []);
 
-  // Generate day options for the next 60 days
-  const availableDays = useMemo(() => {
-    const days: Array<{
-      date: Date;
-      isoString: string;
-      dayOfWeekName: string;
-      dayOfMonth: number;
-      monthName: string;
-      isToday: boolean;
-      isOpen: boolean;
-    }> = [];
+  const [currentViewMonth, setCurrentViewMonth] = useState<Date>(() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
 
-    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const months = [
-      'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-      'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
-    ];
+  const [selectedDateIso, setSelectedDateIso] = useState<string>(() => {
+    // Default to today if open, or tomorrow
+    const d = new Date();
+    if (d.getDay() === 0) d.setDate(d.getDate() + 1); // Skip Sunday if today is Sunday
+    return d.toISOString().split('T')[0];
+  });
 
-    for (let i = 0; i <= 60; i++) {
-      const d = new Date();
-      d.setDate(today.getDate() + i);
-      const dayOfWeek = d.getDay();
-      
-      // Domingos (dayOfWeek === 0) geralmente salões estão fechados
-      const isOpen = dayOfWeek !== 0;
-
-      days.push({
-        date: d,
-        isoString: d.toISOString().split('T')[0],
-        dayOfWeekName: weekDays[dayOfWeek],
-        dayOfMonth: d.getDate(),
-        monthName: months[d.getMonth()],
-        isToday: i === 0,
-        isOpen,
-      });
-    }
-
-    return days;
-  }, [today]);
-
-  const [selectedDateIso, setSelectedDateIso] = useState<string>(
-    availableDays[0]?.isOpen ? availableDays[0].isoString : availableDays[1]?.isoString || availableDays[0]?.isoString
-  );
+  // 3. Professional Selection State ('any' or professional name)
+  const [selectedProfessional, setSelectedProfessional] = useState<string>('any');
 
   // 4. Time Slot Selection
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [timePeriodFilter, setTimePeriodFilter] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos');
 
-  // Generate realistic time slots for the chosen date
+  // Monthly Calendar Generation
+  const monthData = useMemo(() => {
+    const year = currentViewMonth.getFullYear();
+    const month = currentViewMonth.getMonth();
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const monthNameFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+    const monthLabel = monthNameFormatter.format(currentViewMonth);
+
+    // Max limit is 60 days from today
+    const maxDateLimit = new Date(today);
+    maxDateLimit.setDate(maxDateLimit.getDate() + 60);
+
+    const daysGrid: Array<{
+      dayNumber: number | null;
+      isoString: string | null;
+      isToday: boolean;
+      isDisabled: boolean;
+      isClosed: boolean;
+    }> = [];
+
+    // Empty padding slots before 1st day of month
+    for (let i = 0; i < firstDayIndex; i++) {
+      daysGrid.push({ dayNumber: null, isoString: null, isToday: false, isDisabled: true, isClosed: false });
+    }
+
+    // Days of the month
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+      const dateObj = new Date(year, month, d);
+      dateObj.setHours(0, 0, 0, 0);
+
+      const iso = dateObj.toISOString().split('T')[0];
+      const isPast = dateObj < today;
+      const isTooFar = dateObj > maxDateLimit;
+      const isSunday = dateObj.getDay() === 0;
+
+      const isDisabled = isPast || isTooFar || isSunday;
+      const isToday = dateObj.getTime() === today.getTime();
+
+      daysGrid.push({
+        dayNumber: d,
+        isoString: iso,
+        isToday,
+        isDisabled,
+        isClosed: isSunday,
+      });
+    }
+
+    return {
+      monthLabel: monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1),
+      daysGrid,
+      year,
+      month,
+    };
+  }, [currentViewMonth, today]);
+
+  // Navigate month
+  const handlePrevMonth = () => {
+    const prev = new Date(currentViewMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    // Don't allow going before current month
+    if (prev.getFullYear() < today.getFullYear() || (prev.getFullYear() === today.getFullYear() && prev.getMonth() < today.getMonth())) {
+      return;
+    }
+    setCurrentViewMonth(prev);
+  };
+
+  const handleNextMonth = () => {
+    const next = new Date(currentViewMonth);
+    next.setMonth(next.getMonth() + 1);
+    // Limit to 2 months out
+    const maxMonth = new Date(today);
+    maxMonth.setMonth(maxMonth.getMonth() + 2);
+    if (next > maxMonth) return;
+    setCurrentViewMonth(next);
+  };
+
+  // Generate time slots for chosen date + pro
   const generatedSlots = useMemo(() => {
-    // Generate hours based on standard salon hours (08:30 to 19:30)
     const morningSlots = ['08:30', '09:15', '10:00', '10:45', '11:30'];
     const afternoonSlots = ['13:30', '14:15', '15:00', '15:45', '16:30', '17:15'];
     const eveningSlots = ['18:00', '18:45', '19:30'];
@@ -138,12 +190,11 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
       ...eveningSlots.map((t) => ({ time: t, period: 'noite' as const })),
     ];
 
-    // Simulate busy slots deterministically based on date string and professional
     return all.map((slot) => {
       const hash = `${selectedDateIso}-${slot.time}-${selectedProfessional}`
         .split('')
         .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const isOccupied = hash % 5 === 0; // ~20% of slots occupied for realism
+      const isOccupied = hash % 5 === 0; // ~20% realistic occupied rate
       return {
         ...slot,
         available: !isOccupied,
@@ -158,18 +209,26 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Selected date metadata
-  const selectedDayObj = availableDays.find((d) => d.isoString === selectedDateIso) || availableDays[0];
+  // Selected date formatted
+  const selectedDateObj = new Date(selectedDateIso + 'T00:00:00');
+  const dateFormatted = selectedDateObj.toLocaleDateString('pt-BR', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
 
-  const formattedFullDate = selectedDayObj
-    ? `${selectedDayObj.dayOfWeekName}, ${selectedDayObj.dayOfMonth} de ${selectedDayObj.monthName}`
-    : selectedDateIso;
+  const fullDateFormatted = selectedDateObj.toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   const activeProfObj = professionals.find((p) => p.name === selectedProfessional);
-  const resolvedProfessionalName = activeProfObj?.name || (professionals[0]?.name ?? 'Carlos Henrique');
+  const resolvedProfessionalName = activeProfObj?.name || (professionals[0]?.name ?? 'Equipe do Salão');
   const resolvedProfessionalAvatar = activeProfObj?.avatar || professionals[0]?.avatar;
 
-  const handleConfirm = () => {
+  const handleConfirmFinal = () => {
     if (!selectedTimeSlot) return;
 
     onConfirmAppointment({
@@ -177,7 +236,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
       professional: selectedProfessional === 'any' ? `${resolvedProfessionalName} (Designado)` : selectedProfessional,
       professionalAvatar: resolvedProfessionalAvatar,
       dateIso: selectedDateIso,
-      dateFormatted: formattedFullDate,
+      dateFormatted: dateFormatted,
       timeSlot: selectedTimeSlot,
       salonName,
       salonAddress,
@@ -193,313 +252,484 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         role="dialog"
         aria-modal="true"
       >
-        {/* Header do Modal */}
-        <div className="px-5 py-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between sticky top-0 z-10">
-          <div>
+        {/* Header do Modal com Progresso das Etapas */}
+        <div className="px-5 py-4 bg-slate-900/90 border-b border-slate-800 sticky top-0 z-10">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#20C933]" />
+              {currentStep !== 'date' ? (
+                <button
+                  onClick={() => {
+                    if (currentStep === 'professional') setCurrentStep('date');
+                    else if (currentStep === 'time') setCurrentStep('professional');
+                    else if (currentStep === 'confirmation') setCurrentStep('time');
+                  }}
+                  className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+                  aria-label="Voltar etapa"
+                >
+                  <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+                </button>
+              ) : (
+                <Calendar className="w-4 h-4 text-[#20C933]" />
+              )}
               <h2 className="text-base font-bold text-white font-['Poppins']">
-                Agenda do Salão
+                {currentStep === 'date' && '1. Selecione o Dia'}
+                {currentStep === 'professional' && '2. Escolha o Profissional'}
+                {currentStep === 'time' && '3. Escolha o Horário'}
+                {currentStep === 'confirmation' && '4. Confirmação do Atendimento'}
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 truncate max-w-xs">
-              {salonName} • Agendamento em até 60 dias
-            </p>
+
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
+              aria-label="Fechar modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
-            aria-label="Fechar agenda"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {/* Stepper Indicator */}
+          <div className="grid grid-cols-4 gap-1.5">
+            {[
+              { key: 'date', label: 'Data' },
+              { key: 'professional', label: 'Profissional' },
+              { key: 'time', label: 'Horário' },
+              { key: 'confirmation', label: 'Confirmação' },
+            ].map((st, idx) => {
+              const stepOrder: Record<Step, number> = { date: 1, professional: 2, time: 3, confirmation: 4 };
+              const currentOrder = stepOrder[currentStep];
+              const thisOrder = idx + 1;
+              const isPassed = thisOrder < currentOrder;
+              const isCurrent = thisOrder === currentOrder;
+
+              return (
+                <div key={st.key} className="flex flex-col gap-1">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      isCurrent
+                        ? 'bg-[#20C933] shadow-sm shadow-emerald-500/50'
+                        : isPassed
+                        ? 'bg-emerald-600'
+                        : 'bg-slate-800'
+                    }`}
+                  />
+                  <span className={`text-[10px] font-bold uppercase tracking-wider text-center ${
+                    isCurrent ? 'text-emerald-400' : isPassed ? 'text-slate-300' : 'text-slate-600'
+                  }`}>
+                    {st.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
-          
-          {/* 1. SELEÇÃO DO SERVIÇO */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Scissors className="w-3.5 h-3.5 text-[#20C933]" />
-              <span>1. Serviço Escolhido</span>
-            </label>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
 
-            {/* Dropdown / Seletor de Serviço */}
-            <div className="relative">
-              <select
-                value={selectedService.id}
-                onChange={(e) => {
-                  const srv = services.find((s) => s.id === e.target.value);
-                  if (srv) setSelectedService(srv);
-                }}
-                className="w-full bg-slate-900 border border-slate-800 hover:border-slate-700 text-white text-xs font-bold rounded-xl p-3 pr-8 focus:outline-none focus:border-[#20C933] cursor-pointer appearance-none"
-              >
-                {services.map((srv) => (
-                  <option key={srv.id} value={srv.id} className="bg-slate-900 text-white">
-                    {srv.title} — R$ {srv.price.toFixed(0)} ({srv.duration})
-                  </option>
+          {/* ============================================================ */}
+          {/* ETAPA 1: CALENDÁRIO MENSAL */}
+          {/* ============================================================ */}
+          {currentStep === 'date' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              {/* Header do Mês com Controles */}
+              <div className="flex items-center justify-between bg-slate-900 p-3 rounded-2xl border border-slate-800">
+                <button
+                  onClick={handlePrevMonth}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="text-center">
+                  <h3 className="text-sm font-black text-white uppercase tracking-wider font-['Poppins']">
+                    {monthData.monthLabel}
+                  </h3>
+                  <span className="text-[10px] text-emerald-400 font-bold">
+                    Selecione um dia disponível
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleNextMonth}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Grid dos Dias da Semana */}
+              <div className="grid grid-cols-7 gap-1 text-center">
+                {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
+                  <div key={day} className="text-[10px] font-bold text-slate-500 py-1 uppercase">
+                    {day}
+                  </div>
                 ))}
-              </select>
-              <div className="absolute right-3 top-3.5 pointer-events-none text-slate-400 text-xs">
-                ▼
+
+                {/* Dias do Mês em Grade */}
+                {monthData.daysGrid.map((item, index) => {
+                  if (item.dayNumber === null) {
+                    return <div key={`empty-${index}`} className="h-10" />;
+                  }
+
+                  const isSelected = selectedDateIso === item.isoString;
+
+                  return (
+                    <button
+                      key={item.isoString || index}
+                      disabled={item.isDisabled}
+                      onClick={() => {
+                        if (item.isoString) {
+                          setSelectedDateIso(item.isoString);
+                          setSelectedTimeSlot(null);
+                          setCurrentStep('professional'); // Advance directly to professionals
+                        }
+                      }}
+                      className={`h-11 rounded-xl font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#20C933] text-slate-950 font-black shadow-lg shadow-emerald-500/30 scale-105 z-10'
+                          : item.isDisabled
+                          ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
+                          : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
+                      }`}
+                    >
+                      <span>{item.dayNumber}</span>
+                      {item.isToday && !isSelected && (
+                        <span className="text-[8px] font-black uppercase text-emerald-400">Hoje</span>
+                      )}
+                      {item.isClosed && (
+                        <span className="text-[8px] text-rose-500 font-bold">Fechado</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Dica Informativa */}
+              <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800 flex items-center justify-between text-xs text-slate-300">
+                <span className="text-slate-400">Dia selecionado:</span>
+                <span className="font-bold text-emerald-400 uppercase">{fullDateFormatted}</span>
               </div>
             </div>
+          )}
 
-            {/* Card com resumo do serviço selecionado */}
-            <div className="p-3 bg-emerald-950/30 border border-emerald-500/20 rounded-xl flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase bg-emerald-950 px-2 py-0.5 rounded">
-                  {selectedService.category}
-                </span>
-                <h4 className="text-xs font-bold text-white mt-1">{selectedService.title}</h4>
-                <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                  <Clock className="w-3 h-3 text-slate-400" />
-                  Duração estimada: {selectedService.duration}
-                </span>
+          {/* ============================================================ */}
+          {/* ETAPA 2: ESCOLHA DO PROFISSIONAL */}
+          {/* ============================================================ */}
+          {currentStep === 'professional' && (
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {/* Banner do Dia Escolhido */}
+              <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-2xl flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-emerald-400 uppercase font-bold block">Dia Selecionado</span>
+                  <h4 className="text-xs font-bold text-white capitalize">{fullDateFormatted}</h4>
+                </div>
+                <button
+                  onClick={() => setCurrentStep('date')}
+                  className="text-xs font-bold text-emerald-400 hover:underline px-2 py-1 rounded bg-slate-900 border border-emerald-500/30 cursor-pointer"
+                >
+                  Alterar Data
+                </button>
               </div>
-              <span className="text-base font-black text-emerald-400">
-                R$ {selectedService.price.toFixed(0)}
-              </span>
-            </div>
-          </div>
 
-          {/* 2. SELEÇÃO DO PROFISSIONAL */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-[#20C933]" />
-              <span>2. Escolha o Profissional</span>
-            </label>
+              <p className="text-xs text-slate-400 font-semibold">
+                Selecione quem fará seu atendimento neste dia:
+              </p>
 
-            <div className="grid grid-cols-2 gap-2">
-              {/* Opção Qualquer Profissional */}
+              {/* Opção 1: Qualquer Profissional */}
               <button
                 type="button"
-                onClick={() => setSelectedProfessional('any')}
-                className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition cursor-pointer ${
+                onClick={() => {
+                  setSelectedProfessional('any');
+                  setSelectedTimeSlot(null);
+                  setCurrentStep('time');
+                }}
+                className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer ${
                   selectedProfessional === 'any'
-                    ? 'bg-emerald-950/60 border-[#20C933] text-white shadow-sm'
-                    : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-850'
+                    ? 'bg-emerald-950/70 border-[#20C933] text-white shadow-md'
+                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850 hover:border-slate-700'
                 }`}
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-[#20C933] flex-shrink-0">
-                  <Sparkles className="w-4 h-4" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-[#20C933]">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span>Qualquer Profissional</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Recomendado
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Encontra o primeiro horário livre disponível com qualquer barbeiro/cabeleireiro.
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate">Qualquer um</p>
-                  <p className="text-[10px] text-emerald-400">Mais horários livres</p>
-                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500" />
               </button>
 
-              {/* Lista dos Profissionais do Salão */}
+              {/* Lista de Profissionais Específicos */}
               {professionals.map((prof, idx) => {
                 const isSelected = selectedProfessional === prof.name;
                 return (
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => setSelectedProfessional(prof.name)}
-                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition cursor-pointer ${
+                    onClick={() => {
+                      setSelectedProfessional(prof.name);
+                      setSelectedTimeSlot(null);
+                      setCurrentStep('time');
+                    }}
+                    className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer ${
                       isSelected
-                        ? 'bg-emerald-950/60 border-[#20C933] text-white shadow-sm'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-850'
+                        ? 'bg-emerald-950/70 border-[#20C933] text-white shadow-md'
+                        : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850 hover:border-slate-700'
                     }`}
                   >
-                    <img
-                      src={prof.avatar}
-                      alt={prof.name}
-                      className="w-8 h-8 rounded-full object-cover ring-1 ring-white/10 flex-shrink-0"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{prof.name}</p>
-                      <div className="flex items-center gap-1 text-[10px] text-amber-400">
-                        <Star className="w-2.5 h-2.5 fill-amber-400" />
-                        <span>{prof.rating.toFixed(1)}</span>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={prof.avatar}
+                        alt={prof.name}
+                        className="w-11 h-11 rounded-2xl object-cover ring-2 ring-emerald-500/30"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{prof.name}</h4>
+                        <p className="text-xs text-slate-400">{prof.role}</p>
+                        <div className="flex items-center gap-1 text-xs text-amber-400 mt-0.5">
+                          <Star className="w-3 h-3 fill-amber-400" />
+                          <span className="font-bold">{prof.rating.toFixed(1)}</span>
+                          <span className="text-slate-500 text-[11px]">• Vagas livres</span>
+                        </div>
                       </div>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-slate-500" />
                   </button>
                 );
               })}
             </div>
-          </div>
+          )}
 
-          {/* 3. SELEÇÃO DA DATA (MÁXIMO 2 MESES / 60 DIAS) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
-                <span>3. Escolha a Data (Até 2 meses)</span>
-              </label>
-              <span className="text-[11px] text-emerald-400 font-bold">
-                {formattedFullDate}
-              </span>
-            </div>
+          {/* ============================================================ */}
+          {/* ETAPA 3: HORÁRIOS DISPONÍVEIS */}
+          {/* ============================================================ */}
+          {currentStep === 'time' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              {/* Banner de Contexto (Dia + Profissional) */}
+              <div className="p-3 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
+                <div className="space-y-0.5">
+                  <span className="text-slate-400 block">Atendimento com:</span>
+                  <span className="font-bold text-white text-sm">
+                    {selectedProfessional === 'any' ? 'Qualquer Profissional Disponível' : selectedProfessional}
+                  </span>
+                  <span className="text-emerald-400 font-medium block capitalize">
+                    {fullDateFormatted}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setCurrentStep('professional')}
+                  className="text-xs font-bold text-emerald-400 hover:underline px-2 py-1 rounded bg-slate-950 border border-slate-800 cursor-pointer"
+                >
+                  Alterar
+                </button>
+              </div>
 
-            {/* Carrossel Horizontal de Dias */}
-            <div className="flex gap-2 overflow-x-auto pb-2 pt-1 no-scrollbar">
-              {availableDays.map((day) => {
-                const isSelected = selectedDateIso === day.isoString;
-                const isDisabled = !day.isOpen;
-
-                return (
-                  <button
-                    key={day.isoString}
-                    disabled={isDisabled}
-                    onClick={() => {
-                      setSelectedDateIso(day.isoString);
-                      setSelectedTimeSlot(null); // Reset time when date changes
-                    }}
-                    className={`flex flex-col items-center justify-center min-w-[58px] py-2.5 px-2 rounded-2xl border transition-all flex-shrink-0 cursor-pointer ${
-                      isSelected
-                        ? 'bg-[#20C933] border-[#20C933] text-slate-950 font-black shadow-md shadow-emerald-500/30 scale-105'
-                        : isDisabled
-                        ? 'bg-slate-950/40 border-slate-900 text-slate-600 opacity-50 cursor-not-allowed'
-                        : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
-                    }`}
-                  >
-                    <span className={`text-[10px] font-bold uppercase ${isSelected ? 'text-slate-900' : 'text-slate-400'}`}>
-                      {day.isToday ? 'Hoje' : day.dayOfWeekName}
-                    </span>
-                    <span className={`text-base font-black mt-0.5 ${isSelected ? 'text-slate-950' : 'text-white'}`}>
-                      {day.dayOfMonth}
-                    </span>
-                    <span className={`text-[9px] font-medium ${isSelected ? 'text-slate-900' : 'text-slate-400'}`}>
-                      {day.monthName}
-                    </span>
-
-                    {/* Status Dot */}
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full mt-1 ${
-                        isSelected
-                          ? 'bg-slate-950'
-                          : isDisabled
-                          ? 'bg-rose-500/40'
-                          : 'bg-[#20C933]'
+              {/* Filtro de Turnos */}
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Horários Livres
+                </label>
+                <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                  {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
+                    <button
+                      key={period}
+                      type="button"
+                      onClick={() => setTimePeriodFilter(period)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold capitalize transition ${
+                        timePeriodFilter === period
+                          ? 'bg-[#20C933] text-slate-950'
+                          : 'text-slate-400 hover:text-white'
                       }`}
-                    />
-                  </button>
-                );
-              })}
+                    >
+                      {period}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Grade de Horários */}
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {filteredSlots.map((slot) => {
+                  const isSelected = selectedTimeSlot === slot.time;
+                  const isAvailable = slot.available;
+
+                  return (
+                    <button
+                      key={slot.time}
+                      disabled={!isAvailable}
+                      onClick={() => {
+                        setSelectedTimeSlot(slot.time);
+                        setCurrentStep('confirmation'); // Advance to final confirmation
+                      }}
+                      className={`py-3 px-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#20C933] border-[#20C933] text-slate-950 font-black shadow-lg shadow-emerald-500/30 scale-102'
+                          : !isAvailable
+                          ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
+                          : 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                      }`}
+                    >
+                      <Clock className={`w-3.5 h-3.5 ${isSelected ? 'text-slate-950' : isAvailable ? 'text-emerald-400' : 'text-slate-600'}`} />
+                      <span>{slot.time}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+          )}
 
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800/80">
-              <AlertCircle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-              <span>Agendamentos disponíveis para hoje e até os próximos 60 dias.</span>
-            </div>
-          </div>
+          {/* ============================================================ */}
+          {/* ETAPA 4: CONFIRMAÇÃO & INFORMAÇÕES DO SERVIÇO */}
+          {/* ============================================================ */}
+          {currentStep === 'confirmation' && (
+            <div className="space-y-4 animate-in fade-in duration-200">
+              
+              {/* Card de Detalhes do Serviço (Aparece na confirmação) */}
+              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Scissors className="w-4 h-4 text-[#20C933]" />
+                    <span>Serviço Selecionado</span>
+                  </span>
 
-          {/* 4. SELEÇÃO DO HORÁRIO DISPONÍVEL */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#20C933]" />
-                <span>4. Horário Disponível</span>
-              </label>
-
-              {/* Filtro de Turno */}
-              <div className="flex items-center gap-1 bg-slate-900 p-0.5 rounded-lg border border-slate-800">
-                {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
-                  <button
-                    key={period}
-                    type="button"
-                    onClick={() => setTimePeriodFilter(period)}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold capitalize transition ${
-                      timePeriodFilter === period
-                        ? 'bg-[#20C933] text-slate-950'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
+                  {/* Trocar Serviço */}
+                  <select
+                    value={selectedService.id}
+                    onChange={(e) => {
+                      const srv = services.find((s) => s.id === e.target.value);
+                      if (srv) setSelectedService(srv);
+                    }}
+                    className="bg-slate-950 border border-slate-800 text-emerald-400 text-xs font-bold rounded-lg p-1.5 focus:outline-none focus:border-[#20C933] cursor-pointer"
                   >
-                    {period}
-                  </button>
-                ))}
-              </div>
-            </div>
+                    {services.map((srv) => (
+                      <option key={srv.id} value={srv.id} className="bg-slate-900 text-white">
+                        {srv.title} (R$ {srv.price.toFixed(0)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* Grid de Horários */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
-              {filteredSlots.map((slot) => {
-                const isSelected = selectedTimeSlot === slot.time;
-                const isAvailable = slot.available;
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase bg-emerald-950 px-2 py-0.5 rounded">
+                      {selectedService.category}
+                    </span>
+                    <h3 className="text-base font-bold text-white mt-1">{selectedService.title}</h3>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">{selectedService.description}</p>
+                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1 mt-2">
+                      <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                      Duração aproximada: {selectedService.duration}
+                    </span>
+                  </div>
 
-                return (
-                  <button
-                    key={slot.time}
-                    disabled={!isAvailable}
-                    onClick={() => setSelectedTimeSlot(slot.time)}
-                    className={`py-2 px-2 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-1 ${
-                      isSelected
-                        ? 'bg-[#20C933] border-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-102 font-black'
-                        : !isAvailable
-                        ? 'bg-slate-900/40 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
-                        : 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500/60 hover:text-white cursor-pointer'
-                    }`}
-                  >
-                    <Clock className={`w-3 h-3 ${isSelected ? 'text-slate-950' : isAvailable ? 'text-emerald-400' : 'text-slate-600'}`} />
-                    <span>{slot.time}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 5. RESUMO DO AGENDAMENTO */}
-          {selectedTimeSlot && (
-            <div className="p-3.5 bg-slate-900/90 border border-emerald-500/30 rounded-2xl space-y-2 animate-in fade-in duration-200">
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
-                <CheckCircle2 className="w-4 h-4 text-[#20C933]" />
-                <span>Resumo da sua Reserva</span>
+                  <span className="text-xl font-black text-emerald-400 flex-shrink-0">
+                    R$ {selectedService.price.toFixed(0)}
+                  </span>
+                </div>
               </div>
 
-              <div className="text-xs text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Estabelecimento:</span>
-                  <span className="font-bold text-white">{salonName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Serviço:</span>
-                  <span className="font-bold text-white">{selectedService.title}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Profissional:</span>
-                  <span className="font-bold text-white">{selectedProfessional === 'any' ? resolvedProfessionalName : selectedProfessional}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Data & Hora:</span>
-                  <span className="font-bold text-emerald-300">{formattedFullDate} às {selectedTimeSlot}</span>
-                </div>
-                <div className="flex justify-between pt-1 border-t border-slate-800">
-                  <span className="text-slate-400 font-bold">Total a pagar no local:</span>
-                  <span className="font-black text-emerald-400 text-sm">R$ {selectedService.price.toFixed(0)}</span>
+              {/* Resumo Completo do Agendamento */}
+              <div className="p-4 bg-slate-900 border border-emerald-500/30 rounded-2xl space-y-2.5">
+                <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#20C933]" />
+                  <span>Resumo da Reserva</span>
+                </h4>
+
+                <div className="text-xs text-slate-300 space-y-1.5 pt-2 border-t border-slate-800">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 flex items-center gap-1">
+                      <Building2 className="w-3.5 h-3.5 text-slate-500" /> Estabelecimento:
+                    </span>
+                    <span className="font-bold text-white">{salonName}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 flex items-center gap-1">
+                      <User className="w-3.5 h-3.5 text-slate-500" /> Profissional:
+                    </span>
+                    <span className="font-bold text-white">
+                      {selectedProfessional === 'any' ? resolvedProfessionalName : selectedProfessional}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" /> Data e Horário:
+                    </span>
+                    <span className="font-bold text-emerald-300 capitalize">
+                      {dateFormatted} às {selectedTimeSlot}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-800">
+                    <span className="text-slate-300 font-bold">Total a pagar no local:</span>
+                    <span className="font-black text-emerald-400 text-base">R$ {selectedService.price.toFixed(0)}</span>
+                  </div>
                 </div>
               </div>
+
             </div>
           )}
 
         </div>
 
-        {/* Footer do Modal com Botão de Confirmação */}
+        {/* Footer do Modal com Botão de Ação */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-3 sticky bottom-0 z-10">
-          <div className="min-w-0">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Total</span>
-            <span className="text-lg font-black text-emerald-400 leading-tight">
-              R$ {selectedService.price.toFixed(0)}
-            </span>
-          </div>
+          {currentStep === 'date' && (
+            <button
+              onClick={() => setCurrentStep('professional')}
+              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+            >
+              <span>Avançar para Escolher Profissional</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
 
-          <button
-            disabled={!selectedTimeSlot}
-            onClick={handleConfirm}
-            className={`flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition font-['Poppins'] flex items-center justify-center gap-2 shadow-lg ${
-              selectedTimeSlot
-                ? 'bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 shadow-emerald-500/25 cursor-pointer'
-                : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
-            }`}
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>{selectedTimeSlot ? `Confirmar para ${selectedTimeSlot}` : 'Escolha um Horário'}</span>
-          </button>
+          {currentStep === 'professional' && (
+            <button
+              onClick={() => setCurrentStep('time')}
+              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+            >
+              <span>Avançar para Horários Disponíveis</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {currentStep === 'time' && (
+            <button
+              disabled={!selectedTimeSlot}
+              onClick={() => setCurrentStep('confirmation')}
+              className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
+                selectedTimeSlot
+                  ? 'bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 cursor-pointer shadow-emerald-500/20'
+                  : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+              }`}
+            >
+              <span>{selectedTimeSlot ? `Continuar para Confirmação` : 'Escolha um Horário'}</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {currentStep === 'confirmation' && (
+            <button
+              onClick={handleConfirmFinal}
+              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+            >
+              <CheckCircle2 className="w-4 h-4 text-slate-950" />
+              <span>Confirmar Agendamento</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

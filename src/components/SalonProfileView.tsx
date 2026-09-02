@@ -275,36 +275,26 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
 
         {/* Botões de Ação Rápida */}
-        <div className="space-y-2 mt-3">
-          <button
-            onClick={() => handleOpenBooking()}
-            className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wider font-['Poppins'] transition cursor-pointer"
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <a
+            href={`https://wa.me/5541998821140?text=Olá,%20vi%20o%20perfil%20do%20${encodeURIComponent(salonInfo.name)}%20no%20Vagou!`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition shadow-sm"
           >
-            <Calendar className="w-4 h-4 text-slate-950" />
-            <span>Agendar Horário na Agenda (Até 60 dias)</span>
-          </button>
+            <MessageSquare className="w-3.5 h-3.5 text-[#20C933]" />
+            <span>WhatsApp Direto</span>
+          </a>
 
-          <div className="grid grid-cols-2 gap-2">
-            <a
-              href={`https://wa.me/5541998821140?text=Olá,%20vi%20o%20perfil%20do%20${encodeURIComponent(salonInfo.name)}%20no%20Vagou!`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition shadow-sm"
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-[#20C933]" />
-              <span>WhatsApp Direto</span>
-            </a>
-
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#20C933]" />
-              <span>Como Chegar</span>
-            </a>
-          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
+          >
+            <MapPin className="w-3.5 h-3.5 text-[#20C933]" />
+            <span>Como Chegar</span>
+          </a>
         </div>
       </div>
 
@@ -412,7 +402,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800">
                 <Clock className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                 <p className="text-sm font-bold text-white">Sem vagas imediatas abertas no momento</p>
-                <p className="text-xs text-slate-400 mt-1">Consulte a agenda do salão para agendar nos próximos 60 dias.</p>
+                <p className="text-xs text-slate-400 mt-1">Consulte a agenda do salão para novos agendamentos.</p>
                 <button
                   onClick={() => handleOpenBooking()}
                   className="mt-3.5 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center gap-1.5 mx-auto cursor-pointer"
@@ -433,7 +423,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 <Scissors className="w-4 h-4 text-[#20C933]" />
                 <span>Cardápio Completo de Atendimentos</span>
               </h3>
-              <span className="text-[11px] text-emerald-400 font-semibold">Agendamento em até 60 dias</span>
+              <span className="text-[11px] text-emerald-400 font-semibold">Agenda do Salão</span>
             </div>
 
             {catalogServices.map((srv) => (
