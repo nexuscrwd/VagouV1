@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, Search, X } from 'lucide-react';
+import { ArrowUpDown, Compass, Search, X, ArrowLeft, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
@@ -161,13 +161,46 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Fixed Sticky Global Header */}
       <div className="sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between gap-3">
-          {/* Brand Logo */}
-          <div className="flex items-center gap-2">
-            <VagouLogo size="md" />
-          </div>
+          {viewingSalonProfile ? (
+            /* Header com botão Voltar e Nome do Estabelecimento quando visualizando perfil */
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <button
+                id="btn-voltar-radar-perfil"
+                onClick={() => setViewingSalonProfile(null)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] text-white transition active:scale-95 cursor-pointer flex-shrink-0"
+                aria-label="Voltar para o Radar / Início"
+                title="Voltar ao Radar"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+                <span className="text-xs font-black">Radar</span>
+              </button>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-slate-200 truncate block">
+                  {viewingSalonProfile}
+                </span>
+                <span className="text-[10px] text-emerald-400 font-medium">Perfil do Estabelecimento</span>
+              </div>
+            </div>
+          ) : (
+            /* Brand Logo */
+            <div className="flex items-center gap-2">
+              <VagouLogo size="md" />
+            </div>
+          )}
 
           {/* Search Trigger Button & Profile */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {viewingSalonProfile && (
+              <button
+                onClick={() => setViewingSalonProfile(null)}
+                className="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933] flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer"
+                title="Página Inicial (Radar)"
+                aria-label="Ir para a página inicial"
+              >
+                <Home className="w-4 h-4 text-slate-300 hover:text-[#20C933]" />
+              </button>
+            )}
+
             {/* Search Trigger Button */}
             <button
               id="search-trigger-btn"

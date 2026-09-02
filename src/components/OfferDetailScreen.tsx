@@ -1,11 +1,12 @@
 import React from 'react';
-import { ArrowLeft, Share2, Star, ShieldCheck, Clock, Calendar, CheckCircle2, Heart } from 'lucide-react';
+import { ArrowLeft, Share2, Star, ShieldCheck, Clock, Calendar, CheckCircle2, Heart, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 
 interface OfferDetailScreenProps {
   offer: ServiceOffer;
   onBack: () => void;
   onConfirmBooking: (offer: ServiceOffer) => void;
+  onGoHome?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string) => void;
 }
@@ -14,6 +15,7 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
   offer,
   onBack,
   onConfirmBooking,
+  onGoHome,
   isFavorite = false,
   onToggleFavorite,
 }) => {
@@ -30,12 +32,28 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
 
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-          <button
-            onClick={onBack}
-            className="w-10 h-10 rounded-lg bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              id="btn-voltar-detalhe-oferta"
+              onClick={onBack}
+              className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition cursor-pointer active:scale-95"
+              title="Voltar para a página anterior"
+              aria-label="Voltar"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            {onGoHome && (
+              <button
+                id="btn-inicio-detalhe-oferta"
+                onClick={onGoHome}
+                className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur text-slate-800 flex items-center justify-center shadow-md hover:bg-white transition cursor-pointer active:scale-95"
+                title="Ir para a Tela Inicial (Radar)"
+                aria-label="Tela Inicial"
+              >
+                <Home className="w-5 h-5 text-slate-700" />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             {onToggleFavorite && (
               <button

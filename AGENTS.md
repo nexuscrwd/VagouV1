@@ -63,6 +63,10 @@
   - Sem gradientes roxo-azul genéricos.
   - Indicadores de status estáticos e elegantes (sem animações exageradas ou `animate-ping` contínuo).
   - Textos de botões e chips em uma única linha (`whitespace-nowrap`).
+- **📱 Síntese Mobile & Menos Texto (Regra Inegociável de UX):**
+  - **Menos texto, máxima síntese:** O aplicativo é desenhado para uso ágil em celulares. Textos longos, parágrafos explicativos ou redundâncias atrapalham a navegação rápida.
+  - **Mais ícones e botões objetivos:** Priorize ícones autoexplicativos (`lucide-react`), datas/horários compactos (ex: `02/09/26`) e ações diretas com o menor número de palavras possível.
+  - **Zero "Blablabla" e poluição:** É proibido incluir instruções redundantes ou tutoriais óbvios dentro de cards e modais (ex: "Atualiza os horários abaixo", subtítulos redundantes). O design deve ser limpo, visual e ultra-resumido.
 
 ---
 

@@ -15,6 +15,165 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Correção da Tela de Confirmação (Screenshot): Exibição de Data/Hora no Banner do Modal (Substituição de "R$ 55")
+- **Tipo:** `[UI]` / `[UX]` / `[Screenshot]` / `[Bugfix]` / `[Clean Code]`
+- **Motivo:** O usuário enviou um screenshot (`screenshot_1.png`) com quatro setas azuis apontando diretamente para o valor do serviço (`R$ 55`) localizado no banner superior de serviço do modal de agendamento (`SalonBookingModal.tsx`), na etapa de "3. CONFIRMAR". O valor do serviço foi substituído pela data e hora selecionadas no padrão solicitado `DD/MM às HH:MM` (ex: `02/09 às 10:00` acompanhado do ícone `Clock`), evitando a repetição do preço nesse card enquanto o valor total já se encontra no resumo do agendamento.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`:
+    - Atualizado o banner fixo do serviço no topo do modal (`div.flex.items-center.justify-between`) para exibir na coluna da direita a data e hora formatadas (`{selectedTimeSlot ? `${shortDateFormatted} às ${selectedTimeSlot}` : shortDateFormatted}`) com ícone `Clock` em tipografia mono verde esmeralda (`text-emerald-400 font-mono`), removendo a exibição isolada de `R$ {selectedService.price}` que era apontada pelas setas do screenshot.
+- **Resumo Técnico:** Linter (`lint_applet`) e compilação de produção (`compile_applet`) aprovados com 100% de sucesso e 0 erros.
+
+---
+
+### [2026-09-02] — Correção Crítica: Exibição da Data e Hora (DD/MM às HH:MM) no Span Alvo do Card (Substituindo o Valor do Serviço)
+- **Tipo:** `[UI]` / `[UX]` / `[Focus Mode]` / `[Bugfix]` / `[Clean Code]`
+- **Motivo:** O usuário apontou com urgência que o elemento selecionado no card ainda exibia o valor do serviço (`R$ 95`, etc.) em vez da data e hora solicitadas no padrão "DD/MM às HH:MM". A estrutura da coluna de ação inferior direita foi corrigida para que o primeiro `<span>` traga rigorosamente a data e hora formatada da vaga (ex: `02/09 às 16:15` com ícone `Clock`), enquanto o valor monetário foi perfeitamente acomodado de forma compacta e objetiva dentro do botão de ação (`AGENDAR • R$ 95`).
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`:
+    - O primeiro `<span>` da coluna de ação (`div.flex-col.items-end`) agora exibe com prioridade máxima a data e hora formatada (`formatSlotDateTime(offer.timeSlot)`) com ícone `Clock` e tipografia mono compacta.
+    - O botão de ação agora traz o valor integrado de forma direta e limpa (`AGENDAR • R${offer.price}`).
+    - O valor riscado anterior (`De R$ ...`), se houver, foi reposicionado sem conflitar com o primeiro span.
+  - `src/components/SalonProfileView.tsx`:
+    - Na aba de vagas do salão, a coluna da direita também foi ajustada para exibir a data e hora formatada como primeiro elemento filho, mantendo a coerência visual entre feed e perfil.
+  - `src/App.tsx` & `src/data.ts`:
+    - Padronização do campo `dateTime` para o formato `02/09 às HH:MM`.
+- **Resumo Técnico:** Linter e compilação de produção (`compile_applet`) aprovados com 0 erros.
+
+---
+
+### [2026-09-02] — Aplicação da Data e Hora (DD/MM às HH:MM) no Card Principal do Feed (RadarOfferCard)
+- **Tipo:** `[UI]` / `[UX]` / `[Focus Mode]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou via Focus Mode a tag de status do 5º card no feed principal (`div:nth-of-type(5) > ... > span:nth-of-type(1)`) exigindo a exibição expressa da data e hora no padrão "DD/MM às HH:MM" (ex: `02/09 às 14:30`), corrigindo a omissão onde o card do feed ainda exibia o texto estático "VAGA AGORA".
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`:
+    - Importada a função utilitária `formatSlotDateTime`.
+    - Substituída a tag estática `<span>VAGA AGORA</span>` pela chamada dinâmica `<span>{formatSlotDateTime(offer.timeSlot)}</span>`.
+    - Convertido o contêiner para `<span>` semântico com dot em `<i>`, assegurando conformidade matemática com seletores CSS do Focus Mode.
+  - `src/utils/dateFormatter.ts`:
+    - Atualizada a expressão regular para aceitar variações com ou sem crase (`às` ou `as`) e case-insensitive.
+- **Resumo Técnico:** `lint_applet` (0 erros) e `compile_applet` concluídos com sucesso.
+
+---
+
+### [2026-09-02] — Padronização Global da Navegação: Botões Voltar & Início em Todas as Telas
+- **Tipo:** `[UI]` / `[UX]` / `[Navigation]` / `[Clean Code]`
+- **Motivo:** O usuário identificou que na tela de confirmação e em diversas outras telas do aplicativo faltavam os botões de voltar para a página anterior ou retornar à tela inicial (Radar).
+- **Arquivos Impactados:**
+  - `src/components/ConfirmationScreen.tsx`:
+    - Adicionada prop `onNavigateToHome` e cabeçalho superior com botões de "Voltar ao Início" e ícone Home (`lucide-react`).
+    - Adicionado botão secundário "Voltar à Página Inicial" no rodapé ao lado de "Ver na Minha Agenda".
+  - `src/components/HomeScreen.tsx`:
+    - Atualizado o cabeçalho fixo superior (`sticky top-0 z-40`) para exibir botão de retorno ao Radar e botão Home quando visualizando o perfil de um estabelecimento (`viewingSalonProfile`).
+  - `src/components/SalonProfileView.tsx`:
+    - Adicionado botão Home no banner superior ao lado do botão Voltar ao Radar.
+  - `src/components/SalonBookingModal.tsx`:
+    - Adicionados botões de voltar explícitos no cabeçalho do modal e botões secundários no rodapé das etapas 2 e 3 para permitir retorno suave ao calendário ou seleção de horário.
+  - `src/components/SearchScreen.tsx`:
+    - Adicionados botões de "Voltar" e "Home" no cabeçalho fixo de busca.
+  - `src/components/MapScreen.tsx`:
+    - Adicionados botões de "Voltar" e "Home" na barra flutuante de busca do mapa.
+  - `src/components/AgendaScreen.tsx`:
+    - Adicionados botões de "Voltar" e "Home" no cabeçalho da Minha Agenda.
+  - `src/components/ProfileScreen.tsx`:
+    - Adicionada barra superior com "Voltar ao Início" e atalho Home.
+  - `src/components/OfferListScreen.tsx` & `src/components/OfferDetailScreen.tsx`:
+    - Adicionados botões de Início (Home) em conjunto com os botões de Voltar existentes.
+  - `src/components/PartnerScheduleConfigScreen.tsx` & `src/components/PartnerProfileScreen.tsx`:
+    - Adicionados botões de retorno ao app cliente/início nos painéis parceiros.
+  - `src/App.tsx`:
+    - Conectados todos os callbacks de navegação (`onBack`, `onNavigateToHome`, `onGoHome`) para `setCurrentScreen('home')`.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) verificada com sucesso.
+
+---
+
+### [2026-09-02] — Correção Crítica do Focus Mode: Data Abreviada (DD/MM às HH:MM) na Lista de Vagas do Salão
+- **Tipo:** `[UI]` / `[UX]` / `[Focus Mode]` / `[Clean Code]`
+- **Motivo:** O usuário indicou corretamente que o elemento selecionado no Focus Mode (`div:nth-of-type(5) > ... > span:nth-of-type(1)`) não havia sido atualizado na resposta anterior. O seletor correspondia à tag de horário da vaga na aba "Vagas Imediatas" do Perfil do Salão (`SalonProfileView.tsx`), que exibia o prefixo `Vaga às Hoje • 14:30`.
+- **Arquivos Impactados:**
+  - `src/utils/dateFormatter.ts`:
+    - Criado helper utilitário centralizado `formatSlotDateTime()` para converter com precisão qualquer formato (`Hoje • 14:30`, `Amanhã • 10:00`, `15:00`) para a síntese mobile padrão `DD/MM às HH:MM` (ex: `02/09 às 14:30`).
+  - `src/components/SalonProfileView.tsx`:
+    - Substituído o badge `<span ...>Vaga às {offer.timeSlot}</span>` por `<span ...>{formatSlotDateTime(offer.timeSlot)}</span>`.
+  - `src/components/RadarStoryModal.tsx`, `src/components/OfferListScreen.tsx`, `src/components/MapScreen.tsx`:
+    - Padronizados os displays de horários para a mesma síntese compacta `DD/MM às HH:MM`.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Formatação de Data Abreviada DD/MM às HH:MM (Focus Mode)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]` / `[Focus Mode]`
+- **Motivo:** Solicitação do usuário via Focus Mode para substituir exibições longas de data pelo padrão abreviado móvel `DD/MM às HH:MM` (ex: `02/09 às 14:00`).
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`:
+    - Adotado o padrão `shortDateFormatted` no formato `DD/MM` (`selDay/selMonth`).
+    - Banner da Fase 2 atualizado para exibir `DD/MM` (ou `DD/MM às HH:MM` quando o horário for selecionado), eliminando texto por extenso redundante entre parênteses.
+    - Resumo da Fase 3 padronizado para `DD/MM às HH:MM`.
+    - Repassado o formato limpo no callback `onConfirmAppointment`.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Eliminação de Poluição de Serviços e Unificação do Card de Confirmação no Modal
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]` / `[Focus Mode]`
+- **Motivo:** O usuário apontou com precisão a poluição de informação e inconsistência lógica no modal: quando o agendamento é acessado por meio de uma oferta ou serviço publicado, o modal não deve conter opções de troca de serviço (`<select>`) nem descrições redundantes.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`:
+    - Eliminado o `<select>` de troca de serviços e o card duplicado da Fase 3.
+    - Substituídos os dois cards volumosos por um único card de resumo claro, objetivo e elegante com serviço, estabelecimento, profissional, data, horário e valor a pagar.
+    - Adicionado um banner compacto de 1 linha no topo do modal com o serviço publicado contratado (`title`, `salonName`, `duration`, `price`), dando clareza em todas as etapas sem redundância.
+    - Simplificado os títulos do cabeçalho ("Data", "Profissional & Horário", "Confirmação") e stepper ("1. Data", "2. Horário", "3. Confirmar").
+    - Removido import não utilizado `MapPin` (Clean Code).
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Remoção de Textos Introdutórios e Tutoriais no Calendário (Focus Mode)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]` / `[Focus Mode]`
+- **Motivo:** Remoção solicitada dos elementos de texto selecionados via Focus Mode ("Agenda Mensal" e parágrafo tutorial "Clique em um dia disponível no calendário para continuar:"), além do subtítulo redundante "Selecione a data desejada" no seletor do mês, ampliando o foco visual e o espaço para a grade de dias.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Removido o bloco textual inicial da Fase 1 e o subtítulo redundante do cabeçalho do mês, iniciando o modal diretamente nos controles de navegação e grade de datas.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Diretriz Mestra de Síntese Mobile & Compactação Visual da Fase 2
+- **Tipo:** `[UI]` / `[UX]` / `[Docs]` / `[Focus Mode]`
+- **Motivo:** Solicitação do usuário para resumir drasticamente informações e textos longos no modal e instituir nos arquivos de instrução (`AGENTS.md` e `GEMINI.md`) a regra mestra inegociável de foco mobile: menos texto, máxima síntese textual, priorizando ícones e botões objetivos sem poluição ou explicações redundantes.
+- **Arquivos Impactados:**
+  - `AGENTS.md`: Adicionada a regra inegociável "📱 Síntese Mobile & Menos Texto (Regra Inegociável de UX)".
+  - `GEMINI.md`: Adicionada a Regra de Ouro nº 7 ("📱 Síntese Mobile & Menos Texto").
+  - `src/components/SalonBookingModal.tsx`: Resumido o banner de data da Fase 2 (ícone de calendário + `02/09/26 (qua., 2 de set.)` + botão `Alterar`), removido texto longo "1. Escolha o Profissional: / Atualiza os horários" para apenas "Profissional", enxugado o card "Qualquer", e simplificado o cabeçalho de horários para apenas "Horários".
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Remoção da Informação Redundante de Data no Calendário (Focus Mode)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Atendimento à seleção de elementos via Focus Mode ("remover") para eliminar os spans com o texto redundante de data selecionada ("Selecionado: DD/MM/AA") abaixo do calendário, unificando a ação em um botão de avanço limpo de largura total e removendo variáveis e containers obsoletos.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Removidos os spans selecionados e o container redundante, substituídos por um botão de avanço direto de largura total, e removida a constante `shortDateFormatted`.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Eliminação de Redundância e Formato Resumido da Data Selecionada ("Selecionado" "DD/MM/AA")
+- **Tipo:** `[UI]` / `[UX]` / `[Focus Mode]`
+- **Motivo:** Atendimento à solicitação de remoção da redundância do botão de avançar e simplificação do texto do dia selecionado para o formato compacto `"Selecionado"` `"02/09/26"`.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Formatado o dia selecionado para o formato estrito `DD/MM/AA` (`shortDateFormatted`), simplificado o texto para `"Selecionado: DD/MM/AA"` com botão compacto de avançar no card, e removido o botão duplicado de rodapé durante a Fase 1 (calendário).
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Otimização Ultra-Compacta dos Cards e Grade de Horários na Fase 2
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Redução drástica de paddings, margens e dimensões dos cards de profissionais e botões de horários na Fase 2 da agenda, garantindo que a tabela de horários encaixe 100% dentro da tela do modal sem cortes.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Ajustado o container para `p-3`, banner de data enxuto (`p-2 py-1`), cards de profissionais compactos (`min-w-[125px]`, `w-6 h-6` avatar) e grade de horários configurada em 4 colunas horizontais de ~24px de altura.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
 ### [2026-09-02] — Exibição de Profissionais em Carrossel Horizontal na Fase 2 do Agendamento
 - **Tipo:** `[UX]` / `[UI]` / `[Refactor]`
 - **Motivo:** Otimização do espaço vertical na Fase 2 da agenda: os profissionais agora aparecem em uma linha de carrossel deslizante (`overflow-x-auto`), liberando espaço na tela para que a tabela de horários livres seja exibida com máxima visibilidade e destaque logo abaixo.

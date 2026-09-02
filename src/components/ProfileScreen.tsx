@@ -17,12 +17,15 @@ import {
   Trash2,
   Clock,
   Star,
+  ArrowLeft,
+  Home,
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { requestNotificationPermission, sendLocalNotification } from '../utils/notifications';
 import { VagouLogo } from './VagouLogo';
 
 interface ProfileScreenProps {
+  onBack?: () => void;
   onInstallClick?: () => void;
   isInstallable?: boolean;
   isStandalone?: boolean;
@@ -34,6 +37,7 @@ interface ProfileScreenProps {
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
+  onBack,
   onInstallClick,
   isInstallable = true,
   isStandalone = false,
@@ -68,8 +72,32 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full pb-24 bg-white p-5 space-y-5">
+      {/* Top Header with Back & Home */}
+      {onBack && (
+        <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+          <button
+            id="btn-voltar-perfil"
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition p-1.5 -ml-1.5 rounded-lg hover:bg-slate-100 cursor-pointer active:scale-95"
+            aria-label="Voltar para a tela anterior"
+            title="Voltar"
+          >
+            <ArrowLeft className="w-4 h-4 text-emerald-600" />
+            <span>Voltar ao Início</span>
+          </button>
+          <button
+            onClick={onBack}
+            className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer active:scale-95"
+            title="Página Inicial (Radar)"
+            aria-label="Tela Inicial"
+          >
+            <Home className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* User Header */}
-      <div className="flex items-center gap-3.5 pt-2">
+      <div className="flex items-center gap-3.5 pt-1">
         <div className="w-14 h-14 rounded-full bg-emerald-100 border-2 border-emerald-500 text-emerald-800 flex items-center justify-center font-black text-xl shadow-sm">
           A
         </div>

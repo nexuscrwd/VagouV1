@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Volume2, VolumeX, Clock, Zap } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
+import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface RadarStoryModalProps {
   isOpen: boolean;
@@ -224,7 +225,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-md">
                 <Clock className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Horário: {activeOffer.timeSlot}</span>
+                <span>{formatSlotDateTime(activeOffer.timeSlot)}</span>
               </div>
 
               {activeOffer.activeViewers && (

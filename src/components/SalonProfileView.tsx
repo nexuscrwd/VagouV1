@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { 
   ArrowLeft, Star, MapPin, Clock, ShieldCheck, 
   Share2, Heart, Zap, CheckCircle2, Scissors, 
-  Calendar, Award, Coffee, Wifi, Car, Wind
+  Calendar, Award, Coffee, Wifi, Car, Wind, Home
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { SalonBookingModal, CatalogServiceItem } from './SalonBookingModal';
+import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface SalonProfileViewProps {
   salonName: string;
@@ -185,13 +186,25 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
         {/* Top Control Buttons */}
         <div className="absolute top-2.5 inset-x-3 flex items-center justify-between z-20">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-white hover:bg-slate-800 transition text-[11px] font-bold shadow-lg active:scale-95 cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
-            <span>Voltar ao Feed</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-white hover:bg-slate-800 transition text-[11px] font-bold shadow-lg active:scale-95 cursor-pointer"
+              title="Voltar ao Radar"
+              aria-label="Voltar para a página anterior"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
+              <span>Voltar</span>
+            </button>
+            <button
+              onClick={onBack}
+              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+              title="Tela Inicial"
+              aria-label="Ir para a tela inicial"
+            >
+              <Home className="w-3.5 h-3.5 text-slate-200" />
+            </button>
+          </div>
 
           <div className="flex items-center gap-1.5">
             <button
@@ -339,7 +352,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="px-2 py-0.5 rounded-md bg-emerald-950 border border-emerald-500/40 text-[10px] font-black text-emerald-300 uppercase tracking-wider">
-                          Vaga às {offer.timeSlot}
+                          {formatSlotDateTime(offer.timeSlot)}
                         </span>
                         {offer.expiresInMinutes && (
                           <span className="text-[11px] text-rose-400 font-bold">
@@ -357,13 +370,17 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       </p>
                     </div>
 
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right flex-shrink-0 flex flex-col items-end">
+                      <span className="text-xs font-black text-emerald-400 font-mono flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#20C933]" />
+                        <span>{formatSlotDateTime(offer.timeSlot)}</span>
+                      </span>
                       {offer.originalPrice && offer.originalPrice > offer.price && (
-                        <span className="text-xs text-slate-400 line-through block">
+                        <span className="text-[10px] text-slate-400 line-through block mt-0.5">
                           R${offer.originalPrice.toFixed(0)}
                         </span>
                       )}
-                      <span className="text-xl font-black text-emerald-400">
+                      <span className="text-base font-black text-emerald-400">
                         R${offer.price.toFixed(0)}
                       </span>
                     </div>

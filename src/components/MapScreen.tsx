@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Scissors, Star, Navigation, Heart } from 'lucide-react';
+import { Search, Scissors, Star, Navigation, Heart, ArrowLeft, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MapSkeleton } from './SkeletonLoader';
+import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface MapScreenProps {
   offers: ServiceOffer[];
   onSelectOffer: (offer: ServiceOffer) => void;
+  onBack?: () => void;
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
 }
@@ -13,6 +15,7 @@ interface MapScreenProps {
 export const MapScreen: React.FC<MapScreenProps> = ({
   offers,
   onSelectOffer,
+  onBack,
   favorites = [],
   onToggleFavorite,
 }) => {
@@ -59,11 +62,32 @@ export const MapScreen: React.FC<MapScreenProps> = ({
         <div className="absolute top-80 right-6 w-32 h-40 bg-emerald-200/40 rounded-3xl" />
       </div>
 
-      {/* Top Floating Search Bar */}
+      {/* Top Floating Search Bar with Back & Home */}
       <div className="relative z-10 p-4 pt-4">
-        <div className="bg-white rounded-lg shadow-md px-4 py-2.5 flex items-center gap-2 border border-slate-100">
+        <div className="bg-white rounded-xl shadow-md px-3 py-2 flex items-center gap-2 border border-slate-100">
+          {onBack && (
+            <button
+              id="btn-voltar-mapa"
+              onClick={onBack}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-700 transition cursor-pointer flex items-center gap-1 active:scale-95"
+              aria-label="Voltar para a tela anterior"
+              title="Voltar"
+            >
+              <ArrowLeft className="w-4 h-4 text-emerald-600" />
+            </button>
+          )}
           <Search className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="text-xs font-semibold text-slate-800">Corte masculino perto de mim</span>
+          <span className="text-xs font-semibold text-slate-800 flex-1 truncate">Vagas no Mapa perto de mim</span>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-emerald-600 transition cursor-pointer active:scale-95"
+              title="Ir para a Tela Inicial (Radar)"
+              aria-label="Tela Inicial"
+            >
+              <Home className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -145,7 +169,7 @@ export const MapScreen: React.FC<MapScreenProps> = ({
                 {selectedOffer.serviceTitle} • <span className="font-semibold">{selectedOffer.professionalName}</span>
               </p>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                {selectedOffer.timeSlot} • {selectedOffer.distance}
+                {formatSlotDateTime(selectedOffer.timeSlot)} • {selectedOffer.distance}
               </p>
             </div>
           </div>

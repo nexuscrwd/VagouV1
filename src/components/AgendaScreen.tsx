@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, Calendar, Clock, Plus, Trash2 } from 'lucide-react';
+import { ChevronRight, Calendar, Clock, Plus, Trash2, ArrowLeft, Home } from 'lucide-react';
 import { BookingAppointment } from '../types';
 import { CancelModal } from './CancelModal';
 
@@ -7,12 +7,14 @@ interface AgendaScreenProps {
   bookings: BookingAppointment[];
   onNewBookingClick: () => void;
   onCancelBooking: (protocolCode: string) => void;
+  onBack?: () => void;
 }
 
 export const AgendaScreen: React.FC<AgendaScreenProps> = ({
   bookings,
   onNewBookingClick,
   onCancelBooking,
+  onBack,
 }) => {
   const [tab, setTab] = useState<'proximos' | 'historico'>('proximos');
   const [bookingToCancel, setBookingToCancel] = useState<BookingAppointment | null>(null);
@@ -43,19 +45,45 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
         onConfirmCancel={handleConfirmCancel}
       />
 
-      {/* Header Title */}
+      {/* Header Title with Back & Home */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-black text-slate-900">Minha Agenda</h1>
-          <p className="text-xs text-slate-500 mt-0.5">Gerencie e acompanhe seus horários</p>
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              id="btn-voltar-agenda"
+              onClick={onBack}
+              className="p-2 -ml-2 rounded-xl text-slate-700 hover:bg-slate-100 transition flex items-center gap-1 cursor-pointer active:scale-95"
+              title="Voltar ao Início"
+              aria-label="Voltar para a tela inicial"
+            >
+              <ArrowLeft className="w-5 h-5 text-emerald-700" />
+            </button>
+          )}
+          <div>
+            <h1 className="text-xl font-black text-slate-900">Minha Agenda</h1>
+            <p className="text-xs text-slate-500 mt-0.5">Gerencie e acompanhe seus horários</p>
+          </div>
         </div>
-        <button
-          onClick={onNewBookingClick}
-          className="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 text-xs font-bold"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Nova Vaga</span>
-        </button>
+
+        <div className="flex items-center gap-1.5">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer active:scale-95"
+              title="Página Inicial (Radar)"
+              aria-label="Ir para a página inicial"
+            >
+              <Home className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            onClick={onNewBookingClick}
+            className="p-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1 text-xs font-bold cursor-pointer active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Nova Vaga</span>
+          </button>
+        </div>
       </div>
 
       {/* Segmented Control */}

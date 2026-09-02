@@ -1,18 +1,41 @@
 import React from 'react';
-import { Check, MessageCircle, Calendar, ArrowRight } from 'lucide-react';
+import { Check, MessageCircle, ArrowRight, ArrowLeft, Home } from 'lucide-react';
 import { BookingAppointment } from '../types';
 
 interface ConfirmationScreenProps {
   booking: BookingAppointment;
   onNavigateToAgenda: () => void;
+  onNavigateToHome: () => void;
 }
 
 export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
   booking,
   onNavigateToAgenda,
+  onNavigateToHome,
 }) => {
   return (
     <div className="flex flex-col min-h-full pb-20 bg-white p-5 justify-between">
+      {/* Top Header Navigation with Back & Home */}
+      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <button
+          id="btn-voltar-topo-confirmacao"
+          onClick={onNavigateToHome}
+          className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-950 transition p-1.5 -ml-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+          title="Voltar à tela inicial"
+        >
+          <ArrowLeft className="w-4 h-4 text-emerald-600" />
+          <span>Voltar ao Início</span>
+        </button>
+
+        <button
+          onClick={onNavigateToHome}
+          className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+          title="Página Inicial"
+        >
+          <Home className="w-4 h-4" />
+        </button>
+      </div>
+
       <div className="space-y-6 pt-4">
         {/* Check Success Icon */}
         <div className="flex flex-col items-center text-center">
@@ -70,13 +93,22 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-ver-agenda-confirmacao"
           onClick={onNavigateToAgenda}
-          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-xs rounded-lg transition shadow-md shadow-emerald-600/20 uppercase tracking-wider flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-[#20C933] hover:bg-emerald-500 active:scale-[0.99] text-slate-950 font-black text-xs rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>VER AGENDA</span>
-          <ArrowRight className="w-4 h-4" />
+          <span>VER MINHA AGENDA</span>
+          <ArrowRight className="w-4 h-4 stroke-[2.5]" />
         </button>
 
-        <div className="flex items-center justify-center gap-2 text-emerald-700 text-xs font-medium">
+        <button
+          id="btn-voltar-inicio-confirmacao"
+          onClick={onNavigateToHome}
+          className="w-full py-3 bg-slate-100 hover:bg-slate-200 active:scale-[0.99] text-slate-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer border border-slate-200"
+        >
+          <Home className="w-4 h-4 text-slate-700" />
+          <span>Voltar à Página Inicial</span>
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-emerald-700 text-xs font-medium pt-1">
           <MessageCircle className="w-4 h-4" />
           <span>Detalhes enviados por WhatsApp</span>
         </div>

@@ -13,6 +13,8 @@ import {
   DollarSign,
   ShieldCheck,
   Zap,
+  ArrowLeft,
+  Home,
 } from 'lucide-react';
 import { PartnerProfessional } from '../types';
 import { VagouLogo } from './VagouLogo';
@@ -22,6 +24,7 @@ interface PartnerProfileScreenProps {
   onSwitchToClientMode: () => void;
   onNavigateToScheduleConfig: () => void;
   onOpenPublishModal: () => void;
+  onNavigateToHome?: () => void;
 }
 
 export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
@@ -29,6 +32,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
   onSwitchToClientMode,
   onNavigateToScheduleConfig,
   onOpenPublishModal,
+  onNavigateToHome,
 }) => {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
@@ -48,6 +52,30 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full pb-24 bg-slate-50 p-4 space-y-4">
+      {/* Top Header with Back to Home */}
+      <div className="flex items-center justify-between pb-1 border-b border-slate-200">
+        <button
+          id="btn-voltar-painel-parceiro"
+          onClick={onSwitchToClientMode}
+          className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 transition p-1.5 -ml-1.5 rounded-lg hover:bg-slate-200 cursor-pointer active:scale-95"
+          aria-label="Voltar para Modo Cliente"
+          title="Voltar para o Modo Cliente"
+        >
+          <ArrowLeft className="w-4 h-4 text-emerald-600" />
+          <span>Voltar ao App / Cliente</span>
+        </button>
+        {onNavigateToHome && (
+          <button
+            onClick={onNavigateToHome}
+            className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer active:scale-95"
+            title="Ir para a Tela Inicial (Radar)"
+            aria-label="Tela Inicial"
+          >
+            <Home className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
       {/* Establishment Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
         <div className="flex items-center gap-3.5">

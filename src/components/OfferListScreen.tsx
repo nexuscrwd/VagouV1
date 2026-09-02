@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, XCircle, SlidersHorizontal, Star, Clock, Heart } from 'lucide-react';
+import { ArrowLeft, XCircle, SlidersHorizontal, Star, Clock, Heart, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { OfferListSkeleton } from './SkeletonLoader';
+import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface OfferListScreenProps {
   offers: ServiceOffer[];
   onBack: () => void;
   onSelectOffer: (offer: ServiceOffer) => void;
+  onGoHome?: () => void;
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
 }
@@ -15,6 +17,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
   offers,
   onBack,
   onSelectOffer,
+  onGoHome,
   favorites = [],
   onToggleFavorite,
 }) => {
@@ -43,15 +46,30 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full pb-20 bg-white">
-      {/* Top Bar with Search Chip */}
+      {/* Top Bar with Search Chip, Back & Home */}
       <div className="p-4 border-b border-slate-100 sticky top-0 bg-white z-30 shadow-xs">
         <div className="flex items-center gap-2">
           <button
+            id="btn-voltar-lista"
             onClick={onBack}
-            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition"
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition cursor-pointer active:scale-95"
+            title="Voltar para a página anterior"
+            aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
+
+          {onGoHome && (
+            <button
+              id="btn-inicio-lista"
+              onClick={onGoHome}
+              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition cursor-pointer active:scale-95"
+              title="Ir para a Tela Inicial (Radar)"
+              aria-label="Tela Inicial"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+          )}
 
           <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-lg px-3.5 py-2">
             <span className="text-xs font-bold text-slate-900">Corte masculino • Hoje</span>
@@ -151,7 +169,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/60">
                   <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-sm flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {off.timeSlot}
+                    {formatSlotDateTime(off.timeSlot)}
                   </span>
                   <span className="text-sm font-black text-slate-900">R$ {off.price.toFixed(0)}</span>
                 </div>

@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Scissors,
   CheckCircle2,
+  Home,
 } from 'lucide-react';
 import { DayScheduleConfig, PartnerProfessional, TimeBreak } from '../types';
 
@@ -26,6 +27,7 @@ interface PartnerScheduleConfigScreenProps {
   ) => void;
   onAddProfessional: (prof: Omit<PartnerProfessional, 'id'>) => void;
   onBack: () => void;
+  onNavigateToHome?: () => void;
 }
 
 export const PartnerScheduleConfigScreen: React.FC<PartnerScheduleConfigScreenProps> = ({
@@ -33,6 +35,7 @@ export const PartnerScheduleConfigScreen: React.FC<PartnerScheduleConfigScreenPr
   onSaveSchedule,
   onAddProfessional,
   onBack,
+  onNavigateToHome,
 }) => {
   // Selected Target: 'all' (Salon Default) or specific professional ID
   const [selectedTargetId, setSelectedTargetId] = useState<string>('all');
@@ -184,10 +187,14 @@ export const PartnerScheduleConfigScreen: React.FC<PartnerScheduleConfigScreenPr
       <div className="bg-white border-b border-slate-200 p-4 sticky top-0 z-20 shadow-sm">
         <div className="flex items-center justify-between">
           <button
+            id="btn-voltar-config-horarios"
             onClick={onBack}
-            className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition"
+            className="flex items-center gap-1.5 p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer active:scale-95"
+            title="Voltar para a Agenda"
+            aria-label="Voltar"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-emerald-600" />
+            <span className="text-xs font-bold hidden sm:inline">Voltar</span>
           </button>
           <div>
             <h1 className="text-sm font-black text-slate-900 text-center">
@@ -197,7 +204,19 @@ export const PartnerScheduleConfigScreen: React.FC<PartnerScheduleConfigScreenPr
               Dias de atendimento, turnos e intervalos
             </p>
           </div>
-          <div className="w-9" />
+          {onNavigateToHome ? (
+            <button
+              id="btn-inicio-config-horarios"
+              onClick={onNavigateToHome}
+              className="p-2 text-slate-600 hover:text-emerald-600 hover:bg-slate-100 rounded-xl transition cursor-pointer active:scale-95"
+              title="Ir para a Tela Inicial (Radar)"
+              aria-label="Tela Inicial"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+          ) : (
+            <div className="w-9" />
+          )}
         </div>
 
         {/* Target Professional / Salon Selector */}

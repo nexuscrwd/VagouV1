@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Star, MapPin, Sparkles, Zap, Repeat, Eye } from 'lucide-react';
+import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Star, MapPin, Sparkles, Zap, Repeat, Eye, Clock } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
 import { CountdownTimer } from './CountdownTimer';
+import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface RadarOfferCardProps {
   offer: ServiceOffer;
@@ -152,15 +153,15 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
         {/* Top Badges & Actions */}
         <div className="absolute top-3 inset-x-3 z-10 flex items-start justify-between">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-[11px] font-black shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-              <span>VAGA AGORA</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-[11px] font-black shadow-lg font-mono">
+              <i className="w-2 h-2 rounded-full bg-emerald-400 inline-block shrink-0" />
+              <span>{formatSlotDateTime(offer.timeSlot)}</span>
               {offer.expiresInMinutes && (
                 <span className="text-white/90 font-mono font-medium">
                   • {offer.expiresInMinutes}m
                 </span>
               )}
-            </div>
+            </span>
 
             {offer.isFlashDeal && (
               <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md w-fit">
@@ -292,14 +293,16 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
           </div>
 
           <div className="flex flex-col items-end flex-shrink-0">
+            <span className="text-xs sm:text-sm font-black text-emerald-400 font-mono leading-tight tracking-tight flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-[#20C933] shrink-0" />
+              <span>{formatSlotDateTime(offer.timeSlot)}</span>
+            </span>
+
             {offer.originalPrice && offer.originalPrice > offer.price && (
-              <span className="text-[11px] text-slate-400 line-through leading-none">
-                R${offer.originalPrice.toFixed(0)}
+              <span className="text-[10px] text-slate-400 line-through leading-none mt-0.5">
+                De R${offer.originalPrice.toFixed(0)}
               </span>
             )}
-            <span className="text-lg sm:text-xl font-black text-emerald-400 leading-tight">
-              R${offer.price.toFixed(0)}
-            </span>
 
             <button
               id={`btn-radar-agendar-${offer.id}`}
@@ -307,10 +310,10 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 onDirectBook(offer);
               }}
-              className="mt-1 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer"
+              className="mt-1.5 px-3.5 py-1.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer whitespace-nowrap"
             >
               <Zap className="w-3.5 h-3.5 fill-slate-950" />
-              <span>AGENDAR</span>
+              <span>AGENDAR • R${offer.price.toFixed(0)}</span>
             </button>
           </div>
         </div>

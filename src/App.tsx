@@ -35,6 +35,7 @@ import { PartnerPublishModal } from './components/PartnerPublishModal';
 import { PartnerBottomNav } from './components/PartnerBottomNav';
 import { SplashScreen } from './components/SplashScreen';
 import { scheduleAppointmentReminder } from './utils/notifications';
+import { formatSlotDateTime } from './utils/dateFormatter';
 
 export const App: React.FC = () => {
   // App Mode: 'client' (User looking for appointment) or 'partner' (Salon Owner / Professional)
@@ -180,7 +181,7 @@ export const App: React.FC = () => {
       service: offer.serviceTitle,
       professional: offer.professionalName,
       salonName: offer.salonName,
-      dateTime: offer.timeSlot,
+      dateTime: formatSlotDateTime(offer.timeSlot),
       dayGroup: 'HOJE, 26 DE JAN',
       time: offer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', ''),
       totalPrice: offer.price,
@@ -387,6 +388,7 @@ export const App: React.FC = () => {
                     setCurrentScreen('detalhe-oferta');
                   }}
                   onConfirmBooking={handleConfirmBooking}
+                  onBack={() => setCurrentScreen('home')}
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
                 />
@@ -399,6 +401,7 @@ export const App: React.FC = () => {
                     setSelectedOffer(off);
                     setCurrentScreen('detalhe-oferta');
                   }}
+                  onBack={() => setCurrentScreen('home')}
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
                 />
@@ -408,6 +411,7 @@ export const App: React.FC = () => {
                 <OfferListScreen
                   offers={offers}
                   onBack={() => setCurrentScreen('home')}
+                  onGoHome={() => setCurrentScreen('home')}
                   onSelectOffer={(off) => {
                     setSelectedOffer(off);
                     setCurrentScreen('detalhe-oferta');
@@ -421,6 +425,7 @@ export const App: React.FC = () => {
                 <OfferDetailScreen
                   offer={selectedOffer}
                   onBack={() => setCurrentScreen('home')}
+                  onGoHome={() => setCurrentScreen('home')}
                   onConfirmBooking={handleConfirmBooking}
                   isFavorite={favorites.includes(selectedOffer.id)}
                   onToggleFavorite={handleToggleFavorite}
@@ -431,6 +436,7 @@ export const App: React.FC = () => {
                 <ConfirmationScreen
                   booking={lastBooking}
                   onNavigateToAgenda={() => setCurrentScreen('agenda')}
+                  onNavigateToHome={() => setCurrentScreen('home')}
                 />
               )}
 
@@ -439,11 +445,13 @@ export const App: React.FC = () => {
                   bookings={bookings}
                   onNewBookingClick={() => setCurrentScreen('home')}
                   onCancelBooking={handleCancelBooking}
+                  onBack={() => setCurrentScreen('home')}
                 />
               )}
 
               {currentScreen === 'perfil' && (
                 <ProfileScreen
+                  onBack={() => setCurrentScreen('home')}
                   onInstallClick={handleOpenInstallModal}
                   isInstallable={true}
                   isStandalone={isStandalone}
@@ -543,6 +551,10 @@ export const App: React.FC = () => {
                   onSaveSchedule={handleSavePartnerSchedule}
                   onAddProfessional={handleAddProfessional}
                   onBack={() => setPartnerScreen('partner-agenda')}
+                  onNavigateToHome={() => {
+                    setAppMode('client');
+                    setCurrentScreen('home');
+                  }}
                 />
               )}
 
@@ -550,6 +562,10 @@ export const App: React.FC = () => {
                 <PartnerProfileScreen
                   professionals={professionals}
                   onSwitchToClientMode={() => {
+                    setAppMode('client');
+                    setCurrentScreen('home');
+                  }}
+                  onNavigateToHome={() => {
                     setAppMode('client');
                     setCurrentScreen('home');
                   }}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, MapPin, X, SlidersHorizontal, ArrowUpDown, Compass } from 'lucide-react';
+import { Search, MapPin, X, SlidersHorizontal, ArrowUpDown, Compass, ArrowLeft, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { RadarOfferCard } from './RadarOfferCard';
 import { VagouLogo } from './VagouLogo';
@@ -8,6 +8,7 @@ interface SearchScreenProps {
   offers: ServiceOffer[];
   onSelectOffer: (offer: ServiceOffer) => void;
   onConfirmBooking: (offer: ServiceOffer) => void;
+  onBack?: () => void;
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
 }
@@ -16,6 +17,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
   offers,
   onSelectOffer,
   onConfirmBooking,
+  onBack,
   favorites = [],
   onToggleFavorite,
 }) => {
@@ -92,11 +94,34 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
       <div className="sticky top-0 z-40 bg-[#151A1E]/95 backdrop-blur-md border-b border-slate-900 shadow-md">
         <div className="px-4 pt-3.5 pb-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
+            {onBack && (
+              <button
+                id="btn-voltar-busca"
+                onClick={onBack}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:text-white hover:border-[#20C933] transition cursor-pointer active:scale-95"
+                aria-label="Voltar para a tela anterior"
+                title="Voltar"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+                <span className="text-xs font-bold">Voltar</span>
+              </button>
+            )}
             <VagouLogo variant="header" size="xs" theme="dark" showTagline={false} />
             <span className="text-xs font-black text-white uppercase tracking-wider font-['Poppins']">
               • Buscar Vagas
             </span>
           </div>
+
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-[#20C933] hover:border-[#20C933] transition cursor-pointer active:scale-95"
+              title="Ir para a Tela Inicial (Radar)"
+              aria-label="Tela Inicial"
+            >
+              <Home className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Search Input Box */}
