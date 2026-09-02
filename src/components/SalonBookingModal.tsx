@@ -43,7 +43,7 @@ interface SalonBookingModalProps {
   }) => void;
 }
 
-type Step = 'date' | 'time' | 'confirmation';
+type Step = 'date' | 'professionals_and_time' | 'confirmation';
 
 export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   isOpen,
@@ -56,7 +56,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   baseOffer,
   onConfirmAppointment,
 }) => {
-  // Step state: 'date' (Calendar + Pros) -> 'time' (Slots) -> 'confirmation' (Service + Summary)
+  // Step state: 'date' (Phase 1: Monthly Calendar only) -> 'professionals_and_time' (Phase 2: Professionals + Time Table below) -> 'confirmation' (Phase 3: Summary)
   const [currentStep, setCurrentStep] = useState<Step>('date');
 
   // 1. Selected Service State
@@ -231,10 +231,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const resolvedProfessionalName = activeProfObj?.name || (professionals[0]?.name ?? 'Equipe do Salão');
   const resolvedProfessionalAvatar = activeProfObj?.avatar || professionals[0]?.avatar;
 
-  const handleSelectProfessionalAndAdvance = (profName: string) => {
-    setSelectedProfessional(profName);
+  const handleSelectDateAndAdvance = (iso: string) => {
+    setSelectedDateIso(iso);
     setSelectedTimeSlot(null);
-    setCurrentStep('time');
+    setCurrentStep('professionals_and_time');
   };
 
   const handleConfirmFinal = () => {
@@ -268,8 +268,8 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               {currentStep !== 'date' ? (
                 <button
                   onClick={() => {
-                    if (currentStep === 'time') setCurrentStep('date');
-                    else if (currentStep === 'confirmation') setCurrentStep('time');
+                    if (currentStep === 'professionals_and_time') setCurrentStep('date');
+                    else if (currentStep === 'confirmation') setCurrentStep('professionals_and_time');
                   }}
                   className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
                   aria-label="Voltar etapa"
@@ -280,9 +280,9 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 <Calendar className="w-4 h-4 text-[#20C933]" />
               )}
               <h2 className="text-base font-bold text-white font-['Poppins']">
-                {currentStep === 'date' && '1. Escolha a Data e o Profissional'}
-                {currentStep === 'time' && '2. Escolha o Horário'}
-                {currentStep === 'confirmation' && '3. Confirmação do Atendimento'}
+                {currentStep === 'date' && 'Fase 1: Escolha a Data na Agenda'}
+                {currentStep === 'professionals_and_time' && 'Fase 2: Profissionais e Horários'}
+                {currentStep === 'confirmation' && 'Fase 3: Confirmação do Atendimento'}
               </h2>
             </div>
 
@@ -298,11 +298,11 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           {/* Stepper Indicator */}
           <div className="grid grid-cols-3 gap-1.5">
             {[
-              { key: 'date', label: '1. Dia & Profissional' },
-              { key: 'time', label: '2. Horário' },
+              { key: 'date', label: '1. Calendário' },
+              { key: 'professionals_and_time', label: '2. Profissional & Horário' },
               { key: 'confirmation', label: '3. Confirmação' },
             ].map((st, idx) => {
-              const stepOrder: Record<Step, number> = { date: 1, time: 2, confirmation: 3 };
+              const stepOrder: Record<Step, number> = { date: 1, professionals_and_time: 2, confirmation: 3 };
               const currentOrder = stepOrder[currentStep];
               const thisOrder = idx + 1;
               const isPassed = thisOrder < currentOrder;
@@ -334,10 +334,19 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
 
           {/* ============================================================ */}
-          {/* ETAPA 1: CALENDÁRIO MENSAL + CARDS DOS PROFISSIONAIS LOGO ABAIXO */}
+          {/* FASE 1: SOMENTE A AGENDA / CALENDÁRIO MENSAL */}
           {/* ============================================================ */}
           {currentStep === 'date' && (
             <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="text-center space-y-1">
+                <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+                  Agenda Mensal
+                </span>
+                <p className="text-xs text-slate-400">
+                  Clique em um dia disponível no calendário para continuar:
+                </p>
+              </div>
+
               {/* Header do Mês com Controles */}
               <div className="flex items-center justify-between bg-slate-900 p-3 rounded-2xl border border-slate-800">
                 <button
@@ -352,7 +361,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     {monthData.monthLabel}
                   </h3>
                   <span className="text-[10px] text-emerald-400 font-bold">
-                    Selecione o dia do mês
+                    Selecione a data desejada
                   </span>
                 </div>
 
@@ -386,7 +395,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       disabled={item.isDisabled}
                       onClick={() => {
                         if (item.isoString) {
-                          setSelectedDateIso(item.isoString);
+                          handleSelectDateAndAdvance(item.isoString);
                         }
                       }}
                       className={`h-11 rounded-xl font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
@@ -409,162 +418,181 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 })}
               </div>
 
-              {/* SEÇÃO DOS PROFISSIONAIS PARA O DIA SELECIONADO */}
-              <div className="pt-3 border-t border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-white font-['Poppins'] flex items-center gap-1.5 uppercase tracking-wider">
-                    <User className="w-4 h-4 text-[#20C933]" />
-                    <span>Profissionais para {fullDateFormatted}:</span>
-                  </h4>
-                  <span className="text-[10px] text-emerald-400 font-bold">Clique para ver horários</span>
+              {/* Resumo do Dia Selecionado */}
+              <div className="p-3 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Dia Selecionado:</span>
+                  <span className="font-bold text-emerald-400 capitalize">{fullDateFormatted}</span>
                 </div>
-
-                {/* Card 1: Qualquer Profissional */}
                 <button
-                  type="button"
-                  onClick={() => handleSelectProfessionalAndAdvance('any')}
-                  className="w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer bg-slate-900 border-slate-800 hover:border-[#20C933] hover:bg-slate-850 group"
+                  onClick={() => setCurrentStep('professionals_and_time')}
+                  className="py-2 px-3 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition flex items-center gap-1 cursor-pointer font-['Poppins']"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-[#20C933] group-hover:bg-[#20C933] group-hover:text-slate-950 transition">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-white flex items-center gap-1.5 group-hover:text-emerald-300 transition">
-                        <span>Qualquer Profissional</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          Mais Horários
-                        </span>
-                      </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Encontra o primeiro horário livre disponível na equipe.
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#20C933] transition" />
+                  <span>Avançar</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
-
-                {/* Lista de Profissionais da Equipe */}
-                {professionals.map((prof, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSelectProfessionalAndAdvance(prof.name)}
-                    className="w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer bg-slate-900 border-slate-800 hover:border-[#20C933] hover:bg-slate-850 group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={prof.avatar}
-                        alt={prof.name}
-                        className="w-11 h-11 rounded-2xl object-cover ring-2 ring-emerald-500/30"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div>
-                        <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">{prof.name}</h4>
-                        <p className="text-xs text-slate-400">{prof.role}</p>
-                        <div className="flex items-center gap-1 text-xs text-amber-400 mt-0.5">
-                          <Star className="w-3 h-3 fill-amber-400" />
-                          <span className="font-bold">{prof.rating.toFixed(1)}</span>
-                          <span className="text-slate-500 text-[11px]">• Horários disponíveis</span>
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#20C933] transition" />
-                  </button>
-                ))}
               </div>
             </div>
           )}
 
           {/* ============================================================ */}
-          {/* ETAPA 2: HORÁRIOS DISPONÍVEIS */}
+          {/* FASE 2: OS PROFISSIONAIS E ABAIXO A TABELA DE HORÁRIOS */}
           {/* ============================================================ */}
-          {currentStep === 'time' && (
-            <div className="space-y-4 animate-in fade-in duration-200">
-              {/* Banner do Dia e Profissional */}
-              <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <User className="w-3.5 h-3.5 text-[#20C933]" />
-                    <span>Profissional:</span>
-                    <strong className="text-white">
-                      {selectedProfessional === 'any' ? 'Qualquer Profissional Disponível' : selectedProfessional}
-                    </strong>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold capitalize">
-                    <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
-                    <span>{fullDateFormatted}</span>
-                  </div>
+          {currentStep === 'professionals_and_time' && (
+            <div className="space-y-5 animate-in fade-in duration-200">
+              {/* Banner da Data Selecionada */}
+              <div className="p-3 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Data do Atendimento:</span>
+                  <span className="font-bold text-emerald-400 capitalize">{fullDateFormatted}</span>
                 </div>
                 <button
                   onClick={() => setCurrentStep('date')}
                   className="text-xs font-bold text-emerald-400 hover:underline px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer"
                 >
-                  Alterar
+                  Alterar Dia
                 </button>
               </div>
 
-              {/* Filtro de Turnos */}
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                  Horários Livres
-                </label>
-                <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
-                  {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
-                    <button
-                      key={period}
-                      type="button"
-                      onClick={() => setTimePeriodFilter(period)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold capitalize transition ${
-                        timePeriodFilter === period
-                          ? 'bg-[#20C933] text-slate-950'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  ))}
+              {/* BLOCO 1 DA FASE 2: SELEÇÃO DE PROFISSIONAIS */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-white font-['Poppins'] flex items-center gap-1.5 uppercase tracking-wider">
+                    <User className="w-4 h-4 text-[#20C933]" />
+                    <span>1. Escolha o Profissional:</span>
+                  </h4>
+                  <span className="text-[10px] text-slate-400">Atualiza os horários abaixo</span>
+                </div>
+
+                {/* Opções de Profissionais em Cards Interativos */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Card Qualquer Profissional */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedProfessional('any');
+                      setSelectedTimeSlot(null);
+                    }}
+                    className={`p-3 rounded-2xl border text-left flex items-center gap-3 transition cursor-pointer ${
+                      selectedProfessional === 'any'
+                        ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20'
+                        : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      selectedProfessional === 'any' ? 'bg-[#20C933] text-slate-950' : 'bg-emerald-600/30 text-[#20C933]'
+                    }`}>
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <h5 className="text-xs font-bold truncate">Qualquer Profissional</h5>
+                      <p className="text-[10px] text-slate-400 truncate">Mais opções livres</p>
+                    </div>
+                  </button>
+
+                  {/* Cards Individuais da Equipe */}
+                  {professionals.map((prof, idx) => {
+                    const isSelected = selectedProfessional === prof.name;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          setSelectedProfessional(prof.name);
+                          setSelectedTimeSlot(null);
+                        }}
+                        className={`p-3 rounded-2xl border text-left flex items-center gap-3 transition cursor-pointer ${
+                          isSelected
+                            ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20'
+                            : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                        }`}
+                      >
+                        <img
+                          src={prof.avatar}
+                          alt={prof.name}
+                          className="w-9 h-9 rounded-xl object-cover ring-2 ring-emerald-500/30 flex-shrink-0"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="min-w-0">
+                          <h5 className="text-xs font-bold truncate">{prof.name}</h5>
+                          <div className="flex items-center gap-1 text-[10px] text-amber-400">
+                            <Star className="w-3 h-3 fill-amber-400" />
+                            <span>{prof.rating.toFixed(1)}</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Grade de Horários */}
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                {filteredSlots.map((slot) => {
-                  const isSelected = selectedTimeSlot === slot.time;
-                  const isAvailable = slot.available;
+              {/* BLOCO 2 DA FASE 2: TABELA DE HORÁRIOS (LOGOS ABAIXO) */}
+              <div className="pt-3 border-t border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-white font-['Poppins'] flex items-center gap-1.5 uppercase tracking-wider">
+                    <Clock className="w-4 h-4 text-[#20C933]" />
+                    <span>2. Tabela de Horários ({selectedProfessional === 'any' ? 'Equipe' : selectedProfessional}):</span>
+                  </h4>
+                  
+                  {/* Filtro de Turnos */}
+                  <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                    {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
+                      <button
+                        key={period}
+                        type="button"
+                        onClick={() => setTimePeriodFilter(period)}
+                        className={`px-2 py-0.5 rounded-lg text-[10px] font-bold capitalize transition ${
+                          timePeriodFilter === period
+                            ? 'bg-[#20C933] text-slate-950'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {period}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                  return (
-                    <button
-                      key={slot.time}
-                      disabled={!isAvailable}
-                      onClick={() => {
-                        setSelectedTimeSlot(slot.time);
-                        setCurrentStep('confirmation'); // Advance to final confirmation screen
-                      }}
-                      className={`py-3 px-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#20C933] border-[#20C933] text-slate-950 font-black shadow-lg shadow-emerald-500/30 scale-102'
-                          : !isAvailable
-                          ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
-                          : 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                      }`}
-                    >
-                      <Clock className={`w-3.5 h-3.5 ${isSelected ? 'text-slate-950' : isAvailable ? 'text-emerald-400' : 'text-slate-600'}`} />
-                      <span>{slot.time}</span>
-                    </button>
-                  );
-                })}
+                {/* Grade da Tabela de Horários */}
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {filteredSlots.map((slot) => {
+                    const isSelected = selectedTimeSlot === slot.time;
+                    const isAvailable = slot.available;
+
+                    return (
+                      <button
+                        key={slot.time}
+                        disabled={!isAvailable}
+                        onClick={() => {
+                          setSelectedTimeSlot(slot.time);
+                          setCurrentStep('confirmation'); // Advance to final confirmation screen on click
+                        }}
+                        className={`py-3 px-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#20C933] border-[#20C933] text-slate-950 font-black shadow-lg shadow-emerald-500/30 scale-102'
+                            : !isAvailable
+                            ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
+                            : 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                        }`}
+                      >
+                        <Clock className={`w-3.5 h-3.5 ${isSelected ? 'text-slate-950' : isAvailable ? 'text-emerald-400' : 'text-slate-600'}`} />
+                        <span>{slot.time}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
             </div>
           )}
 
           {/* ============================================================ */}
-          {/* ETAPA 3: CONFIRMAÇÃO & DETALHES DO SERVIÇO */}
+          {/* FASE 3: CONFIRMAÇÃO & DETALHES DO SERVIÇO */}
           {/* ============================================================ */}
           {currentStep === 'confirmation' && (
             <div className="space-y-4 animate-in fade-in duration-200">
               
-              {/* Card de Detalhes do Serviço (Aparece na tela de confirmação) */}
+              {/* Card de Detalhes do Serviço */}
               <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -655,7 +683,17 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
         {/* Footer do Modal com Botão de Ação Final */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-3 sticky bottom-0 z-10">
-          {currentStep === 'time' && (
+          {currentStep === 'date' && (
+            <button
+              onClick={() => setCurrentStep('professionals_and_time')}
+              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+            >
+              <span>Avançar para Profissionais e Horários</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {currentStep === 'professionals_and_time' && (
             <button
               disabled={!selectedTimeSlot}
               onClick={() => setCurrentStep('confirmation')}
@@ -678,12 +716,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               <CheckCircle2 className="w-4 h-4 text-slate-950" />
               <span>Confirmar Agendamento</span>
             </button>
-          )}
-
-          {currentStep === 'date' && (
-            <div className="text-[11px] text-slate-400 text-center w-full">
-              Selecione o dia e clique em um profissional para ver os horários.
-            </div>
           )}
         </div>
       </div>

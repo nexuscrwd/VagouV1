@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, Star, MapPin, Clock, ShieldCheck, MessageSquare, 
+  ArrowLeft, Star, MapPin, Clock, ShieldCheck, 
   Share2, Heart, Zap, CheckCircle2, Scissors, 
   Calendar, Award, Coffee, Wifi, Car, Wind
 } from 'lucide-react';
@@ -274,23 +274,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         </div>
 
-        {/* Botões de Ação Rápida */}
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          <a
-            href={`https://wa.me/5541998821140?text=Olá,%20vi%20o%20perfil%20do%20${encodeURIComponent(salonInfo.name)}%20no%20Vagou!`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition shadow-sm"
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-[#20C933]" />
-            <span>WhatsApp Direto</span>
-          </a>
-
+        {/* Botão de Ação Rápida */}
+        <div className="mt-3">
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
+            className="w-full flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
           >
             <MapPin className="w-3.5 h-3.5 text-[#20C933]" />
             <span>Como Chegar</span>

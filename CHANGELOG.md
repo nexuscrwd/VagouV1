@@ -15,6 +15,36 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Remoção do Botão "WhatsApp Direto" no Perfil do Salão (Focus Mode)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Atendimento à seleção de elemento via Focus Mode ("remover") para eliminar o botão de WhatsApp no perfil do salão, ajustando o botão de ação rápida "Como Chegar" para largura total (`w-full`) e limpando os imports não utilizados.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o botão `<a href="https://wa.me/...">WhatsApp Direto</a>`, mantendo o botão *"Como Chegar"* expandido, e limpo o import do ícone `MessageSquare`.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Reestruturação da Agenda em Fases Claras (Calendário -> Profissionais + Horários -> Confirmação)
+- **Tipo:** `[Refactor]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Atendimento à solicitação de reestruturação do fluxo da agenda em fases distintas:
+  - **Fase 1**: Somente a agenda mensal com os dias do calendário.
+  - **Fase 2**: Seleção de profissionais com a tabela de horários logo abaixo, que atualiza dinamicamente conforme a seleção do profissional.
+  - **Fase 3**: Confirmação final do agendamento e detalhes do serviço.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Reestruturado o estado de etapas para `date` (Fase 1) -> `professionals_and_time` (Fase 2) -> `confirmation` (Fase 3) com reatividade dinâmica da grade de horários ao profissional escolhido.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Ajuste de Espaçamento Vertical na Barra de Categorias e Filtros
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** Aplicação do ajuste de estilo via Focus Mode para adicionar `padding-top: 10px` e `padding-bottom: 10px` (`py-2.5`) no container de chips de categorias e filtro do cabeçalho superior.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Atualizado a classe CSS da barra de categorias de `px-4 pb-2.5` para `px-4 py-2.5` (`10px` superior e inferior).
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
 ### [2026-09-02] — Ajuste de Alinhamento e Proporção do Avatar e Botões do Cabeçalho
 - **Tipo:** `[Fix]` / `[UI]` / `[Clean Code]`
 - **Motivo:** Correção do desalinhamento e proporção do botão de avatar do perfil no cabeçalho superior (o container e a imagem interna possuíam dimensões assimétricas de 32px x 32px e 28px x 28px sem centralização flex), e ajuste na barra de Stories (`RadarStoryBar`) para alinhamento uniforme pelo topo (`items-start`).

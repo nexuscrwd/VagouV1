@@ -199,7 +199,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {!viewingSalonProfile && (
           <>
             {/* Category Chips Bar with Integrated Sort Filter & Count Badge */}
-            <div className="px-4 pb-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <div className="px-4 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 const isAll = cat.id === 'todos';
