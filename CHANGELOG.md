@@ -15,6 +15,15 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Exibição de Profissionais em Carrossel Horizontal na Fase 2 do Agendamento
+- **Tipo:** `[UX]` / `[UI]` / `[Refactor]`
+- **Motivo:** Otimização do espaço vertical na Fase 2 da agenda: os profissionais agora aparecem em uma linha de carrossel deslizante (`overflow-x-auto`), liberando espaço na tela para que a tabela de horários livres seja exibida com máxima visibilidade e destaque logo abaixo.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Substituída a grade vertical de profissionais por uma linha de carrossel horizontal estilizada com cards compactos.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
 ### [2026-09-02] — Remoção do Botão "WhatsApp Direto" no Perfil do Salão (Focus Mode)
 - **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
 - **Motivo:** Atendimento à seleção de elemento via Focus Mode ("remover") para eliminar o botão de WhatsApp no perfil do salão, ajustando o botão de ação rápida "Como Chegar" para largura total (`w-full`) e limpando os imports não utilizados.

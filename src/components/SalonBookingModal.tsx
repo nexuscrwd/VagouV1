@@ -464,8 +464,8 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   <span className="text-[10px] text-slate-400">Atualiza os horários abaixo</span>
                 </div>
 
-                {/* Opções de Profissionais em Cards Interativos */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Opções de Profissionais em Carrossel Horizontal */}
+                <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
                   {/* Card Qualquer Profissional */}
                   <button
                     type="button"
@@ -473,9 +473,9 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       setSelectedProfessional('any');
                       setSelectedTimeSlot(null);
                     }}
-                    className={`p-3 rounded-2xl border text-left flex items-center gap-3 transition cursor-pointer ${
+                    className={`min-w-[160px] max-w-[170px] flex-shrink-0 p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition cursor-pointer ${
                       selectedProfessional === 'any'
-                        ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20'
+                        ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20 scale-[1.02]'
                         : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                     }`}
                   >
@@ -485,7 +485,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <h5 className="text-xs font-bold truncate">Qualquer Profissional</h5>
+                      <h5 className="text-xs font-bold truncate">Qualquer Prof.</h5>
                       <p className="text-[10px] text-slate-400 truncate">Mais opções livres</p>
                     </div>
                   </button>
@@ -501,9 +501,9 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                           setSelectedProfessional(prof.name);
                           setSelectedTimeSlot(null);
                         }}
-                        className={`p-3 rounded-2xl border text-left flex items-center gap-3 transition cursor-pointer ${
+                        className={`min-w-[150px] max-w-[160px] flex-shrink-0 p-2.5 rounded-2xl border text-left flex items-center gap-2.5 transition cursor-pointer ${
                           isSelected
-                            ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20'
+                            ? 'bg-emerald-950/80 border-[#20C933] text-white shadow-md shadow-emerald-500/20 scale-[1.02]'
                             : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                         }`}
                       >
