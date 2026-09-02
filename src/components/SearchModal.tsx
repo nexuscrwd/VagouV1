@@ -79,58 +79,66 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       <div className="w-full max-w-lg flex flex-col transition-all duration-200 animate-in zoom-in-95">
         
         {/* Floating Search Bar */}
-        <div className="relative bg-[#151A1E] border-2 border-slate-700/80 focus-within:border-[#20C933] rounded-3xl p-2 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <div className="pl-3 text-[#20C933]">
-            <Search className="w-6 h-6" />
-          </div>
+        <div className="relative bg-[#151A1E] border-2 border-slate-700/80 focus-within:border-[#20C933] rounded-3xl p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-1">
+          {/* Action Button: Search */}
+          <button
+            type="button"
+            onClick={() => inputRef.current?.focus()}
+            className="p-2.5 rounded-full text-[#20C933] hover:bg-slate-800/80 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+            aria-label="Buscar"
+            title="Buscar"
+          >
+            <Search className="w-5 h-5" />
+          </button>
 
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="O que você precisa agora? Ex: Barba, Degradê..."
+            placeholder="Ex: Barba, Degradê..."
             className="flex-1 bg-transparent py-3 pr-2 text-base sm:text-lg font-medium text-white placeholder-slate-500 focus:outline-none"
           />
 
+          {/* Action Button: Clear query or Close modal */}
           {query ? (
             <button
-              onClick={() => setQuery('')}
-              className="p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition"
-              aria-label="Limpar busca"
+              type="button"
+              onClick={() => {
+                setQuery('');
+                inputRef.current?.focus();
+              }}
+              className="p-2.5 rounded-full bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              aria-label="Limpar campo de busca"
+              title="Limpar campo"
             >
               <X className="w-4 h-4" />
             </button>
           ) : (
             <button
+              type="button"
               onClick={onClose}
-              className="px-3 py-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition active:scale-95"
+              className="p-2.5 rounded-full bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer border border-slate-700/60"
+              aria-label="Fechar busca"
+              title="Fechar"
             >
-              ESC
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
         {/* State 1: When user hasn't typed anything yet */}
         {!query.trim() ? (
-          <div className="mt-4 text-center">
-            <p className="text-xs text-slate-400 mb-2.5 font-medium">
-              Sugestões rápidas:
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {quickTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setQuery(tag)}
-                  className="px-3 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition active:scale-95 shadow-sm"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-            <p className="text-[11px] text-slate-500 mt-4">
-              Toque fora da barra ou pressione ESC para fechar
-            </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            {quickTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setQuery(tag)}
+                className="px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition active:scale-95 shadow-sm"
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         ) : (
           /* State 2: Results revealed directly under the central search bar */

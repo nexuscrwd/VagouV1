@@ -17,10 +17,10 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ### [2026-09-02] — Modal Centralizado Flutuante de Busca com Fundo Ofuscado (Opção A)
 - **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Clean Code]`
-- **Motivo:** Implementação da Opção A solicitada pelo usuário: tela totalmente ofuscada (`backdrop-blur-xl bg-black/85`), input de busca centralizado flutuante com foco automático e tags rápidas de sugestão. Ao digitar, os resultados filtrados são exibidos elegantemente logo abaixo do campo.
+- **Motivo:** Implementação da Opção A: tela totalmente ofuscada (`backdrop-blur-xl bg-black/85`), input de busca centralizado flutuante com foco automático, placeholder minimalista (`Ex: Barba, Degradê...`) e tags rápidas de sugestão sem textos redundantes. O ícone de lupa funciona como botão de ação de busca e o botão "X" limpa o campo ou fecha a janela.
 - **Arquivos Impactados:**
-  - `src/components/SearchModal.tsx` (Estrutura limpa, minimalista, centralizada e responsiva com fechamento via ESC ou clique fora)
-- **Resumo Técnico:** Código 100% limpo, livre de dependências ou variáveis não utilizadas, focado na ergonomia do usuário e agilidade na busca.
+  - `src/components/SearchModal.tsx` (Remoção de textos auxiliares redundantes, deixando apenas as tags limpas de sugestão)
+- **Resumo Técnico:** Código 100% limpo, livre de resíduos, sem dependências zumbis e validado pelo TypeScript.
 
 ---
 
