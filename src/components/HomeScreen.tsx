@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, MapPin } from 'lucide-react';
+import { ArrowUpDown, Compass, MapPin, Search } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
@@ -19,6 +19,7 @@ interface HomeScreenProps {
   onSwitchToPartnerMode?: () => void;
   onConfirmBooking?: (offer: ServiceOffer) => void;
   onOpenProfileDrawer?: () => void;
+  onOpenSearchModal?: () => void;
   currentSegment?: 'barbearia' | 'salao' | 'todos';
   onSelectSegment?: (segment: 'barbearia' | 'salao' | 'todos') => void;
   userName?: string;
@@ -37,6 +38,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onSwitchToPartnerMode,
   onConfirmBooking,
   onOpenProfileDrawer,
+  onOpenSearchModal,
   currentSegment = 'barbearia',
   onSelectSegment,
   userName = 'Anderson Silva',
@@ -136,7 +138,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full pb-24 bg-slate-950 text-slate-100">
-      {/* Single Unified Sticky Top Bar (Logo + User Avatar Profile + Netflix Categories) */}
+      {/* Single Unified Sticky Top Container (Logo + User Avatar Profile + Netflix Categories + Stories Bar) */}
       <div className="sticky top-0 z-40 bg-[#151A1E]/95 backdrop-blur-md border-b border-slate-900 shadow-md">
         {/* Top Header Row: Official Logo (Left) + Profile Avatar Trigger (Right) */}
         <div className="px-4 pt-3.5 pb-2.5 flex items-center justify-between">
@@ -145,6 +147,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Quick Search Button (Triggers Centered Search Modal) */}
+            {onOpenSearchModal && (
+              <button
+                id="btn-top-search-trigger"
+                onClick={onOpenSearchModal}
+                className="p-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933]/50 transition-all active:scale-95 flex items-center justify-center shadow-sm"
+                title="Buscar vagas imediatas"
+                aria-label="Abrir busca rápida"
+              >
+                <Search className="w-4 h-4 text-[#20C933]" />
+              </button>
+            )}
+
             {/* Quick Segment Indicator / Switcher */}
             {onSelectSegment && (
               <div className="flex items-center bg-slate-900/90 rounded-full p-0.5 border border-slate-800">
@@ -210,6 +225,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             );
           })}
         </div>
+
+        {/* Top Stories Bar (Fixed with header) */}
+        <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
+          <RadarStoryBar offers={offers} onSelectStory={handleOpenStory} />
+        </div>
       </div>
 
       {/* PWA Install Banner */}
@@ -221,11 +241,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           />
         </div>
       )}
-
-      {/* Top Stories Bar */}
-      <div className="border-b border-slate-900/80 bg-slate-950/80 backdrop-blur-sm">
-        <RadarStoryBar offers={offers} onSelectStory={handleOpenStory} />
-      </div>
 
       {/* Feed Strip: Urgency, Location Context & Sorting */}
       <div className="px-4 pt-3 pb-2 flex items-center justify-between text-xs">

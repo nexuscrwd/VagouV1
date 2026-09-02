@@ -5,11 +5,13 @@ import { ScreenId } from '../types';
 interface BottomNavProps {
   currentScreen: ScreenId;
   onSelectScreen: (screen: ScreenId) => void;
+  onOpenSearchModal?: () => void;
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({
   currentScreen,
   onSelectScreen,
+  onOpenSearchModal,
 }) => {
   const tabs = [
     { id: 'home' as ScreenId, label: 'Radar', icon: Radio },
@@ -17,6 +19,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     { id: 'mapa' as ScreenId, label: 'Mapa', icon: MapPin },
     { id: 'agenda' as ScreenId, label: 'Agenda', icon: Calendar },
   ];
+
+  const handleTabClick = (tabId: ScreenId) => {
+    if (tabId === 'busca' && onOpenSearchModal) {
+      onOpenSearchModal();
+    } else {
+      onSelectScreen(tabId);
+    }
+  };
 
   return (
     <nav className="flex-shrink-0 w-full h-16 bg-[#151A1E]/95 backdrop-blur-md border-t border-slate-800/90 px-4 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
@@ -32,7 +42,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           <button
             key={tab.id}
             id={`nav-${tab.id}`}
-            onClick={() => onSelectScreen(tab.id)}
+            onClick={() => handleTabClick(tab.id)}
             className={`flex flex-col items-center justify-center gap-1 py-1 px-3 transition active:scale-95 ${
               isActive ? 'text-[#20C933]' : 'text-slate-400 hover:text-slate-200'
             }`}

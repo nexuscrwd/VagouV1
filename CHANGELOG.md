@@ -15,6 +15,25 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Modal Centralizado Flutuante de Busca com Fundo Ofuscado (Opção A)
+- **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Implementação da Opção A solicitada pelo usuário: tela totalmente ofuscada (`backdrop-blur-xl bg-black/85`), input de busca centralizado flutuante com foco automático e tags rápidas de sugestão. Ao digitar, os resultados filtrados são exibidos elegantemente logo abaixo do campo.
+- **Arquivos Impactados:**
+  - `src/components/SearchModal.tsx` (Estrutura limpa, minimalista, centralizada e responsiva com fechamento via ESC ou clique fora)
+- **Resumo Técnico:** Código 100% limpo, livre de dependências ou variáveis não utilizadas, focado na ergonomia do usuário e agilidade na busca.
+
+---
+
+### [2026-09-02] — Fixação do Bloco Superior Unificado (Header + Categorias + Stories Radar)
+- **Tipo:** `[Fix]` / `[UI]`
+- **Motivo:** O contêiner de Stories do Radar (`RadarStoryBar`) foi unificado e integrado à barra superior fixa (`sticky top-0 z-40`), garantindo que o logo, foto de perfil, categorias estilo Netflix e stories permaneçam 100% fixos no topo durante a rolagem do feed de vagas.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx` (Unificação da barra de stories dentro do contêiner sticky superior)
+  - `src/components/RadarStoryBar.tsx` (Ajuste de contraste do nome dos estabelecimentos para `text-slate-300`)
+- **Resumo Técnico:** Eliminado o descolamento dos stories na rolagem; a transição de rolagem ocorre perfeitamente por trás do bloco superior fixo.
+
+---
+
 ### [2026-09-02] — Pacote de Modernização UI/UX: Categorias Netflix, Busca no Rodapé, Foto de Perfil no Topo e Manuais do App
 - **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Docs]`
 - **Motivo:** Implementação da experiência de navegação por categorias estilo Netflix (sem emojis supérfluos, mantendo apenas o relâmpago), migração da busca para o menu inferior com fundo Grafite (#151A1E), posicionamento da foto de perfil no topo direito com gaveta lateral, onboarding de interesses, padronização da terminologia "Agendar" e criação dos Manuais Técnico e de Usuário.

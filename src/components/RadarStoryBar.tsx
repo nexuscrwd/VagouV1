@@ -96,7 +96,7 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({ offers, onSelectSt
                 )}
               </div>
 
-              <span className="text-[10px] font-semibold text-slate-800 mt-1.5 max-w-[62px] truncate text-center leading-tight">
+              <span className="text-[10px] font-semibold text-slate-300 group-hover:text-white mt-1.5 max-w-[62px] truncate text-center leading-tight">
                 {offer.salonName}
               </span>
             </motion.button>

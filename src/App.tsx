@@ -24,6 +24,7 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AgendaScreen } from './components/AgendaScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
+import { SearchModal } from './components/SearchModal';
 import { ProfileDrawer } from './components/ProfileDrawer';
 import { InterestOnboardingModal } from './components/InterestOnboardingModal';
 import { InstallModal } from './components/InstallModal';
@@ -46,9 +47,10 @@ export const App: React.FC = () => {
   const [bookings, setBookings] = useState<BookingAppointment[]>(INITIAL_BOOKINGS);
   const [lastBooking, setLastBooking] = useState<BookingAppointment>(INITIAL_BOOKINGS[0]);
 
-  // Profile Drawer & Netflix Profile Segment
+  // Profile Drawer & Netflix Profile Segment & Search Modal
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState<boolean>(false);
   const [isInterestModalOpen, setIsInterestModalOpen] = useState<boolean>(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
   const [userSegment, setUserSegment] = useState<'barbearia' | 'salao' | 'todos'>(() => {
     try {
       const saved = localStorage.getItem('vagou_user_segment');
@@ -367,6 +369,7 @@ export const App: React.FC = () => {
                   onToggleFavorite={handleToggleFavorite}
                   onConfirmBooking={handleConfirmBooking}
                   onOpenProfileDrawer={() => setIsProfileDrawerOpen(true)}
+                  onOpenSearchModal={() => setIsSearchModalOpen(true)}
                   currentSegment={userSegment}
                   onSelectSegment={handleSelectSegment}
                   onSwitchToPartnerMode={() => {
@@ -463,6 +466,7 @@ export const App: React.FC = () => {
             <BottomNav
               currentScreen={currentScreen}
               onSelectScreen={(screen) => setCurrentScreen(screen)}
+              onOpenSearchModal={() => setIsSearchModalOpen(true)}
             />
 
             {/* Profile Drawer Component */}
@@ -484,6 +488,20 @@ export const App: React.FC = () => {
               isOpen={isInterestModalOpen}
               onClose={() => setIsInterestModalOpen(false)}
               onSavePreferences={handleSaveInterestPreferences}
+            />
+
+            {/* Center Search Modal with Backdrop Blur */}
+            <SearchModal
+              isOpen={isSearchModalOpen}
+              onClose={() => setIsSearchModalOpen(false)}
+              offers={offers}
+              onSelectOffer={(off) => {
+                setSelectedOffer(off);
+                setCurrentScreen('detalhe-oferta');
+              }}
+              onConfirmBooking={handleConfirmBooking}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
             />
           </div>
         )}
