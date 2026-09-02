@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, Search, X, ArrowLeft, Home } from 'lucide-react';
+import { ArrowUpDown, Compass, X, ArrowLeft, Home } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
@@ -20,7 +20,6 @@ interface HomeScreenProps {
   onSwitchToPartnerMode?: () => void;
   onConfirmBooking?: (offer: ServiceOffer) => void;
   onOpenProfileDrawer?: () => void;
-  onOpenSearchModal?: () => void;
   currentSegment?: 'barbearia' | 'salao' | 'todos';
   onSelectSegment?: (segment: 'barbearia' | 'salao' | 'todos') => void;
   userName?: string;
@@ -39,7 +38,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onSwitchToPartnerMode,
   onConfirmBooking,
   onOpenProfileDrawer,
-  onOpenSearchModal,
   currentSegment = 'barbearia',
   onSelectSegment,
   userName = 'Anderson Silva',
@@ -184,11 +182,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           ) : (
             /* Brand Logo */
             <div className="flex items-center gap-2">
-              <VagouLogo size="md" />
+              <VagouLogo size="lg" variant="full" />
             </div>
           )}
 
-          {/* Search Trigger Button & Profile */}
+          {/* Profile */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {viewingSalonProfile && (
               <button
@@ -200,16 +198,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Home className="w-4 h-4 text-slate-300 hover:text-[#20C933]" />
               </button>
             )}
-
-            {/* Search Trigger Button */}
-            <button
-              id="search-trigger-btn"
-              onClick={onOpenSearchModal}
-              className="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933] flex items-center justify-center transition-all shadow-sm active:scale-95 group cursor-pointer"
-              title="Buscar serviços ou salões"
-            >
-              <Search className="w-4 h-4 text-slate-300 group-hover:text-[#20C933] transition-colors" />
-            </button>
 
             {/* Profile Avatar Button */}
             <button

@@ -22,6 +22,7 @@ import { OfferListScreen } from './components/OfferListScreen';
 import { OfferDetailScreen } from './components/OfferDetailScreen';
 import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AgendaScreen } from './components/AgendaScreen';
+import { FavoritesScreen } from './components/FavoritesScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
 import { SearchModal } from './components/SearchModal';
@@ -370,7 +371,6 @@ export const App: React.FC = () => {
                   onToggleFavorite={handleToggleFavorite}
                   onConfirmBooking={handleConfirmBooking}
                   onOpenProfileDrawer={() => setIsProfileDrawerOpen(true)}
-                  onOpenSearchModal={() => setIsSearchModalOpen(true)}
                   currentSegment={userSegment}
                   onSelectSegment={handleSelectSegment}
                   onSwitchToPartnerMode={() => {
@@ -449,6 +449,21 @@ export const App: React.FC = () => {
                 />
               )}
 
+              {currentScreen === 'favoritos' && (
+                <FavoritesScreen
+                  offers={offers}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                  onSelectOffer={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  onConfirmBooking={handleConfirmBooking}
+                  onBack={() => setCurrentScreen('home')}
+                  onGoHome={() => setCurrentScreen('home')}
+                />
+              )}
+
               {currentScreen === 'perfil' && (
                 <ProfileScreen
                   onBack={() => setCurrentScreen('home')}
@@ -482,6 +497,8 @@ export const App: React.FC = () => {
               isOpen={isProfileDrawerOpen}
               onClose={() => setIsProfileDrawerOpen(false)}
               onNavigateToAgenda={() => setCurrentScreen('agenda')}
+              onNavigateToFavorites={() => setCurrentScreen('favoritos')}
+              favoriteCount={favorites.length}
               onSwitchToPartnerMode={() => {
                 setAppMode('partner');
                 setPartnerScreen('partner-agenda');

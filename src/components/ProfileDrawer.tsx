@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   ChevronRight,
   UserCheck,
+  Heart,
 } from 'lucide-react';
 import { VagouLogo } from './VagouLogo';
 
@@ -16,6 +17,8 @@ interface ProfileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigateToAgenda: () => void;
+  onNavigateToFavorites?: () => void;
+  favoriteCount?: number;
   onSwitchToPartnerMode: () => void;
   onOpenInterestConfig: () => void;
   onOpenHelpModal?: () => void;
@@ -29,6 +32,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   isOpen,
   onClose,
   onNavigateToAgenda,
+  onNavigateToFavorites,
+  favoriteCount,
   onSwitchToPartnerMode,
   onOpenInterestConfig,
   onOpenHelpModal,
@@ -150,6 +155,34 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               </div>
               <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
             </button>
+
+            {onNavigateToFavorites && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onNavigateToFavorites();
+                }}
+                className="w-full p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 text-left flex items-center justify-between transition group cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-rose-950/60 text-rose-500 flex items-center justify-center border border-rose-500/20">
+                    <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-white block">Favoritos</span>
+                      {favoriteCount !== undefined && favoriteCount > 0 && (
+                        <span className="text-[10px] bg-rose-500/20 text-rose-400 font-bold font-mono px-1.5 py-0.2 rounded-full border border-rose-500/30">
+                          {favoriteCount}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-400">Salões e serviços salvos</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
+              </button>
+            )}
 
             <button
               onClick={() => {

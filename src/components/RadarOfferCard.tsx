@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Star, MapPin, Sparkles, Zap, Repeat, Eye, Clock } from 'lucide-react';
+import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Star, MapPin, Zap, Repeat, Eye } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
 import { CountdownTimer } from './CountdownTimer';
@@ -32,7 +32,80 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const mediaLevel = offer.mediaLevel || (offer.imageUrl ? 2 : 1);
-  const gallery = offer.galleryImages || (offer.imageUrl ? [offer.imageUrl] : []);
+  const gallery = offer.galleryImages && offer.galleryImages.length > 0
+    ? offer.galleryImages
+    : offer.imageUrl
+    ? [offer.imageUrl]
+    : [];
+
+  // Swipe & Touch Gesture State
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const isSwiping = useRef<boolean>(false);
+  const mouseDownX = useRef<number | null>(null);
+  const isDraggingMouse = useRef<boolean>(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+    isSwiping.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+    if (touchStartX.current && Math.abs(touchStartX.current - touchEndX.current) > 10) {
+      isSwiping.current = true;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 30;
+
+    if (Math.abs(distance) >= minSwipeDistance && gallery.length > 1) {
+      if (distance > 0) {
+        setCarouselIndex((prev) => (prev + 1) % gallery.length);
+      } else {
+        setCarouselIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+      }
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    mouseDownX.current = e.clientX;
+    isDraggingMouse.current = true;
+    isSwiping.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingMouse.current || mouseDownX.current === null) return;
+    if (Math.abs(mouseDownX.current - e.clientX) > 10) {
+      isSwiping.current = true;
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isDraggingMouse.current || mouseDownX.current === null) return;
+    const distance = mouseDownX.current - e.clientX;
+    mouseDownX.current = null;
+    isDraggingMouse.current = false;
+    const minSwipeDistance = 30;
+
+    if (Math.abs(distance) >= minSwipeDistance && gallery.length > 1) {
+      if (distance > 0) {
+        setCarouselIndex((prev) => (prev + 1) % gallery.length);
+      } else {
+        setCarouselIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+      }
+    }
+  };
+
+  const handleMouseLeave = () => {
+    isDraggingMouse.current = false;
+    mouseDownX.current = null;
+  };
 
   const toggleVideoPlayback = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,7 +141,10 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
 
   return (
     <div
-      onClick={() => onSelectOffer(offer)}
+      onClick={() => {
+        if (isSwiping.current) return;
+        onSelectOffer(offer);
+      }}
       className="relative z-0 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-lg group hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
     >
       {/* Media Canvas Container */}
@@ -104,14 +180,32 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
             </button>
           </div>
         ) : mediaLevel === 2 && gallery.length > 0 ? (
-          /* LEVEL 2: Photo Carousel */
-          <div className="relative w-full h-full">
-            <img
-              src={gallery[carouselIndex]}
-              alt={offer.serviceTitle}
-              className="w-full h-full object-cover transition-all duration-500"
-              referrerPolicy="no-referrer"
-            />
+          /* LEVEL 2: Photo Carousel with Touch Swipe */
+          <div
+            className="relative w-full h-full overflow-hidden select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div
+              className="flex w-full h-full transition-transform duration-300 ease-out"
+              style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+            >
+              {gallery.map((imgUrl, idx) => (
+                <img
+                  key={idx}
+                  src={imgUrl}
+                  alt={`${offer.serviceTitle} - ${idx + 1}`}
+                  className="w-full h-full object-cover flex-shrink-0"
+                  referrerPolicy="no-referrer"
+                  draggable={false}
+                />
+              ))}
+            </div>
 
             {gallery.length > 1 && (
               <>
@@ -129,17 +223,6 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
-
-                <div className="absolute top-16 right-4 z-10 flex gap-1 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
-                  {gallery.map((_, idx) => (
-                    <span
-                      key={idx}
-                      className={`w-1.5 h-1.5 rounded-full transition-all ${
-                        idx === carouselIndex ? 'bg-emerald-400 w-3' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
-                </div>
               </>
             )}
           </div>
@@ -172,17 +255,17 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5">
-            {onOpenStory && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenStory();
-                }}
-                className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-slate-900 transition shadow-md cursor-pointer"
-                title="Abrir em Tela Cheia (Story)"
-              >
-                <Sparkles className="w-4 h-4 text-amber-300" />
-              </button>
+            {gallery.length > 1 && (
+              <div className="flex items-center gap-1 bg-slate-900/80 backdrop-blur-md border border-white/20 px-2.5 py-2 rounded-full shadow-md">
+                {gallery.map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === carouselIndex ? 'w-3 bg-emerald-400' : 'w-1.5 bg-white/60'
+                    }`}
+                  />
+                ))}
+              </div>
             )}
 
             <button
@@ -293,16 +376,9 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
           </div>
 
           <div className="flex flex-col items-end flex-shrink-0">
-            <span className="text-xs sm:text-sm font-black text-emerald-400 font-mono leading-tight tracking-tight flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-[#20C933] shrink-0" />
+            <span className="text-lg sm:text-[20px] font-black text-emerald-400 font-mono leading-tight tracking-tight">
               <span>{formatSlotDateTime(offer.timeSlot)}</span>
             </span>
-
-            {offer.originalPrice && offer.originalPrice > offer.price && (
-              <span className="text-[10px] text-slate-400 line-through leading-none mt-0.5">
-                De R${offer.originalPrice.toFixed(0)}
-              </span>
-            )}
 
             <button
               id={`btn-radar-agendar-${offer.id}`}

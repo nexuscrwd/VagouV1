@@ -322,6 +322,11 @@ export const MOCK_OFFERS: ServiceOffer[] = [
     dayLabel: 'Hoje',
     duration: '75 min',
     imageUrl: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=800&q=80',
+    ],
     lat: -23.535,
     lng: -46.452,
     mediaLevel: 2,

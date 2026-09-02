@@ -639,15 +639,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400 flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400" /> Data e Horário:
-                    </span>
-                    <span className="font-bold text-emerald-300 text-right">
-                      {shortDateFormatted} às {selectedTimeSlot}
-                    </span>
-                  </div>
-
                   <div className="flex justify-between items-center pt-2.5 border-t border-slate-800">
                     <span className="text-slate-300 font-bold">Total a pagar:</span>
                     <span className="font-black text-emerald-400 text-lg">R$ {selectedService.price.toFixed(0)}</span>
@@ -663,48 +654,28 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         {currentStep !== 'date' && (
           <div className="p-4 bg-slate-900 border-t border-slate-800 flex flex-col gap-2 sticky bottom-0 z-10">
             {currentStep === 'professionals_and_time' && (
-              <>
-                <button
-                  disabled={!selectedTimeSlot}
-                  onClick={() => setCurrentStep('confirmation')}
-                  className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
-                    selectedTimeSlot
-                      ? 'bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 cursor-pointer shadow-emerald-500/20'
-                      : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
-                  }`}
-                >
-                  <span>{selectedTimeSlot ? `Avançar para Confirmação` : 'Selecione um Horário Acima'}</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep('date')}
-                  className="w-full py-2 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
-                  <span>Voltar para o calendário</span>
-                </button>
-              </>
+              <button
+                disabled={!selectedTimeSlot}
+                onClick={() => setCurrentStep('confirmation')}
+                className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
+                  selectedTimeSlot
+                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 cursor-pointer shadow-emerald-500/20'
+                    : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
+                }`}
+              >
+                <span>{selectedTimeSlot ? `Avançar para Confirmação` : 'Selecione um Horário Acima'}</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
             )}
 
             {currentStep === 'confirmation' && (
-              <>
-                <button
-                  onClick={handleConfirmFinal}
-                  className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-slate-950" />
-                  <span>Confirmar Agendamento</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep('professionals_and_time')}
-                  className="w-full py-2 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
-                  <span>Voltar e alterar horário</span>
-                </button>
-              </>
+              <button
+                onClick={handleConfirmFinal}
+                className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+              >
+                <CheckCircle2 className="w-4 h-4 text-slate-950" />
+                <span>Confirmar Agendamento</span>
+              </button>
             )}
           </div>
         )}

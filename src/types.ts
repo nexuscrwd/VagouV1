@@ -8,6 +8,7 @@ export type ScreenId =
   | 'detalhe'
   | 'confirmacao'
   | 'agenda'
+  | 'favoritos'
   | 'perfil';
 
 export type PartnerScreenId =

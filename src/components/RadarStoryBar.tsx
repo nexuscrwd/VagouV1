@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
-import { Zap, Video, Camera, Scissors, Check } from 'lucide-react';
+import { Video, Camera, Scissors, Check } from 'lucide-react';
 import { ServiceOffer } from '../types';
 
 interface SalonStoryGroup {
@@ -67,46 +67,6 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({
   return (
     <div className="w-full py-2.5 px-4 overflow-x-auto no-scrollbar">
       <div className="flex items-start gap-3.5 min-w-max">
-        {/* Radar Indicator / Reset Filter Button */}
-        <button
-          onClick={() => onSelectSalon?.(null)}
-          className="flex flex-col items-center flex-shrink-0 group focus:outline-none cursor-pointer"
-          title="Ver todos os salões e vagas"
-        >
-          <div
-            className={`relative w-15 h-15 rounded-full p-0.5 transition-all duration-300 ${
-              selectedSalonFilter === null
-                ? 'bg-gradient-to-tr from-emerald-500 via-teal-400 to-amber-400 ring-2 ring-emerald-400 scale-105 shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 opacity-70 hover:opacity-100'
-            }`}
-          >
-            <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center text-center p-1 text-white">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-                className="text-emerald-400"
-              >
-                <Zap className="w-4 h-4 fill-emerald-400" />
-              </motion.div>
-              <span className="text-[8px] font-black tracking-tighter text-emerald-300 uppercase mt-0.5 font-['Poppins']">
-                TODOS
-              </span>
-            </div>
-            {selectedSalonFilter === null && (
-              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#20C933] border-2 border-[#12161A] flex items-center justify-center">
-                <Check className="w-2 h-2 text-slate-950 stroke-[3]" />
-              </span>
-            )}
-          </div>
-          <span
-            className={`text-[10px] font-black mt-1.5 uppercase tracking-tight font-['Poppins'] ${
-              selectedSalonFilter === null ? 'text-[#20C933]' : 'text-slate-400'
-            }`}
-          >
-            Geral
-          </span>
-        </button>
-
         {/* Stories Items Grouped by Salon */}
         {salonGroups.map((group) => {
           const isSelected = selectedSalonFilter === group.salonName;

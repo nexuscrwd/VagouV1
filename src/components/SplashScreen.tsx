@@ -38,26 +38,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
       }`}
       style={{ touchAction: 'none' }}
     >
-      <div className="flex flex-col items-center justify-center gap-6 animate-fadeIn">
-        {/* Official V Symbol in Center */}
-        <div className="relative flex items-center justify-center p-4">
-          <VagouLogo variant="icon" size="xl" theme="dark" />
-        </div>
-
-        {/* Brand Name & Official Tagline */}
-        <div className="flex flex-col items-center text-center">
-          <div className="flex items-start">
-            <span className="text-3xl font-black tracking-tight text-white font-['Poppins']">
-              Vagou
-            </span>
-            <span className="text-xs font-bold text-[#20C933] ml-1 -mt-1 font-['Poppins']">
-              app
-            </span>
-          </div>
-          <span className="text-[#20C933] text-sm font-semibold tracking-wide mt-1.5 font-['Poppins']">
-            Vagou achou.
-          </span>
-        </div>
+      <div className="flex flex-col items-center justify-center animate-fadeIn">
+        {/* Official Full Logo */}
+        <VagouLogo variant="full" size="xl" theme="dark" showTagline={true} />
       </div>
 
       {/* Footer Branding / Indicator */}
