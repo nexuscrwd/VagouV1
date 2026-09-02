@@ -164,8 +164,8 @@ export const MediaFallbackCard: React.FC<MediaFallbackCardProps> = ({ offer }) =
 
       {/* Footer */}
       <div className="relative z-10 w-full pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
-        <span className="flex items-center gap-1 text-[10px] text-emerald-300 font-medium">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
+        <span className="flex items-center gap-1.5 text-[10px] text-emerald-300 font-medium">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
           Vaga Imediata no Radar
         </span>
         <span className="text-[10px] text-slate-400">

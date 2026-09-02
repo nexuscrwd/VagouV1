@@ -12,7 +12,7 @@ export const PartnerBottomNav: React.FC<PartnerBottomNavProps> = ({
   onSelectScreen,
 }) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 z-40 px-3 py-1.5 shadow-lg">
+    <nav className="flex-shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/90 z-40 px-3 py-1.5 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] pb-[env(safe-area-inset-bottom)]">
       <div className="grid grid-cols-4 items-center">
         {/* Agenda */}
         <button
@@ -73,6 +73,6 @@ export const PartnerBottomNav: React.FC<PartnerBottomNavProps> = ({
           <span className="text-[10px] mt-1">Meu Salão</span>
         </button>
       </div>
-    </div>
+    </nav>
   );
 };

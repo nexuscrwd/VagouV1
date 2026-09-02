@@ -114,16 +114,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black text-white tracking-wide">VAGOU</span>
-                <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-wider border border-emerald-500/40 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-                  RADAR ON
-                </span>
-              </div>
-              <span className="text-[10px] text-slate-400 block -mt-0.5">
-                Vagas imediatas em tempo real
-              </span>
+              <span className="text-xs font-black text-white tracking-wide">VAGOU</span>
             </div>
           </div>
 
@@ -199,7 +190,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Feed Strip: Urgency & Sorting */}
       <div className="px-4 pt-3 pb-2 flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+          <div className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
           <span className="font-extrabold text-white text-xs uppercase tracking-wider">
             {filteredAndSortedOffers.length} VAGAS DISPONÍVEIS AGORA
           </span>

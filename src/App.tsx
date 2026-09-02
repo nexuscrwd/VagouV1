@@ -306,104 +306,107 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#151A1E] sm:bg-slate-200 flex justify-center items-start antialiased selection:bg-emerald-500 selection:text-white">
+    <div className="h-[100dvh] w-full bg-[#151A1E] sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-emerald-500 selection:text-white overflow-hidden">
       {/* Real Fullscreen Mobile Container */}
-      <main className="w-full max-w-md min-h-[100dvh] bg-white text-slate-900 flex flex-col relative shadow-2xl overflow-x-hidden font-sans">
+      <main className="w-full max-w-md h-[100dvh] bg-white text-slate-900 flex flex-col relative shadow-2xl overflow-hidden font-sans">
         
         {/* CLIENT MODE SCREENS */}
         {appMode === 'client' && (
-          <div className="flex-1 w-full relative overflow-y-auto">
-            {currentScreen === 'home' && (
-              <HomeScreen
-                offers={offers}
-                onNavigateToOffers={(q, cat) => setCurrentScreen('lista-ofertas')}
-                onNavigateToOfferDetail={(off) => {
-                  setSelectedOffer(off);
-                  setCurrentScreen('detalhe-oferta');
-                }}
-                onNavigateToMap={() => setCurrentScreen('mapa')}
-                onOpenInstallModal={handleOpenInstallModal}
-                isStandalone={isStandalone}
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-                onConfirmBooking={handleConfirmBooking}
-                onSwitchToPartnerMode={() => {
-                  setAppMode('partner');
-                  setPartnerScreen('partner-agenda');
-                }}
-              />
-            )}
+          <div className="flex flex-col h-full w-full overflow-hidden">
+            {/* Scrollable Screen Content Container */}
+            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden relative">
+              {currentScreen === 'home' && (
+                <HomeScreen
+                  offers={offers}
+                  onNavigateToOffers={(q, cat) => setCurrentScreen('lista-ofertas')}
+                  onNavigateToOfferDetail={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  onNavigateToMap={() => setCurrentScreen('mapa')}
+                  onOpenInstallModal={handleOpenInstallModal}
+                  isStandalone={isStandalone}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                  onConfirmBooking={handleConfirmBooking}
+                  onSwitchToPartnerMode={() => {
+                    setAppMode('partner');
+                    setPartnerScreen('partner-agenda');
+                  }}
+                />
+              )}
 
-            {currentScreen === 'mapa' && (
-              <MapScreen
-                offers={offers}
-                onSelectOffer={(off) => {
-                  setSelectedOffer(off);
-                  setCurrentScreen('detalhe-oferta');
-                }}
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            )}
+              {currentScreen === 'mapa' && (
+                <MapScreen
+                  offers={offers}
+                  onSelectOffer={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              )}
 
-            {currentScreen === 'lista-ofertas' && (
-              <OfferListScreen
-                offers={offers}
-                onBack={() => setCurrentScreen('home')}
-                onSelectOffer={(off) => {
-                  setSelectedOffer(off);
-                  setCurrentScreen('detalhe-oferta');
-                }}
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            )}
+              {currentScreen === 'lista-ofertas' && (
+                <OfferListScreen
+                  offers={offers}
+                  onBack={() => setCurrentScreen('home')}
+                  onSelectOffer={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              )}
 
-            {currentScreen === 'detalhe-oferta' && (
-              <OfferDetailScreen
-                offer={selectedOffer}
-                onBack={() => setCurrentScreen('home')}
-                onConfirmBooking={handleConfirmBooking}
-                isFavorite={favorites.includes(selectedOffer.id)}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            )}
+              {currentScreen === 'detalhe-oferta' && (
+                <OfferDetailScreen
+                  offer={selectedOffer}
+                  onBack={() => setCurrentScreen('home')}
+                  onConfirmBooking={handleConfirmBooking}
+                  isFavorite={favorites.includes(selectedOffer.id)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              )}
 
-            {currentScreen === 'confirmacao' && (
-              <ConfirmationScreen
-                booking={lastBooking}
-                onNavigateToAgenda={() => setCurrentScreen('agenda')}
-              />
-            )}
+              {currentScreen === 'confirmacao' && (
+                <ConfirmationScreen
+                  booking={lastBooking}
+                  onNavigateToAgenda={() => setCurrentScreen('agenda')}
+                />
+              )}
 
-            {currentScreen === 'agenda' && (
-              <AgendaScreen
-                bookings={bookings}
-                onNewBookingClick={() => setCurrentScreen('home')}
-                onCancelBooking={handleCancelBooking}
-              />
-            )}
+              {currentScreen === 'agenda' && (
+                <AgendaScreen
+                  bookings={bookings}
+                  onNewBookingClick={() => setCurrentScreen('home')}
+                  onCancelBooking={handleCancelBooking}
+                />
+              )}
 
-            {currentScreen === 'perfil' && (
-              <ProfileScreen
-                onInstallClick={handleOpenInstallModal}
-                isInstallable={true}
-                isStandalone={isStandalone}
-                offers={offers}
-                favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
-                onSelectOffer={(off) => {
-                  setSelectedOffer(off);
-                  setCurrentScreen('detalhe-oferta');
-                }}
-                onSwitchToPartnerMode={() => {
-                  setAppMode('partner');
-                  setPartnerScreen('partner-agenda');
-                }}
-              />
-            )}
+              {currentScreen === 'perfil' && (
+                <ProfileScreen
+                  onInstallClick={handleOpenInstallModal}
+                  isInstallable={true}
+                  isStandalone={isStandalone}
+                  offers={offers}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                  onSelectOffer={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  onSwitchToPartnerMode={() => {
+                    setAppMode('partner');
+                    setPartnerScreen('partner-agenda');
+                  }}
+                />
+              )}
+            </div>
 
-            {/* Client Bottom Navigation */}
+            {/* Client Bottom Navigation - Fixed and Permanent at bottom */}
             <BottomNav
               currentScreen={currentScreen}
               onSelectScreen={(screen) => setCurrentScreen(screen)}
@@ -413,58 +416,61 @@ export const App: React.FC = () => {
 
         {/* PARTNER / ESTABELECIMENTO MODE SCREENS */}
         {appMode === 'partner' && (
-          <div className="flex-1 w-full relative overflow-y-auto">
-            {partnerScreen === 'partner-agenda' && (
-              <PartnerAgendaScreen
-                appointments={partnerAppointments}
-                professionals={professionals}
-                onOpenPublishModal={(prefill) => {
-                  setPublishPrefill(prefill);
-                  setIsPublishModalOpen(true);
-                }}
-                onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
-                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
-              />
-            )}
+          <div className="flex flex-col h-full w-full overflow-hidden">
+            {/* Scrollable Screen Content Container for Partner */}
+            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden relative">
+              {partnerScreen === 'partner-agenda' && (
+                <PartnerAgendaScreen
+                  appointments={partnerAppointments}
+                  professionals={professionals}
+                  onOpenPublishModal={(prefill) => {
+                    setPublishPrefill(prefill);
+                    setIsPublishModalOpen(true);
+                  }}
+                  onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
+                  onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+                />
+              )}
 
-            {partnerScreen === 'partner-publish' && (
-              <PartnerAgendaScreen
-                appointments={partnerAppointments}
-                professionals={professionals}
-                onOpenPublishModal={(prefill) => {
-                  setPublishPrefill(prefill);
-                  setIsPublishModalOpen(true);
-                }}
-                onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
-                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
-              />
-            )}
+              {partnerScreen === 'partner-publish' && (
+                <PartnerAgendaScreen
+                  appointments={partnerAppointments}
+                  professionals={professionals}
+                  onOpenPublishModal={(prefill) => {
+                    setPublishPrefill(prefill);
+                    setIsPublishModalOpen(true);
+                  }}
+                  onUpdateAppointmentStatus={handleUpdatePartnerAppointmentStatus}
+                  onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+                />
+              )}
 
-            {partnerScreen === 'partner-schedule-config' && (
-              <PartnerScheduleConfigScreen
-                professionals={professionals}
-                onSaveSchedule={handleSavePartnerSchedule}
-                onAddProfessional={handleAddProfessional}
-                onBack={() => setPartnerScreen('partner-agenda')}
-              />
-            )}
+              {partnerScreen === 'partner-schedule-config' && (
+                <PartnerScheduleConfigScreen
+                  professionals={professionals}
+                  onSaveSchedule={handleSavePartnerSchedule}
+                  onAddProfessional={handleAddProfessional}
+                  onBack={() => setPartnerScreen('partner-agenda')}
+                />
+              )}
 
-            {partnerScreen === 'partner-profile' && (
-              <PartnerProfileScreen
-                professionals={professionals}
-                onSwitchToClientMode={() => {
-                  setAppMode('client');
-                  setCurrentScreen('home');
-                }}
-                onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
-                onOpenPublishModal={() => {
-                  setPublishPrefill(undefined);
-                  setIsPublishModalOpen(true);
-                }}
-              />
-            )}
+              {partnerScreen === 'partner-profile' && (
+                <PartnerProfileScreen
+                  professionals={professionals}
+                  onSwitchToClientMode={() => {
+                    setAppMode('client');
+                    setCurrentScreen('home');
+                  }}
+                  onNavigateToScheduleConfig={() => setPartnerScreen('partner-schedule-config')}
+                  onOpenPublishModal={() => {
+                    setPublishPrefill(undefined);
+                    setIsPublishModalOpen(true);
+                  }}
+                />
+              )}
+            </div>
 
-            {/* Partner Bottom Navigation */}
+            {/* Partner Bottom Navigation - Fixed and Permanent at bottom */}
             <PartnerBottomNav
               currentScreen={partnerScreen}
               onSelectScreen={(screen) => {

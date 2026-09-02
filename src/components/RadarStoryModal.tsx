@@ -218,8 +218,8 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
               </div>
 
               {activeOffer.activeViewers && (
-                <div className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-slate-300 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block" />
+                <div className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-slate-300 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
                   <span>{activeOffer.activeViewers} pessoas vendo</span>
                 </div>
               )}

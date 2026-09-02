@@ -149,7 +149,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
         <div className="absolute top-3 inset-x-3 z-20 flex items-start justify-between">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-[11px] font-black shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
               <span>VAGA AGORA</span>
               {offer.expiresInMinutes && (
                 <span className="text-white/90 font-mono font-medium">

@@ -33,8 +33,7 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({ offers, onSelectSt
                 RADAR
               </span>
             </div>
-            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
-            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border border-white" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white" />
           </div>
           <span className="text-[10px] font-black text-emerald-600 mt-1 uppercase tracking-tight">
             Ao Vivo
