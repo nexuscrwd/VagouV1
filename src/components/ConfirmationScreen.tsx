@@ -16,12 +16,12 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
       <div className="space-y-6 pt-4">
         {/* Check Success Icon */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
+          <div className="w-16 h-16 rounded-2xl bg-[#20C933] text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
             <Check className="w-9 h-9 stroke-[3]" />
           </div>
-          <h1 className="text-xl font-black text-slate-900 mt-4">Reserva confirmada!</h1>
+          <h1 className="text-xl font-black text-slate-900 mt-4 font-['Poppins']">Agendamento confirmado!</h1>
           <p className="text-xs text-slate-500 max-w-xs mt-1">
-            Sua vaga está garantida. Apresente o código abaixo ao chegar.
+            Sua vaga está garantida. Apresente o código abaixo ao chegar no estabelecimento.
           </p>
         </div>
 

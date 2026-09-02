@@ -257,15 +257,15 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
             </span>
 
             <button
-              id={`btn-radar-reservar-${offer.id}`}
+              id={`btn-radar-agendar-${offer.id}`}
               onClick={(e) => {
                 e.stopPropagation();
                 onDirectBook(offer);
               }}
-              className="mt-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1"
+              className="mt-1 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins']"
             >
               <Zap className="w-3.5 h-3.5 fill-slate-950" />
-              <span>RESERVAR</span>
+              <span>AGENDAR</span>
             </button>
           </div>
         </div>

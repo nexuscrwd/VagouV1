@@ -15,6 +15,25 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Pacote de Modernização UI/UX: Categorias Netflix, Busca no Rodapé, Foto de Perfil no Topo e Manuais do App
+- **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Docs]`
+- **Motivo:** Implementação da experiência de navegação por categorias estilo Netflix (sem emojis supérfluos, mantendo apenas o relâmpago), migração da busca para o menu inferior com fundo Grafite (#151A1E), posicionamento da foto de perfil no topo direito com gaveta lateral, onboarding de interesses, padronização da terminologia "Agendar" e criação dos Manuais Técnico e de Usuário.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx` (Topo limpo com logo + perfil, remoção de busca superior e categorias dinâmicas sem emojis)
+  - `src/components/SearchScreen.tsx` (Nova tela dedicada de busca com filtros e ordenação)
+  - `src/components/BottomNav.tsx` (Fundo Grafite `#151A1E`, nova aba Buscar substituindo Perfil)
+  - `src/components/ProfileDrawer.tsx` (Novo menu lateral acionado pelo avatar do topo com perfil Anderson/Esposa)
+  - `src/components/InterestOnboardingModal.tsx` (Novo modal de preferências de categorias estilo Netflix)
+  - `src/components/RadarOfferCard.tsx` (Substituição de "RESERVAR" por "AGENDAR" e cores oficiais)
+  - `src/components/OfferDetailScreen.tsx` & `src/components/ConfirmationScreen.tsx` (Terminologia "Agendar" e "Agendamento")
+  - `src/App.tsx` (Integração das novas rotas, telas e estados de perfil)
+  - `src/types.ts` (Adicionado `busca` ao `ScreenId`)
+  - `DEV_MANUAL.md` (Novo: Manual de arquitetura, tokens e UI/UX para desenvolvedores e designers)
+  - `USER_MANUAL.md` (Novo: Guia de uso e central de ajuda do usuário)
+- **Resumo Técnico:** Concluída a reformulação para uma arquitetura limpa, mobile-first e de alta usabilidade com perfis de recomendação e documentação completa.
+
+---
+
 ### [2026-09-01] — Implementação da Identidade Visual Oficial (Manual de Identidade)
 - **Tipo:** `[Feat]` / `[UI]` / `[Docs]`
 - **Motivo:** Aplicação completa dos elementos do Manual de Identidade Visual oficial do Vagou (Logo SVG, cores #20C933 / #151A1E, fonte Poppins, favicon e Splash Screen).

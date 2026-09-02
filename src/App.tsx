@@ -16,6 +16,7 @@ import {
   INITIAL_PARTNER_APPOINTMENTS,
 } from './data';
 import { HomeScreen } from './components/HomeScreen';
+import { SearchScreen } from './components/SearchScreen';
 import { MapScreen } from './components/MapScreen';
 import { OfferListScreen } from './components/OfferListScreen';
 import { OfferDetailScreen } from './components/OfferDetailScreen';
@@ -23,6 +24,8 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AgendaScreen } from './components/AgendaScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { BottomNav } from './components/BottomNav';
+import { ProfileDrawer } from './components/ProfileDrawer';
+import { InterestOnboardingModal } from './components/InterestOnboardingModal';
 import { InstallModal } from './components/InstallModal';
 import { PartnerAgendaScreen } from './components/PartnerAgendaScreen';
 import { PartnerScheduleConfigScreen } from './components/PartnerScheduleConfigScreen';
@@ -42,6 +45,39 @@ export const App: React.FC = () => {
   const [selectedOffer, setSelectedOffer] = useState<ServiceOffer>(MOCK_OFFERS[0]);
   const [bookings, setBookings] = useState<BookingAppointment[]>(INITIAL_BOOKINGS);
   const [lastBooking, setLastBooking] = useState<BookingAppointment>(INITIAL_BOOKINGS[0]);
+
+  // Profile Drawer & Netflix Profile Segment
+  const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState<boolean>(false);
+  const [isInterestModalOpen, setIsInterestModalOpen] = useState<boolean>(false);
+  const [userSegment, setUserSegment] = useState<'barbearia' | 'salao' | 'todos'>(() => {
+    try {
+      const saved = localStorage.getItem('vagou_user_segment');
+      return (saved as 'barbearia' | 'salao' | 'todos') || 'barbearia';
+    } catch {
+      return 'barbearia';
+    }
+  });
+
+  const handleSelectSegment = (segment: 'barbearia' | 'salao' | 'todos') => {
+    setUserSegment(segment);
+    try {
+      localStorage.setItem('vagou_user_segment', segment);
+    } catch {}
+  };
+
+  const handleSaveInterestPreferences = (selectedIds: string[]) => {
+    if (selectedIds.includes('barbearia') && !selectedIds.includes('salao')) {
+      handleSelectSegment('barbearia');
+    } else if (selectedIds.includes('salao') && !selectedIds.includes('barbearia')) {
+      handleSelectSegment('salao');
+    } else {
+      handleSelectSegment('todos');
+    }
+    try {
+      localStorage.setItem('vagou_user_interests', JSON.stringify(selectedIds));
+      localStorage.setItem('vagou_onboarding_completed', 'true');
+    } catch {}
+  };
 
   // Partner Navigation State
   const [partnerScreen, setPartnerScreen] = useState<PartnerScreenId>('partner-agenda');
@@ -170,7 +206,7 @@ export const App: React.FC = () => {
       startTime: offer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', ''),
       endTime: '15:15',
       status: 'CONFIRMADO',
-      notes: 'Reserva feita através do app do cliente.',
+      notes: 'Agendamento imediato realizado pelo app do cliente.',
     };
     setPartnerAppointments((prev) => [newPartnerAppt, ...prev]);
 
@@ -307,19 +343,19 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-[#151A1E] sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-emerald-500 selection:text-white overflow-hidden">
+    <div className="h-[100dvh] w-full bg-[#151A1E] sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-slate-950 overflow-hidden">
       {/* Real Fullscreen Mobile Container */}
-      <main className="w-full max-w-md h-[100dvh] bg-white text-slate-900 flex flex-col relative shadow-2xl overflow-hidden font-sans">
+      <main className="w-full max-w-md h-[100dvh] bg-slate-950 text-slate-100 flex flex-col relative shadow-2xl overflow-hidden font-sans">
         
         {/* CLIENT MODE SCREENS */}
         {appMode === 'client' && (
           <div className="flex flex-col h-full w-full overflow-hidden">
             {/* Scrollable Screen Content Container */}
-            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden relative">
+            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden relative bg-slate-950">
               {currentScreen === 'home' && (
                 <HomeScreen
                   offers={offers}
-                  onNavigateToOffers={(q, cat) => setCurrentScreen('lista-ofertas')}
+                  onNavigateToOffers={() => setCurrentScreen('busca')}
                   onNavigateToOfferDetail={(off) => {
                     setSelectedOffer(off);
                     setCurrentScreen('detalhe-oferta');
@@ -330,10 +366,26 @@ export const App: React.FC = () => {
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
                   onConfirmBooking={handleConfirmBooking}
+                  onOpenProfileDrawer={() => setIsProfileDrawerOpen(true)}
+                  currentSegment={userSegment}
+                  onSelectSegment={handleSelectSegment}
                   onSwitchToPartnerMode={() => {
                     setAppMode('partner');
                     setPartnerScreen('partner-agenda');
                   }}
+                />
+              )}
+
+              {currentScreen === 'busca' && (
+                <SearchScreen
+                  offers={offers}
+                  onSelectOffer={(off) => {
+                    setSelectedOffer(off);
+                    setCurrentScreen('detalhe-oferta');
+                  }}
+                  onConfirmBooking={handleConfirmBooking}
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
@@ -411,6 +463,27 @@ export const App: React.FC = () => {
             <BottomNav
               currentScreen={currentScreen}
               onSelectScreen={(screen) => setCurrentScreen(screen)}
+            />
+
+            {/* Profile Drawer Component */}
+            <ProfileDrawer
+              isOpen={isProfileDrawerOpen}
+              onClose={() => setIsProfileDrawerOpen(false)}
+              onNavigateToAgenda={() => setCurrentScreen('agenda')}
+              onSwitchToPartnerMode={() => {
+                setAppMode('partner');
+                setPartnerScreen('partner-agenda');
+              }}
+              onOpenInterestConfig={() => setIsInterestModalOpen(true)}
+              currentSegment={userSegment}
+              onSelectSegment={handleSelectSegment}
+            />
+
+            {/* Interest Onboarding / Personalization Modal */}
+            <InterestOnboardingModal
+              isOpen={isInterestModalOpen}
+              onClose={() => setIsInterestModalOpen(false)}
+              onSavePreferences={handleSaveInterestPreferences}
             />
           </div>
         )}

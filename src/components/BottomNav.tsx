@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, MapPin, Calendar, User } from 'lucide-react';
+import { Radio, Search, MapPin, Calendar } from 'lucide-react';
 import { ScreenId } from '../types';
 
 interface BottomNavProps {
@@ -12,14 +12,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onSelectScreen,
 }) => {
   const tabs = [
-    { id: 'home' as ScreenId, label: 'Início', icon: Home },
+    { id: 'home' as ScreenId, label: 'Radar', icon: Radio },
+    { id: 'busca' as ScreenId, label: 'Buscar', icon: Search },
     { id: 'mapa' as ScreenId, label: 'Mapa', icon: MapPin },
     { id: 'agenda' as ScreenId, label: 'Agenda', icon: Calendar },
-    { id: 'perfil' as ScreenId, label: 'Perfil', icon: User },
   ];
 
   return (
-    <nav className="flex-shrink-0 w-full h-16 bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-4 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+    <nav className="flex-shrink-0 w-full h-16 bg-[#151A1E]/95 backdrop-blur-md border-t border-slate-800/90 px-4 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.5)]">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive =
@@ -33,12 +33,21 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             key={tab.id}
             id={`nav-${tab.id}`}
             onClick={() => onSelectScreen(tab.id)}
-            className={`flex flex-col items-center justify-center gap-1 py-1.5 px-3 transition active:scale-95 ${
-              isActive ? 'text-[#20C933]' : 'text-slate-400 hover:text-slate-600'
+            className={`flex flex-col items-center justify-center gap-1 py-1 px-3 transition active:scale-95 ${
+              isActive ? 'text-[#20C933]' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
-            <span className={`text-[10px] ${isActive ? 'font-bold' : 'font-medium'}`}>
+            <div className="relative">
+              <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
+              {tab.id === 'home' && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#20C933] animate-pulse" />
+              )}
+            </div>
+            <span
+              className={`text-[10px] tracking-wide font-['Poppins'] ${
+                isActive ? 'font-black text-[#20C933]' : 'font-medium'
+              }`}
+            >
               {tab.label}
             </span>
           </button>

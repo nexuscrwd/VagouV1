@@ -87,10 +87,10 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
             <p className="text-xs text-slate-500 mt-1">Distância: {offer.distance} • {offer.neighborhood}</p>
           </div>
 
-          {/* Horário da Reserva Section */}
+          {/* Horário do Agendamento Section */}
           <div className="pt-2">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-800 mb-2">
-              HORÁRIO DA RESERVA
+              HORÁRIO DO AGENDAMENTO
             </h3>
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-2.5 text-center">
@@ -125,8 +125,8 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
                 </span>
               </div>
               <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 text-xs font-semibold">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Reserva protegida</span>
+                <ShieldCheck className="w-4 h-4 text-[#20C933]" />
+                <span>Agendamento protegido</span>
               </div>
             </div>
           </div>
@@ -135,11 +135,11 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
         {/* CTA & Cancellation Policy */}
         <div className="pt-6 space-y-3">
           <button
-            id="btn-reservar-agora"
+            id="btn-agendar-agora"
             onClick={() => onConfirmBooking(offer)}
-            className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-sm rounded-lg transition shadow-md shadow-emerald-600/20 uppercase tracking-wider"
+            className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-slate-950 font-black text-sm rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider font-['Poppins']"
           >
-            RESERVAR AGORA
+            AGENDAR AGORA
           </button>
 
           <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
