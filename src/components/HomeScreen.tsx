@@ -181,16 +181,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {/* Profile Avatar Button */}
             <button
               onClick={onOpenProfileDrawer}
-              className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-[#20C933]/50 hover:ring-[#20C933] transition-all cursor-pointer flex-shrink-0"
+              className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-[#20C933]/50 hover:ring-[#20C933] transition-all cursor-pointer flex-shrink-0 flex items-center justify-center"
               title="Meu Perfil & Configurações"
             >
               <img
                 src={userAvatarUrl}
                 alt={userName}
-                className="w-7 h-7 rounded-full object-cover"
+                className="w-full h-full object-cover rounded-full"
                 referrerPolicy="no-referrer"
               />
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#20C933] border-2 border-[#151A1E]" />
+              <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-[#20C933] border-2 border-[#151A1E]" />
             </button>
           </div>
         </div>

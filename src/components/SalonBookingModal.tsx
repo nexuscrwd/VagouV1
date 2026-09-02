@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, Calendar, Clock, User, CheckCircle2, ChevronLeft, ChevronRight, 
   Sparkles, Star, Scissors, ArrowLeft, Building2, MapPin
@@ -43,7 +43,7 @@ interface SalonBookingModalProps {
   }) => void;
 }
 
-type Step = 'date' | 'professional' | 'time' | 'confirmation';
+type Step = 'date' | 'time' | 'confirmation';
 
 export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   isOpen,
@@ -56,7 +56,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   baseOffer,
   onConfirmAppointment,
 }) => {
-  // Step state: 'date' -> 'professional' -> 'time' -> 'confirmation'
+  // Step state: 'date' (Calendar + Pros) -> 'time' (Slots) -> 'confirmation' (Service + Summary)
   const [currentStep, setCurrentStep] = useState<Step>('date');
 
   // 1. Selected Service State
@@ -86,7 +86,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   });
 
   const [selectedDateIso, setSelectedDateIso] = useState<string>(() => {
-    // Default to today if open, or tomorrow
     const d = new Date();
     if (d.getDay() === 0) d.setDate(d.getDate() + 1); // Skip Sunday if today is Sunday
     return d.toISOString().split('T')[0];
@@ -99,6 +98,20 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [timePeriodFilter, setTimePeriodFilter] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos');
 
+  // Sync state when modal opens or initialService changes
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStep('date');
+      setSelectedTimeSlot(null);
+      setSelectedProfessional('any');
+      if (initialService) {
+        setSelectedService(initialService);
+      } else if (services.length > 0) {
+        setSelectedService(services[0]);
+      }
+    }
+  }, [isOpen, initialService, services]);
+
   // Monthly Calendar Generation
   const monthData = useMemo(() => {
     const year = currentViewMonth.getFullYear();
@@ -109,10 +122,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
     const monthNameFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
     const monthLabel = monthNameFormatter.format(currentViewMonth);
-
-    // Max limit is 60 days from today
-    const maxDateLimit = new Date(today);
-    maxDateLimit.setDate(maxDateLimit.getDate() + 60);
 
     const daysGrid: Array<{
       dayNumber: number | null;
@@ -134,10 +143,9 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
       const iso = dateObj.toISOString().split('T')[0];
       const isPast = dateObj < today;
-      const isTooFar = dateObj > maxDateLimit;
       const isSunday = dateObj.getDay() === 0;
 
-      const isDisabled = isPast || isTooFar || isSunday;
+      const isDisabled = isPast || isSunday;
       const isToday = dateObj.getTime() === today.getTime();
 
       daysGrid.push({
@@ -161,7 +169,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const handlePrevMonth = () => {
     const prev = new Date(currentViewMonth);
     prev.setMonth(prev.getMonth() - 1);
-    // Don't allow going before current month
     if (prev.getFullYear() < today.getFullYear() || (prev.getFullYear() === today.getFullYear() && prev.getMonth() < today.getMonth())) {
       return;
     }
@@ -171,10 +178,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const handleNextMonth = () => {
     const next = new Date(currentViewMonth);
     next.setMonth(next.getMonth() + 1);
-    // Limit to 2 months out
-    const maxMonth = new Date(today);
-    maxMonth.setMonth(maxMonth.getMonth() + 2);
-    if (next > maxMonth) return;
     setCurrentViewMonth(next);
   };
 
@@ -194,7 +197,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
       const hash = `${selectedDateIso}-${slot.time}-${selectedProfessional}`
         .split('')
         .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const isOccupied = hash % 5 === 0; // ~20% realistic occupied rate
+      const isOccupied = hash % 5 === 0;
       return {
         ...slot,
         available: !isOccupied,
@@ -228,6 +231,12 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const resolvedProfessionalName = activeProfObj?.name || (professionals[0]?.name ?? 'Equipe do Salão');
   const resolvedProfessionalAvatar = activeProfObj?.avatar || professionals[0]?.avatar;
 
+  const handleSelectProfessionalAndAdvance = (profName: string) => {
+    setSelectedProfessional(profName);
+    setSelectedTimeSlot(null);
+    setCurrentStep('time');
+  };
+
   const handleConfirmFinal = () => {
     if (!selectedTimeSlot) return;
 
@@ -259,8 +268,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               {currentStep !== 'date' ? (
                 <button
                   onClick={() => {
-                    if (currentStep === 'professional') setCurrentStep('date');
-                    else if (currentStep === 'time') setCurrentStep('professional');
+                    if (currentStep === 'time') setCurrentStep('date');
                     else if (currentStep === 'confirmation') setCurrentStep('time');
                   }}
                   className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
@@ -272,10 +280,9 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 <Calendar className="w-4 h-4 text-[#20C933]" />
               )}
               <h2 className="text-base font-bold text-white font-['Poppins']">
-                {currentStep === 'date' && '1. Selecione o Dia'}
-                {currentStep === 'professional' && '2. Escolha o Profissional'}
-                {currentStep === 'time' && '3. Escolha o Horário'}
-                {currentStep === 'confirmation' && '4. Confirmação do Atendimento'}
+                {currentStep === 'date' && '1. Escolha a Data e o Profissional'}
+                {currentStep === 'time' && '2. Escolha o Horário'}
+                {currentStep === 'confirmation' && '3. Confirmação do Atendimento'}
               </h2>
             </div>
 
@@ -289,14 +296,13 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           </div>
 
           {/* Stepper Indicator */}
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5">
             {[
-              { key: 'date', label: 'Data' },
-              { key: 'professional', label: 'Profissional' },
-              { key: 'time', label: 'Horário' },
-              { key: 'confirmation', label: 'Confirmação' },
+              { key: 'date', label: '1. Dia & Profissional' },
+              { key: 'time', label: '2. Horário' },
+              { key: 'confirmation', label: '3. Confirmação' },
             ].map((st, idx) => {
-              const stepOrder: Record<Step, number> = { date: 1, professional: 2, time: 3, confirmation: 4 };
+              const stepOrder: Record<Step, number> = { date: 1, time: 2, confirmation: 3 };
               const currentOrder = stepOrder[currentStep];
               const thisOrder = idx + 1;
               const isPassed = thisOrder < currentOrder;
@@ -325,10 +331,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5">
 
           {/* ============================================================ */}
-          {/* ETAPA 1: CALENDÁRIO MENSAL */}
+          {/* ETAPA 1: CALENDÁRIO MENSAL + CARDS DOS PROFISSIONAIS LOGO ABAIXO */}
           {/* ============================================================ */}
           {currentStep === 'date' && (
             <div className="space-y-4 animate-in fade-in duration-200">
@@ -346,7 +352,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     {monthData.monthLabel}
                   </h3>
                   <span className="text-[10px] text-emerald-400 font-bold">
-                    Selecione um dia disponível
+                    Selecione o dia do mês
                   </span>
                 </div>
 
@@ -381,8 +387,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       onClick={() => {
                         if (item.isoString) {
                           setSelectedDateIso(item.isoString);
-                          setSelectedTimeSlot(null);
-                          setCurrentStep('professional'); // Advance directly to professionals
                         }
                       }}
                       className={`h-11 rounded-xl font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
@@ -405,87 +409,48 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 })}
               </div>
 
-              {/* Dica Informativa */}
-              <div className="p-3 bg-slate-900/80 rounded-2xl border border-slate-800 flex items-center justify-between text-xs text-slate-300">
-                <span className="text-slate-400">Dia selecionado:</span>
-                <span className="font-bold text-emerald-400 uppercase">{fullDateFormatted}</span>
-              </div>
-            </div>
-          )}
-
-          {/* ============================================================ */}
-          {/* ETAPA 2: ESCOLHA DO PROFISSIONAL */}
-          {/* ============================================================ */}
-          {currentStep === 'professional' && (
-            <div className="space-y-3 animate-in fade-in duration-200">
-              {/* Banner do Dia Escolhido */}
-              <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-2xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-emerald-400 uppercase font-bold block">Dia Selecionado</span>
-                  <h4 className="text-xs font-bold text-white capitalize">{fullDateFormatted}</h4>
+              {/* SEÇÃO DOS PROFISSIONAIS PARA O DIA SELECIONADO */}
+              <div className="pt-3 border-t border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-white font-['Poppins'] flex items-center gap-1.5 uppercase tracking-wider">
+                    <User className="w-4 h-4 text-[#20C933]" />
+                    <span>Profissionais para {fullDateFormatted}:</span>
+                  </h4>
+                  <span className="text-[10px] text-emerald-400 font-bold">Clique para ver horários</span>
                 </div>
+
+                {/* Card 1: Qualquer Profissional */}
                 <button
-                  onClick={() => setCurrentStep('date')}
-                  className="text-xs font-bold text-emerald-400 hover:underline px-2 py-1 rounded bg-slate-900 border border-emerald-500/30 cursor-pointer"
+                  type="button"
+                  onClick={() => handleSelectProfessionalAndAdvance('any')}
+                  className="w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer bg-slate-900 border-slate-800 hover:border-[#20C933] hover:bg-slate-850 group"
                 >
-                  Alterar Data
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-[#20C933] group-hover:bg-[#20C933] group-hover:text-slate-950 transition">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-1.5 group-hover:text-emerald-300 transition">
+                        <span>Qualquer Profissional</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          Mais Horários
+                        </span>
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Encontra o primeiro horário livre disponível na equipe.
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#20C933] transition" />
                 </button>
-              </div>
 
-              <p className="text-xs text-slate-400 font-semibold">
-                Selecione quem fará seu atendimento neste dia:
-              </p>
-
-              {/* Opção 1: Qualquer Profissional */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedProfessional('any');
-                  setSelectedTimeSlot(null);
-                  setCurrentStep('time');
-                }}
-                className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer ${
-                  selectedProfessional === 'any'
-                    ? 'bg-emerald-950/70 border-[#20C933] text-white shadow-md'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850 hover:border-slate-700'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-600/30 border border-emerald-500/50 flex items-center justify-center text-[#20C933]">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
-                      <span>Qualquer Profissional</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Recomendado
-                      </span>
-                    </h4>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Encontra o primeiro horário livre disponível com qualquer barbeiro/cabeleireiro.
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-slate-500" />
-              </button>
-
-              {/* Lista de Profissionais Específicos */}
-              {professionals.map((prof, idx) => {
-                const isSelected = selectedProfessional === prof.name;
-                return (
+                {/* Lista de Profissionais da Equipe */}
+                {professionals.map((prof, idx) => (
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => {
-                      setSelectedProfessional(prof.name);
-                      setSelectedTimeSlot(null);
-                      setCurrentStep('time');
-                    }}
-                    className={`w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer ${
-                      isSelected
-                        ? 'bg-emerald-950/70 border-[#20C933] text-white shadow-md'
-                        : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850 hover:border-slate-700'
-                    }`}
+                    onClick={() => handleSelectProfessionalAndAdvance(prof.name)}
+                    className="w-full p-3.5 rounded-2xl border text-left flex items-center justify-between transition cursor-pointer bg-slate-900 border-slate-800 hover:border-[#20C933] hover:bg-slate-850 group"
                   >
                     <div className="flex items-center gap-3">
                       <img
@@ -495,41 +460,45 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         referrerPolicy="no-referrer"
                       />
                       <div>
-                        <h4 className="text-sm font-bold text-white">{prof.name}</h4>
+                        <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition">{prof.name}</h4>
                         <p className="text-xs text-slate-400">{prof.role}</p>
                         <div className="flex items-center gap-1 text-xs text-amber-400 mt-0.5">
                           <Star className="w-3 h-3 fill-amber-400" />
                           <span className="font-bold">{prof.rating.toFixed(1)}</span>
-                          <span className="text-slate-500 text-[11px]">• Vagas livres</span>
+                          <span className="text-slate-500 text-[11px]">• Horários disponíveis</span>
                         </div>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-slate-500" />
+                    <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-[#20C933] transition" />
                   </button>
-                );
-              })}
+                ))}
+              </div>
             </div>
           )}
 
           {/* ============================================================ */}
-          {/* ETAPA 3: HORÁRIOS DISPONÍVEIS */}
+          {/* ETAPA 2: HORÁRIOS DISPONÍVEIS */}
           {/* ============================================================ */}
           {currentStep === 'time' && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              {/* Banner de Contexto (Dia + Profissional) */}
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
-                <div className="space-y-0.5">
-                  <span className="text-slate-400 block">Atendimento com:</span>
-                  <span className="font-bold text-white text-sm">
-                    {selectedProfessional === 'any' ? 'Qualquer Profissional Disponível' : selectedProfessional}
-                  </span>
-                  <span className="text-emerald-400 font-medium block capitalize">
-                    {fullDateFormatted}
-                  </span>
+              {/* Banner do Dia e Profissional */}
+              <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between text-xs">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <User className="w-3.5 h-3.5 text-[#20C933]" />
+                    <span>Profissional:</span>
+                    <strong className="text-white">
+                      {selectedProfessional === 'any' ? 'Qualquer Profissional Disponível' : selectedProfessional}
+                    </strong>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold capitalize">
+                    <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
+                    <span>{fullDateFormatted}</span>
+                  </div>
                 </div>
                 <button
-                  onClick={() => setCurrentStep('professional')}
-                  className="text-xs font-bold text-emerald-400 hover:underline px-2 py-1 rounded bg-slate-950 border border-slate-800 cursor-pointer"
+                  onClick={() => setCurrentStep('date')}
+                  className="text-xs font-bold text-emerald-400 hover:underline px-2.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer"
                 >
                   Alterar
                 </button>
@@ -570,7 +539,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       disabled={!isAvailable}
                       onClick={() => {
                         setSelectedTimeSlot(slot.time);
-                        setCurrentStep('confirmation'); // Advance to final confirmation
+                        setCurrentStep('confirmation'); // Advance to final confirmation screen
                       }}
                       className={`py-3 px-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
                         isSelected
@@ -590,20 +559,20 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           )}
 
           {/* ============================================================ */}
-          {/* ETAPA 4: CONFIRMAÇÃO & INFORMAÇÕES DO SERVIÇO */}
+          {/* ETAPA 3: CONFIRMAÇÃO & DETALHES DO SERVIÇO */}
           {/* ============================================================ */}
           {currentStep === 'confirmation' && (
             <div className="space-y-4 animate-in fade-in duration-200">
               
-              {/* Card de Detalhes do Serviço (Aparece na confirmação) */}
+              {/* Card de Detalhes do Serviço (Aparece na tela de confirmação) */}
               <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Scissors className="w-4 h-4 text-[#20C933]" />
-                    <span>Serviço Selecionado</span>
+                    <span>Serviço do Atendimento</span>
                   </span>
 
-                  {/* Trocar Serviço */}
+                  {/* Selector de troca de serviço */}
                   <select
                     value={selectedService.id}
                     onChange={(e) => {
@@ -629,7 +598,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">{selectedService.description}</p>
                     <span className="text-xs text-slate-300 font-medium flex items-center gap-1 mt-2">
                       <Clock className="w-3.5 h-3.5 text-emerald-400" />
-                      Duração aproximada: {selectedService.duration}
+                      Duração estimada: {selectedService.duration}
                     </span>
                   </div>
 
@@ -639,11 +608,11 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 </div>
               </div>
 
-              {/* Resumo Completo do Agendamento */}
+              {/* Resumo Completo da Reserva */}
               <div className="p-4 bg-slate-900 border border-emerald-500/30 rounded-2xl space-y-2.5">
                 <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-[#20C933]" />
-                  <span>Resumo da Reserva</span>
+                  <span>Resumo do Agendamento</span>
                 </h4>
 
                 <div className="text-xs text-slate-300 space-y-1.5 pt-2 border-t border-slate-800">
@@ -684,28 +653,8 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
         </div>
 
-        {/* Footer do Modal com Botão de Ação */}
+        {/* Footer do Modal com Botão de Ação Final */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-3 sticky bottom-0 z-10">
-          {currentStep === 'date' && (
-            <button
-              onClick={() => setCurrentStep('professional')}
-              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
-            >
-              <span>Avançar para Escolher Profissional</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-
-          {currentStep === 'professional' && (
-            <button
-              onClick={() => setCurrentStep('time')}
-              className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
-            >
-              <span>Avançar para Horários Disponíveis</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-
           {currentStep === 'time' && (
             <button
               disabled={!selectedTimeSlot}
@@ -716,7 +665,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
               }`}
             >
-              <span>{selectedTimeSlot ? `Continuar para Confirmação` : 'Escolha um Horário'}</span>
+              <span>{selectedTimeSlot ? `Avançar para Confirmação` : 'Selecione um Horário Acima'}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           )}
@@ -730,8 +679,15 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               <span>Confirmar Agendamento</span>
             </button>
           )}
+
+          {currentStep === 'date' && (
+            <div className="text-[11px] text-slate-400 text-center w-full">
+              Selecione o dia e clique em um profissional para ver os horários.
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
+

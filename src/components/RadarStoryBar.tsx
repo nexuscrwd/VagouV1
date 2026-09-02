@@ -66,7 +66,7 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({
 
   return (
     <div className="w-full py-2.5 px-4 overflow-x-auto no-scrollbar">
-      <div className="flex items-center gap-3.5 min-w-max">
+      <div className="flex items-start gap-3.5 min-w-max">
         {/* Radar Indicator / Reset Filter Button */}
         <button
           onClick={() => onSelectSalon?.(null)}
@@ -99,7 +99,7 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({
             )}
           </div>
           <span
-            className={`text-[10px] font-black mt-1 uppercase tracking-tight font-['Poppins'] ${
+            className={`text-[10px] font-black mt-1.5 uppercase tracking-tight font-['Poppins'] ${
               selectedSalonFilter === null ? 'text-[#20C933]' : 'text-slate-400'
             }`}
           >

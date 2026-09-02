@@ -15,6 +15,25 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Ajuste de Alinhamento e Proporção do Avatar e Botões do Cabeçalho
+- **Tipo:** `[Fix]` / `[UI]` / `[Clean Code]`
+- **Motivo:** Correção do desalinhamento e proporção do botão de avatar do perfil no cabeçalho superior (o container e a imagem interna possuíam dimensões assimétricas de 32px x 32px e 28px x 28px sem centralização flex), e ajuste na barra de Stories (`RadarStoryBar`) para alinhamento uniforme pelo topo (`items-start`).
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Padronizado a dimensão do botão de avatar para 36px x 36px (`w-9 h-9`) igual ao botão de busca, com a imagem ajustada para preenchimento total e centralizado (`w-full h-full object-cover`).
+  - `src/components/RadarStoryBar.tsx`: Ajustado o container da barra de stories para `items-start` e alinhado a margem do rótulo *"Geral"*.
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Ajuste Fino do Agendamento: Calendário Mensal com Profissionais em Exibição Direta
+- **Tipo:** `[Refactor]` / `[UX]` / `[Clean Code]`
+- **Motivo:** Ajuste no modal de agendamento para responder com precisão à experiência solicitada: na **1ª Etapa**, ao selecionar o dia no Calendário Mensal, a lista de profissionais (com o card *"Qualquer Profissional"*) aparece em destaque logo abaixo da grade para visualização imediata. Ao clicar no card do profissional, o modal avança diretamente para a **2ª Etapa (Horários Disponíveis)**, e a seleção do horário leva à **3ª Etapa (Confirmação e Detalhes do Serviço)**.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Unificado a seleção de data e profissional em uma única etapa inicial integrada, adicionado hook de reset automático dos estados ao reabrir o modal, e estruturado em 3 etapas intuitivas (`date & pros` -> `time` -> `confirmation`).
+- **Resumo Técnico:** Linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
 ### [2026-09-02] — Remoção do Botão Superior "Agendar Horário na Agenda" no Perfil do Salão
 - **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
 - **Motivo:** Remoção do botão redundante de agendamento no topo do perfil do salão conforme seleção no modo Focus do usuário, mantendo os atalhos limpos de *"WhatsApp Direto"* e *"Como Chegar"* e os agendamentos concentrados no cardápio de serviços e avisos.
