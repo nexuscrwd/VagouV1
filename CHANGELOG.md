@@ -15,6 +15,44 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Implementação do Sistema de Agendamento da Agenda do Salão (Até 60 Dias)
+- **Tipo:** `[Feat]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou um fluxo completo de agendamento na seção de serviços do salão/profissional: ao clicar em "Agendar", o cliente é direcionado à agenda do estabelecimento, onde escolhe a data (com restrição máxima de até 2 meses / 60 dias) e, sucessivamente, um horário disponível.
+- **Arquivos Criados & Modificados:**
+  - `src/components/SalonBookingModal.tsx`: Criado o modal/componente de agendamento interativo com seleção de serviço, escolha de profissional (ou *"Qualquer um"* para maior flexibilidade de horários), carrossel de datas limitado a 60 dias a partir de hoje (com bloqueio de domingos/dias fechados e indicador do dia atual), grade de horários disponíveis divididos por turnos (Manhã, Tarde, Noite), resumo de reserva e confirmação.
+  - `src/components/SalonProfileView.tsx`: Integração do `SalonBookingModal`, botão rápido *"📅 Agendar Horário na Agenda (Até 60 dias)"*, gatilhos em cada item do cardápio de serviços e no estado de vagas esgotadas para direcionar diretamente à agenda.
+- **Resumo Técnico:** Clean code total sem imports mortos ou variáveis zumbis, tipagem estrita com TypeScript, linter (`tsc --noEmit`) 0 erros e compilação de produção (`npm run build`) 100% verificada.
+
+---
+
+### [2026-09-02] — Redução Adicional da Altura do Cabeçalho do Perfil do Salão
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou diminuir ainda mais a altura do cabeçalho da capa do salão/profissional para torná-lo ultracompacto e priorizar o conteúdo e serviços na tela.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Altura da capa reduzida para `h-24 sm:h-28` com botões e espaçamentos otimizados.
+- **Resumo Técnico:** Linter 0 erros, compilação de produção verificada.
+
+---
+
+### [2026-09-02] — Ajuste no Cabeçalho do Perfil do Salão (Remoção do Badge de Vagas e Redução de Altura)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou no print do perfil do salão/profissional a remoção do badge flutuante "2 vagas abertas agora" do cabeçalho da capa (pois essa informação pertence à lista/cardápio de serviços) e a redução da altura do cabeçalho da capa, que estava muito alto.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o badge "vagas abertas agora" da foto de capa e reduzida a altura do cabeçalho de `h-56/h-64` para `h-36/h-40`, tornando o topo compacto e dando visibilidade imediata às informações e serviços.
+- **Resumo Técnico:** Clean code sem sobras, linter (`tsc --noEmit`) 0 erros e build de produção validado.
+
+---
+
+### [2026-09-02] — Restauração Integral do App ao Estado Original
+- **Tipo:** `[Rollback]` / `[UI]` / `[Clean Code]`
+- **Motivo:** Restauração total de todos os elementos e componentes originais do app (Barra de Stories no cabeçalho `RadarStoryBar`, badges informativos dos cards, perfil de salão completo `SalonProfileView` e feed de vagas).
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Barra de stories superior preservada e integrada.
+  - `src/components/RadarOfferCard.tsx`: Todos os dados e overlays originais mantidos intactos.
+- **Resumo Técnico:** Estado original 100% restaurado, linter (`tsc --noEmit`) 0 erros e build de produção validado.
+
+---
+
 ### [2026-09-02] — Implementação e Ativação da Página/Seção do Estabelecimento/Profissional (SalonProfileView)
 - **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Clean Code]`
 - **Motivo:** O usuário solicitou que ao clicar no avatar do salão/profissional na barra de stories ou no card do feed, abra-se a página/seção dedicada do estabelecimento ocupando toda a seção principal do aplicativo, mantendo o cabeçalho superior unificado e incluindo um cabeçalho próprio com foto de capa, dados de contato, vagas imediatas, cardápio de serviços, equipe e avaliações.

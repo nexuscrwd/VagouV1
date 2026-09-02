@@ -245,7 +245,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             </div>
 
-            {/* Top Stories Bar */}
+            {/* Carrossel de Ícones de Feeds / Stories dos Salões */}
             <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
               <RadarStoryBar
                 offers={offers}

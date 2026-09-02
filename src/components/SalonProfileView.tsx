@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, Star, MapPin, Clock, ShieldCheck, Phone, MessageSquare, 
-  Share2, Heart, Zap, Sparkles, CheckCircle2, ChevronRight, Scissors, 
+  ArrowLeft, Star, MapPin, Clock, ShieldCheck, MessageSquare, 
+  Share2, Heart, Zap, CheckCircle2, Scissors, 
   Calendar, Award, Coffee, Wifi, Car, Wind
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
+import { SalonBookingModal, CatalogServiceItem } from './SalonBookingModal';
 
 interface SalonProfileViewProps {
   salonName: string;
@@ -26,6 +27,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   onToggleFavorite,
 }) => {
   const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'avaliacoes'>('vagas');
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
+  const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
 
   // Filter all offers belonging to this salon
   const salonOffers = offers.filter((o) => o.salonName === salonName);
@@ -92,7 +95,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   };
 
   // Full catalog of services for this salon
-  const catalogServices = [
+  const catalogServices: CatalogServiceItem[] = [
     {
       id: 'srv-1',
       title: 'Corte Degradê / Fade Moderno',
@@ -135,10 +138,43 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     }
   ];
 
+  const handleOpenBooking = (srv?: CatalogServiceItem) => {
+    setBookingService(srv || catalogServices[0]);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleConfirmSchedule = (bookingData: {
+    service: CatalogServiceItem;
+    professional: string;
+    professionalAvatar?: string;
+    dateIso: string;
+    dateFormatted: string;
+    timeSlot: string;
+    salonName: string;
+    salonAddress: string;
+    price: number;
+  }) => {
+    if (primaryOffer) {
+      onDirectBook({
+        ...primaryOffer,
+        id: `sched-${Date.now()}`,
+        salonName: bookingData.salonName,
+        serviceTitle: bookingData.service.title,
+        price: bookingData.price,
+        duration: bookingData.service.duration,
+        professionalName: bookingData.professional,
+        professionalAvatar: bookingData.professionalAvatar || primaryOffer.professionalAvatar,
+        timeSlot: `${bookingData.dateFormatted} às ${bookingData.timeSlot}`,
+        dayLabel: bookingData.dateFormatted,
+        serviceCategory: (bookingData.service.category.toLowerCase().includes('barba') ? 'barba' : 'cabelo') as any,
+      });
+    }
+  };
+
   return (
     <div className="w-full bg-slate-950 text-slate-100 min-h-screen pb-24">
-      {/* 1. Header Próprio do Estabelecimento / Capa com Ações */}
-      <div className="relative w-full h-56 sm:h-64 bg-slate-900 overflow-hidden">
+      {/* 1. Header Próprio do Estabelecimento / Capa Super Compacta */}
+      <div className="relative w-full h-24 sm:h-28 bg-slate-900 overflow-hidden">
         <img
           src={salonInfo.coverImage}
           alt={salonInfo.name}
@@ -148,22 +184,22 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/60" />
 
         {/* Top Control Buttons */}
-        <div className="absolute top-4 inset-x-4 flex items-center justify-between z-20">
+        <div className="absolute top-2.5 inset-x-3 flex items-center justify-between z-20">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-white hover:bg-slate-800 transition text-xs font-bold shadow-lg active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-white hover:bg-slate-800 transition text-[11px] font-bold shadow-lg active:scale-95 cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+            <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
             <span>Voltar ao Feed</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => onToggleFavorite?.(salonInfo.name)}
-              className="w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
               aria-label="Favoritar salão"
             >
-              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
             </button>
             <button
               onClick={() => {
@@ -171,28 +207,20 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   navigator.share({ title: salonInfo.name, url: window.location.href }).catch(() => {});
                 }
               }}
-              className="w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
               aria-label="Compartilhar salão"
             >
-              <Share2 className="w-4 h-4 text-white" />
+              <Share2 className="w-3.5 h-3.5 text-white" />
             </button>
           </div>
         </div>
-
-        {/* Live Slot Status Pill */}
-        {salonOffers.length > 0 && (
-          <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-500/50 text-emerald-300 text-xs font-bold backdrop-blur-md shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-[#20C933] inline-block animate-pulse" />
-            <span>{salonOffers.length} {salonOffers.length === 1 ? 'vaga aberta agora' : 'vagas abertas agora'}</span>
-          </div>
-        )}
       </div>
 
       {/* 2. Informações Principais do Estabelecimento */}
-      <div className="px-4 -mt-10 relative z-20">
-        <div className="flex items-end gap-3.5">
+      <div className="px-4 -mt-5 relative z-20">
+        <div className="flex items-end gap-3">
           {/* Avatar com anel de destaque */}
-          <div className="relative w-20 h-20 rounded-2xl ring-4 ring-slate-950 overflow-hidden bg-slate-900 shadow-2xl flex-shrink-0">
+          <div className="relative w-16 h-16 rounded-xl ring-3 ring-slate-950 overflow-hidden bg-slate-900 shadow-xl flex-shrink-0">
             {salonInfo.avatar ? (
               <img
                 src={salonInfo.avatar}
@@ -201,26 +229,26 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-emerald-600 to-slate-900 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-full h-full bg-gradient-to-br from-emerald-600 to-slate-900 flex items-center justify-center text-white font-bold text-lg">
                 {salonInfo.name.slice(0, 2).toUpperCase()}
               </div>
             )}
-            <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-[#20C933] border-2 border-slate-950" />
+            <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-[#20C933] border-2 border-slate-950" />
           </div>
 
-          <div className="flex-1 min-w-0 pb-1">
+          <div className="flex-1 min-w-0 pb-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="text-lg sm:text-xl font-black text-white font-['Poppins'] leading-tight truncate">
+              <h1 className="text-base sm:text-lg font-black text-white font-['Poppins'] leading-tight truncate">
                 {salonInfo.name}
               </h1>
               {salonInfo.verified && (
-                <ShieldCheck className="w-4 h-4 text-[#20C933] flex-shrink-0" title="Estabelecimento Verificado" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" title="Estabelecimento Verificado" />
               )}
             </div>
 
-            <div className="flex items-center gap-2 mt-1 text-xs text-slate-300">
-              <span className="flex items-center gap-1 font-bold text-amber-400">
-                <Star className="w-3.5 h-3.5 fill-amber-400" />
+            <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-300">
+              <span className="flex items-center gap-0.5 font-bold text-amber-400">
+                <Star className="w-3 h-3 fill-amber-400" />
                 {salonInfo.rating.toFixed(1)}
               </span>
               <span className="text-slate-500">•</span>
@@ -247,26 +275,36 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
 
         {/* Botões de Ação Rápida */}
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          <a
-            href={`https://wa.me/5541998821140?text=Olá,%20vi%20o%20perfil%20do%20${encodeURIComponent(salonInfo.name)}%20no%20Vagou!`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition shadow-sm"
+        <div className="space-y-2 mt-3">
+          <button
+            onClick={() => handleOpenBooking()}
+            className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wider font-['Poppins'] transition cursor-pointer"
           >
-            <MessageSquare className="w-4 h-4 text-[#20C933]" />
-            <span>WhatsApp Direto</span>
-          </a>
+            <Calendar className="w-4 h-4 text-slate-950" />
+            <span>Agendar Horário na Agenda (Até 60 dias)</span>
+          </button>
 
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
-          >
-            <MapPin className="w-4 h-4 text-[#20C933]" />
-            <span>Como Chegar</span>
-          </a>
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href={`https://wa.me/5541998821140?text=Olá,%20vi%20o%20perfil%20do%20${encodeURIComponent(salonInfo.name)}%20no%20Vagou!`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold transition shadow-sm"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-[#20C933]" />
+              <span>WhatsApp Direto</span>
+            </a>
+
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#20C933]" />
+              <span>Como Chegar</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -374,7 +412,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800">
                 <Clock className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                 <p className="text-sm font-bold text-white">Sem vagas imediatas abertas no momento</p>
-                <p className="text-xs text-slate-400 mt-1">Consulte a aba de serviços abaixo para agendamento programado.</p>
+                <p className="text-xs text-slate-400 mt-1">Consulte a agenda do salão para agendar nos próximos 60 dias.</p>
+                <button
+                  onClick={() => handleOpenBooking()}
+                  className="mt-3.5 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center gap-1.5 mx-auto cursor-pointer"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-slate-950" />
+                  <span>Ver Agenda e Horários Livres</span>
+                </button>
               </div>
             )}
           </div>
@@ -383,15 +428,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         {/* ABA: TODOS OS SERVIÇOS */}
         {activeTab === 'servicos' && (
           <div className="space-y-3">
-            <h3 className="text-sm font-bold text-white font-['Poppins'] flex items-center gap-1.5">
-              <Scissors className="w-4 h-4 text-[#20C933]" />
-              <span>Cardápio Completo de Atendimentos</span>
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white font-['Poppins'] flex items-center gap-1.5">
+                <Scissors className="w-4 h-4 text-[#20C933]" />
+                <span>Cardápio Completo de Atendimentos</span>
+              </h3>
+              <span className="text-[11px] text-emerald-400 font-semibold">Agendamento em até 60 dias</span>
+            </div>
 
             {catalogServices.map((srv) => (
               <div
                 key={srv.id}
-                className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-slate-700 transition"
+                onClick={() => handleOpenBooking(srv)}
+                className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/50 transition cursor-pointer group"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -404,7 +453,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-white mt-1">{srv.title}</h4>
+                  <h4 className="text-sm font-bold text-white mt-1 group-hover:text-emerald-300 transition-colors">{srv.title}</h4>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">{srv.description}</p>
                 </div>
 
@@ -413,19 +462,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     R${srv.price.toFixed(0)}
                   </span>
                   <button
-                    onClick={() => {
-                      if (primaryOffer) {
-                        onDirectBook({
-                          ...primaryOffer,
-                          serviceTitle: srv.title,
-                          price: srv.price,
-                          duration: srv.duration,
-                        });
-                      }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenBooking(srv);
                     }}
-                    className="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-[#20C933] hover:text-slate-950 text-slate-200 text-[11px] font-bold rounded-lg transition cursor-pointer"
+                    className="mt-2 px-3 py-1.5 bg-emerald-950/80 hover:bg-[#20C933] hover:text-slate-950 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center gap-1"
                   >
-                    Agendar
+                    <Calendar className="w-3 h-3" />
+                    <span>Agendar</span>
                   </button>
                 </div>
               </div>
@@ -536,6 +580,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}
+      <SalonBookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        salonName={salonInfo.name}
+        salonAddress={salonInfo.address}
+        services={catalogServices}
+        professionals={salonInfo.professionals}
+        initialService={bookingService}
+        baseOffer={primaryOffer}
+        onConfirmAppointment={handleConfirmSchedule}
+      />
     </div>
   );
 };
