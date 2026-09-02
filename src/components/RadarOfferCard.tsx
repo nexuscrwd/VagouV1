@@ -64,7 +64,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
   return (
     <div
       onClick={() => onSelectOffer(offer)}
-      className="relative w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-lg group hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
+      className="relative z-0 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-lg group hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
     >
       {/* Media Canvas Container */}
       <div className="relative w-full h-[390px] sm:h-[440px] bg-slate-950 overflow-hidden">
@@ -92,7 +92,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 setIsMuted(!isMuted);
               }}
-              className="absolute bottom-24 right-4 z-20 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition shadow-md"
+              className="absolute bottom-24 right-4 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition shadow-md"
               aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -112,20 +112,20 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               <>
                 <button
                   onClick={prevCarouselImage}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
                   aria-label="Foto anterior"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={nextCarouselImage}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
                   aria-label="Próxima foto"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
 
-                <div className="absolute top-16 right-4 z-20 flex gap-1 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+                <div className="absolute top-16 right-4 z-10 flex gap-1 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
                   {gallery.map((_, idx) => (
                     <span
                       key={idx}
@@ -146,7 +146,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
         )}
 
         {/* Top Badges & Actions */}
-        <div className="absolute top-3 inset-x-3 z-20 flex items-start justify-between">
+        <div className="absolute top-3 inset-x-3 z-10 flex items-start justify-between">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-[11px] font-black shadow-lg">
               <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />

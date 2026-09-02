@@ -29,6 +29,7 @@ import { PartnerScheduleConfigScreen } from './components/PartnerScheduleConfigS
 import { PartnerProfileScreen } from './components/PartnerProfileScreen';
 import { PartnerPublishModal } from './components/PartnerPublishModal';
 import { PartnerBottomNav } from './components/PartnerBottomNav';
+import { SplashScreen } from './components/SplashScreen';
 import { scheduleAppointmentReminder } from './utils/notifications';
 
 export const App: React.FC = () => {
@@ -501,6 +502,9 @@ export const App: React.FC = () => {
           onPublishOffer={handlePublishOffer}
           initialPrefill={publishPrefill}
         />
+
+        {/* Official Brand Splash Screen (Manual de Identidade Visual) */}
+        <SplashScreen durationMs={1400} />
       </main>
     </div>
   );

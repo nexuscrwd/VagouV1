@@ -5,6 +5,7 @@ import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
 import { RadarStoryModal } from './RadarStoryModal';
 import { RadarOfferCard } from './RadarOfferCard';
+import { VagouLogo } from './VagouLogo';
 
 interface HomeScreenProps {
   onNavigateToOffers: (query?: string, category?: string) => void;
@@ -104,18 +105,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="flex flex-col min-h-full pb-24 bg-slate-950 text-slate-100">
-      {/* Top Header */}
-      <div className="px-4 pt-4 pb-2 bg-slate-950 border-b border-slate-900 sticky top-0 z-30">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-xs font-black text-emerald-400">
-                V
-              </div>
-            </div>
-            <div>
-              <span className="text-xs font-black text-white tracking-wide">VAGOU</span>
-            </div>
+      {/* Single Unified Sticky Top Bar (Header + Search + Categories) */}
+      <div className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-900 shadow-md">
+        {/* Logo, Partner Switcher & Location */}
+        <div className="px-4 pt-3 pb-2 flex items-center justify-between">
+          <div className="flex items-center">
+            <VagouLogo variant="header" size="sm" theme="dark" showTagline={false} />
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -140,15 +135,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* Search Input */}
-        <div className="mt-3 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar salão, corte, barba, unhas..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/50"
-          />
+        <div className="px-4 pb-2">
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar salão, corte, barba, unhas..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/50"
+            />
+          </div>
+        </div>
+
+        {/* Category Chips Bar */}
+        <div className="px-4 pb-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 ${
+                  isActive
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
+                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -165,26 +182,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Top Stories Bar */}
       <div className="border-b border-slate-900/80 bg-slate-950/80 backdrop-blur-sm">
         <RadarStoryBar offers={offers} onSelectStory={handleOpenStory} />
-      </div>
-
-      {/* Category Chips Bar */}
-      <div className="px-4 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-[98px] z-20 bg-slate-950/95 backdrop-blur-md border-b border-slate-900">
-        {categories.map((cat) => {
-          const isActive = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1 ${
-                isActive
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
-                  : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>{cat.label}</span>
-            </button>
-          );
-        })}
       </div>
 
       {/* Feed Strip: Urgency & Sorting */}

@@ -15,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { PartnerProfessional } from '../types';
+import { VagouLogo } from './VagouLogo';
 
 interface PartnerProfileScreenProps {
   professionals: PartnerProfessional[];
@@ -232,8 +233,9 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
         </div>
       </div>
 
-      <div className="pt-2 text-center">
-        <span className="text-[11px] text-slate-400">
+      <div className="pt-4 pb-2 flex flex-col items-center justify-center gap-1.5 text-center">
+        <VagouLogo variant="full" size="sm" theme="light" showTagline />
+        <span className="text-[10px] text-slate-400 font-medium">
           Vagou Parceiro v1.2.0 • Painel do Estabelecimento
         </span>
       </div>

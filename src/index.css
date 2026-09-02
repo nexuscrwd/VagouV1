@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer base {
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
 /* Hide scrollbars globally across all elements, browsers and devices (Instagram native style) */
 * {
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -16,6 +22,7 @@
 html, body, #root {
   -ms-overflow-style: none;
   scrollbar-width: none;
+  font-family: 'Poppins', sans-serif;
 }
 
 html::-webkit-scrollbar,
@@ -36,3 +43,17 @@ body::-webkit-scrollbar,
   scrollbar-width: none !important;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

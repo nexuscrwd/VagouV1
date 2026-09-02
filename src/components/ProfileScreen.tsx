@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { requestNotificationPermission, sendLocalNotification } from '../utils/notifications';
+import { VagouLogo } from './VagouLogo';
 
 interface ProfileScreenProps {
   onInstallClick?: () => void;
@@ -300,8 +301,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
       </div>
 
-      <div className="pt-2 text-center">
-        <span className="text-[11px] text-slate-400">Vagou App v1.2.0 • PWA Mobile</span>
+      <div className="pt-4 pb-2 flex flex-col items-center justify-center gap-1.5 text-center">
+        <VagouLogo variant="full" size="sm" theme="light" showTagline />
+        <span className="text-[10px] text-slate-400 font-medium">Versão 1.2.0 • PWA Mobile</span>
       </div>
     </div>
   );
