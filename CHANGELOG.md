@@ -15,6 +15,17 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-02] — Filtro Dinâmico do Feed ao Clicar no Story do Salão & Expansão de Mocks
+- **Tipo:** `[Feat]` / `[UX]` / `[UI]` / `[Data]`
+- **Motivo:** O usuário solicitou que o clique no ícone do Story no topo filtre dinamicamente o feed para exibir exclusivamente os serviços/vagas abertas daquele salão/profissional selecionado, com novos mocks ricos de serviços para demonstrar múltiplos itens por estabelecimento.
+- **Arquivos Impactados:**
+  - `src/data.ts` (Expansão dos mocks para múltiplos serviços por salão: *Salão X Prime*, *Barbearia Primo*, *Studio Mabe Nails*, *Don Studio Facial* e *Espaço Glamour VIP*)
+  - `src/components/RadarStoryBar.tsx` (Agrupamento único por salão com contagem de vagas, anel Verde Vagou `#20C933` no salão ativo, botão de "Todos / Feed Geral" e opacidade suave nos demais)
+  - `src/components/HomeScreen.tsx` (Controle de estado `selectedSalonFilter`, filtro reativo do feed e fita indicadora *"Filtrando por estabelecimento: [Nome]"* com botão *"Ver todos"*)
+- **Resumo Técnico:** Clean code total, tipagem estrita sem erros de TypeScript e compilação de produção 100% validada.
+
+---
+
 ### [2026-09-02] — Modal Centralizado Flutuante de Busca com Fundo Ofuscado (Opção A)
 - **Tipo:** `[Feat]` / `[UI]` / `[UX]` / `[Clean Code]`
 - **Motivo:** Implementação da Opção A: tela totalmente ofuscada (`backdrop-blur-xl bg-black/85`), input de busca centralizado flutuante com foco automático, placeholder minimalista (`Ex: Barba, Degradê...`) e tags rápidas de sugestão sem textos redundantes. O ícone de lupa funciona como botão de ação de busca e o botão "X" limpa o campo ou fecha a janela.

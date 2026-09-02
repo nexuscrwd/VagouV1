@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, MapPin, Search } from 'lucide-react';
+import { ArrowUpDown, Compass, Search, X } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
@@ -45,6 +45,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   userAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
+  const [selectedSalonFilter, setSelectedSalonFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'urgency' | 'distance' | 'price'>('urgency');
 
   const [isStoryModalOpen, setIsStoryModalOpen] = useState<boolean>(false);
@@ -85,11 +86,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const filteredAndSortedOffers = useMemo(() => {
     let list = [...offers];
 
-    // Segment filter
-    if (currentSegment === 'barbearia') {
-      list = list.filter((o) => o.serviceCategory === 'barba' || o.serviceCategory === 'cabelo');
-    } else if (currentSegment === 'salao') {
-      list = list.filter((o) => o.serviceCategory === 'unhas' || o.serviceCategory === 'beleza' || o.serviceCategory === 'estetica' || o.serviceCategory === 'cabelo');
+    // Filter by specific salon if selected via Story click
+    if (selectedSalonFilter) {
+      list = list.filter((o) => o.salonName === selectedSalonFilter);
+    } else {
+      // Apply segment filter when no specific salon is locked
+      if (currentSegment === 'barbearia') {
+        list = list.filter((o) => o.serviceCategory === 'barba' || o.serviceCategory === 'cabelo');
+      } else if (currentSegment === 'salao') {
+        list = list.filter((o) => o.serviceCategory === 'unhas' || o.serviceCategory === 'beleza' || o.serviceCategory === 'estetica' || o.serviceCategory === 'cabelo');
+      }
     }
 
     // Category filter
@@ -121,7 +127,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     });
 
     return list;
-  }, [offers, selectedCategory, sortBy, currentSegment]);
+  }, [offers, selectedCategory, sortBy, currentSegment, selectedSalonFilter]);
+
+  const handleToggleSalonFilter = (salonName: string) => {
+    setSelectedSalonFilter((prev) => (prev === salonName ? null : salonName));
+  };
+
+  const handleClearSalonFilter = () => {
+    setSelectedSalonFilter(null);
+  };
 
   const handleOpenStory = (index: number) => {
     setActiveStoryIndex(index);
@@ -226,9 +240,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           })}
         </div>
 
-        {/* Top Stories Bar (Fixed with header) */}
+        {/* Top Stories Bar with Integrated Salon Filter */}
         <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
-          <RadarStoryBar offers={offers} onSelectStory={handleOpenStory} />
+          <RadarStoryBar
+            offers={offers}
+            selectedSalonFilter={selectedSalonFilter}
+            onToggleSalonFilter={handleToggleSalonFilter}
+            onClearFilter={handleClearSalonFilter}
+            onSelectStory={handleOpenStory}
+          />
         </div>
       </div>
 
@@ -242,12 +262,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       )}
 
+      {/* Active Salon Filter Ribbon / Badge */}
+      {selectedSalonFilter && (
+        <div className="px-4 pt-3 pb-1">
+          <div className="p-2.5 rounded-xl bg-slate-900/95 border border-[#20C933]/40 flex items-center justify-between shadow-md">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#20C933] flex-shrink-0" />
+              <div className="min-w-0">
+                <div className="text-[11px] text-slate-400 font-medium">Filtrando por estabelecimento:</div>
+                <div className="text-xs font-bold text-white truncate font-['Poppins']">
+                  {selectedSalonFilter}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleClearSalonFilter}
+              className="ml-2 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-all active:scale-95 whitespace-nowrap border border-slate-700 font-['Poppins']"
+              title="Mostrar todas as vagas de todos os salões"
+            >
+              <X className="w-3.5 h-3.5 text-[#20C933]" />
+              <span>Ver todos</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Feed Strip: Urgency, Location Context & Sorting */}
       <div className="px-4 pt-3 pb-2 flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-[#20C933] inline-block" />
           <span className="font-extrabold text-white text-xs uppercase tracking-wider font-['Poppins']">
-            {filteredAndSortedOffers.length} VAGAS ABERTAS AGORA
+            {filteredAndSortedOffers.length} {filteredAndSortedOffers.length === 1 ? 'VAGA ABERTA' : 'VAGAS ABERTAS'}
           </span>
         </div>
 
@@ -284,19 +330,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 mb-3">
               <Compass className="w-8 h-8 text-[#20C933] animate-spin" />
             </div>
-            <h3 className="text-base font-bold text-white font-['Poppins']">Nenhuma vaga encontrada</h3>
+            <h3 className="text-base font-bold text-white font-['Poppins']">
+              Nenhuma vaga encontrada
+            </h3>
             <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-              Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.
+              {selectedSalonFilter
+                ? `Não há vagas ativas no momento para ${selectedSalonFilter} com a categoria selecionada.`
+                : 'Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.'}
             </p>
-            <button
-              onClick={() => {
-                setSelectedCategory('todos');
-                onSelectSegment?.('todos');
-              }}
-              className="mt-4 px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow"
-            >
-              Ver Todas as Vagas
-            </button>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              {selectedSalonFilter && (
+                <button
+                  onClick={handleClearSalonFilter}
+                  className="px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow"
+                >
+                  Ver Todos os Salões
+                </button>
+              )}
+              {selectedCategory !== 'todos' && (
+                <button
+                  onClick={() => setSelectedCategory('todos')}
+                  className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl border border-slate-700"
+                >
+                  Limpar Categorias
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
