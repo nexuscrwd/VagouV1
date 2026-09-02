@@ -27,28 +27,32 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
   const [progress, setProgress] = useState<number>(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const activeOffer = offers[currentIndex] || offers[0];
+  // Sync index and reset progress when opening modal or when initialIndex changes
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(Math.min(Math.max(0, initialIndex), Math.max(0, offers.length - 1)));
+      setProgress(0);
+    }
+  }, [isOpen, initialIndex, offers.length]);
+
   const STORY_DURATION_MS = 6000;
 
+  // Auto-advancing story timer
   useEffect(() => {
-    setCurrentIndex(initialIndex);
-    setProgress(0);
-  }, [initialIndex, isOpen]);
-
-  useEffect(() => {
-    if (!isOpen || isPaused) return;
+    if (!isOpen || isPaused || offers.length === 0) return;
 
     const interval = 50;
     const step = (interval / STORY_DURATION_MS) * 100;
 
     const timer = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
+        if (prev + step >= 100) {
           if (currentIndex < offers.length - 1) {
             setCurrentIndex((curr) => curr + 1);
             return 0;
           } else {
-            onClose();
+            // Close safely without state update during rendering
+            setTimeout(() => onClose(), 0);
             return 100;
           }
         }
@@ -59,6 +63,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
     return () => clearInterval(timer);
   }, [isOpen, isPaused, currentIndex, offers.length, onClose]);
 
+  // Video reset on story change
   useEffect(() => {
     setProgress(0);
     if (videoRef.current) {
@@ -71,6 +76,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
     e?.stopPropagation();
     if (currentIndex < offers.length - 1) {
       setCurrentIndex((prev) => prev + 1);
+      setProgress(0);
     } else {
       onClose();
     }
@@ -80,10 +86,14 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
     e?.stopPropagation();
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
+      setProgress(0);
     }
   };
 
-  if (!isOpen || !activeOffer) return null;
+  if (!isOpen || offers.length === 0) return null;
+
+  const activeOffer = offers[currentIndex] || offers[0];
+  if (!activeOffer) return null;
 
   const mediaLevel = activeOffer.mediaLevel || (activeOffer.imageUrl ? 2 : 1);
 

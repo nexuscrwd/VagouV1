@@ -11,6 +11,8 @@ interface RadarOfferCardProps {
   onSelectOffer: (offer: ServiceOffer) => void;
   onDirectBook: (offer: ServiceOffer) => void;
   onOpenStory?: () => void;
+  onFilterBySalon?: (salonName: string) => void;
+  onOpenSalonProfile?: (salonName: string) => void;
 }
 
 export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
@@ -20,6 +22,8 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
   onSelectOffer,
   onDirectBook,
   onOpenStory,
+  onFilterBySalon,
+  onOpenSalonProfile,
 }) => {
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
@@ -92,7 +96,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 setIsMuted(!isMuted);
               }}
-              className="absolute bottom-24 right-4 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition shadow-md"
+              className="absolute bottom-24 right-4 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition shadow-md cursor-pointer"
               aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -112,14 +116,14 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               <>
                 <button
                   onClick={prevCarouselImage}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
                   aria-label="Foto anterior"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={nextCarouselImage}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
                   aria-label="Próxima foto"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -173,7 +177,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                   e.stopPropagation();
                   onOpenStory();
                 }}
-                className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-slate-900 transition shadow-md"
+                className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-slate-900 transition shadow-md cursor-pointer"
                 title="Abrir em Tela Cheia (Story)"
               >
                 <Sparkles className="w-4 h-4 text-amber-300" />
@@ -185,7 +189,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 onToggleFavorite(offer.id);
               }}
-              className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md"
+              className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer"
               aria-label="Favoritar"
             >
               <Heart
@@ -219,10 +223,51 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
         {/* Bottom Bar Info & Action */}
         <div className="absolute bottom-3 inset-x-3.5 z-20 flex items-end justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 truncate">
+            {/* Salon Name with click-to-profile action */}
+            <div className="flex items-center gap-2">
+              {/* Mini Avatar / Click to open profile */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onOpenSalonProfile) {
+                    onOpenSalonProfile(offer.salonName);
+                  } else if (onFilterBySalon) {
+                    onFilterBySalon(offer.salonName);
+                  }
+                }}
+                className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-emerald-400 flex-shrink-0 bg-slate-800 hover:ring-2 hover:ring-white transition cursor-pointer"
+                title={`Ver perfil de ${offer.salonName}`}
+              >
+                {offer.professionalAvatar || offer.imageUrl ? (
+                  <img
+                    src={offer.professionalAvatar || offer.imageUrl}
+                    alt={offer.salonName}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-emerald-700 text-white text-[9px] font-bold flex items-center justify-center">
+                    {offer.salonName.slice(0, 1)}
+                  </div>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onOpenSalonProfile) {
+                    onOpenSalonProfile(offer.salonName);
+                  } else if (onFilterBySalon) {
+                    onFilterBySalon(offer.salonName);
+                  }
+                }}
+                className="text-[11px] font-bold uppercase tracking-wider text-[#20C933] hover:underline hover:text-emerald-300 transition-colors truncate text-left focus:outline-none cursor-pointer"
+                title={`Ver perfil completo de ${offer.salonName}`}
+              >
                 {offer.salonName}
-              </span>
+              </button>
               <span className="text-[10px] text-slate-400">•</span>
               <span className="text-[10px] text-slate-300 flex items-center gap-0.5">
                 <MapPin className="w-2.5 h-2.5 text-emerald-400" />
@@ -230,7 +275,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               </span>
             </div>
 
-            <h3 className="text-sm sm:text-base font-black text-white leading-tight truncate mt-0.5">
+            <h3 className="text-sm sm:text-base font-black text-white leading-tight truncate mt-1">
               {offer.serviceTitle}
             </h3>
 
@@ -262,7 +307,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 onDirectBook(offer);
               }}
-              className="mt-1 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins']"
+              className="mt-1 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 fill-slate-950" />
               <span>AGENDAR</span>

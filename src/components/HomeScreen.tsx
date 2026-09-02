@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, Search } from 'lucide-react';
+import { ArrowUpDown, Compass, Search, X } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
 import { RadarStoryBar } from './RadarStoryBar';
 import { RadarStoryModal } from './RadarStoryModal';
 import { RadarOfferCard } from './RadarOfferCard';
+import { SalonProfileView } from './SalonProfileView';
 import { VagouLogo } from './VagouLogo';
 
 interface HomeScreenProps {
@@ -45,6 +46,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   userAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
+  const [selectedSalonFilter, setSelectedSalonFilter] = useState<string | null>(null);
+  const [viewingSalonProfile, setViewingSalonProfile] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'urgency' | 'distance' | 'price'>('urgency');
 
   const [isStoryModalOpen, setIsStoryModalOpen] = useState<boolean>(false);
@@ -84,6 +87,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const filteredAndSortedOffers = useMemo(() => {
     let list = [...offers];
+
+    // Filter by selected Salon from Stories if active
+    if (selectedSalonFilter) {
+      list = list.filter((o) => o.salonName === selectedSalonFilter);
+    }
 
     // Segment filter
     if (currentSegment === 'barbearia') {
@@ -133,7 +141,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     });
 
     return list;
-  }, [offers, selectedCategory, sortBy, currentSegment]);
+  }, [offers, selectedSalonFilter, selectedCategory, sortBy, currentSegment]);
 
   const handleOpenStory = (index: number) => {
     setActiveStoryIndex(index);
@@ -150,7 +158,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="pb-28 bg-slate-950 min-h-screen text-slate-100">
-      {/* Fixed Sticky Header */}
+      {/* Fixed Sticky Global Header */}
       <div className="sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
         <div className="px-4 py-3 flex items-center justify-between gap-3">
           {/* Brand Logo */}
@@ -164,7 +172,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <button
               id="search-trigger-btn"
               onClick={onOpenSearchModal}
-              className="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933] flex items-center justify-center transition-all shadow-sm active:scale-95 group"
+              className="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933] flex items-center justify-center transition-all shadow-sm active:scale-95 group cursor-pointer"
               title="Buscar serviços ou salões"
             >
               <Search className="w-4 h-4 text-slate-300 group-hover:text-[#20C933] transition-colors" />
@@ -187,106 +195,154 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
 
-        {/* Category Chips Bar with Integrated Sort Filter & Count Badge */}
-        <div className="px-4 pb-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          {categories.map((cat) => {
-            const isActive = selectedCategory === cat.id;
-            const isAll = cat.id === 'todos';
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 font-['Poppins'] flex-shrink-0 ${
-                  isActive
-                    ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
-                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                <span>{cat.label}</span>
-                {isAll && (
-                  <span
-                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+        {/* Renderiza a Barra de Categorias e Stories somente se não estiver visualizando o perfil de um salão */}
+        {!viewingSalonProfile && (
+          <>
+            {/* Category Chips Bar with Integrated Sort Filter & Count Badge */}
+            <div className="px-4 pb-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat.id;
+                const isAll = cat.id === 'todos';
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 font-['Poppins'] flex-shrink-0 cursor-pointer ${
                       isActive
-                        ? 'bg-slate-950 text-[#20C933]'
-                        : 'bg-[#20C933]/20 text-[#20C933]'
+                        ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
+                        : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
                     }`}
                   >
-                    {filteredAndSortedOffers.length}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                    <span>{cat.label}</span>
+                    {isAll && (
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                          isActive
+                            ? 'bg-slate-950 text-[#20C933]'
+                            : 'bg-[#20C933]/20 text-[#20C933]'
+                        }`}
+                      >
+                        {filteredAndSortedOffers.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
 
-          {/* Integrated Sort Selector */}
-          <div className="flex items-center gap-1 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 text-[11px] font-semibold text-slate-300 flex-shrink-0 ml-auto">
-            <ArrowUpDown className="w-3.5 h-3.5 text-[#20C933]" />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-transparent border-none text-[11px] text-slate-200 font-bold focus:outline-none cursor-pointer pr-1"
-              title="Ordenar vagas"
-            >
-              <option value="urgency" className="bg-slate-900 text-white">⚡ Mais Urgentes</option>
-              <option value="distance" className="bg-slate-900 text-white">📍 Mais Próximos</option>
-              <option value="price" className="bg-slate-900 text-white">🏷️ Menor Preço</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Top Stories Bar (Click opens fullscreen story viewer) */}
-        <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
-          <RadarStoryBar offers={offers} onSelectStory={handleOpenStory} />
-        </div>
-      </div>
-
-      {/* PWA Install Banner */}
-      {onOpenInstallModal && (
-        <div className="px-4 pt-2">
-          <InstallBanner
-            onOpenInstallModal={onOpenInstallModal}
-            isStandalone={isStandalone}
-          />
-        </div>
-      )}
-
-      {/* Vertical Radar Feed */}
-      <div className="px-4 space-y-4 mt-3">
-        {filteredAndSortedOffers.length > 0 ? (
-          filteredAndSortedOffers.map((offer, index) => (
-            <RadarOfferCard
-              key={offer.id}
-              offer={offer}
-              isFavorite={favorites.includes(offer.id)}
-              onToggleFavorite={(id) => onToggleFavorite?.(id)}
-              onSelectOffer={(off) => onNavigateToOfferDetail(off)}
-              onDirectBook={handleDirectBook}
-              onOpenStory={() => handleOpenStory(index)}
-            />
-          ))
-        ) : (
-          <div className="py-16 text-center px-6 bg-slate-900/60 rounded-2xl border border-slate-800">
-            <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 mb-3">
-              <Compass className="w-8 h-8 text-[#20C933] animate-spin" />
+              {/* Integrated Sort Selector */}
+              <div className="flex items-center gap-1 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 text-[11px] font-semibold text-slate-300 flex-shrink-0 ml-auto">
+                <ArrowUpDown className="w-3.5 h-3.5 text-[#20C933]" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-transparent border-none text-[11px] text-slate-200 font-bold focus:outline-none cursor-pointer pr-1"
+                  title="Ordenar vagas"
+                >
+                  <option value="urgency" className="bg-slate-900 text-white">⚡ Mais Urgentes</option>
+                  <option value="distance" className="bg-slate-900 text-white">📍 Mais Próximos</option>
+                  <option value="price" className="bg-slate-900 text-white">🏷️ Menor Preço</option>
+                </select>
+              </div>
             </div>
-            <h3 className="text-base font-bold text-white font-['Poppins']">
-              Nenhuma vaga encontrada
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-              Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.
-            </p>
-            <button
-              onClick={() => {
-                setSelectedCategory('todos');
-                onSelectSegment?.('todos');
-              }}
-              className="mt-4 px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow"
-            >
-              Ver Todas as Vagas
-            </button>
-          </div>
+
+            {/* Top Stories Bar */}
+            <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
+              <RadarStoryBar
+                offers={offers}
+                selectedSalonFilter={selectedSalonFilter}
+                onSelectSalon={(salon) => setSelectedSalonFilter(salon)}
+                onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
+              />
+            </div>
+          </>
         )}
       </div>
+
+      {/* RENDERIZAÇÃO CONDICIONAL: SEÇÃO/PÁGINA DO SALÃO vs FEED GERAL */}
+      {viewingSalonProfile ? (
+        <SalonProfileView
+          salonName={viewingSalonProfile}
+          offers={offers}
+          onBack={() => setViewingSalonProfile(null)}
+          onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+          onDirectBook={handleDirectBook}
+          isFavorite={favorites.includes(viewingSalonProfile)}
+          onToggleFavorite={() => onToggleFavorite?.(viewingSalonProfile)}
+        />
+      ) : (
+        <>
+          {/* Active Salon Filter Ribbon */}
+          {selectedSalonFilter && (
+            <div className="px-4 pt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs text-emerald-200 font-medium">
+                <span>
+                  Filtrando vagas de: <strong className="text-white font-bold">{selectedSalonFilter}</strong>
+                </span>
+              </div>
+              <button
+                onClick={() => setSelectedSalonFilter(null)}
+                className="flex items-center gap-1 text-xs text-slate-400 hover:text-white bg-slate-900 px-2.5 py-1.5 rounded-xl border border-slate-800 transition cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Ver todos</span>
+              </button>
+            </div>
+          )}
+
+          {/* PWA Install Banner */}
+          {onOpenInstallModal && (
+            <div className="px-4 pt-2">
+              <InstallBanner
+                onOpenInstallModal={onOpenInstallModal}
+                isStandalone={isStandalone}
+              />
+            </div>
+          )}
+
+          {/* Vertical Radar Feed */}
+          <div className="px-4 space-y-4 mt-3">
+            {filteredAndSortedOffers.length > 0 ? (
+              filteredAndSortedOffers.map((offer, index) => (
+                <RadarOfferCard
+                  key={offer.id}
+                  offer={offer}
+                  isFavorite={favorites.includes(offer.id)}
+                  onToggleFavorite={(id) => onToggleFavorite?.(id)}
+                  onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+                  onDirectBook={handleDirectBook}
+                  onOpenStory={() => handleOpenStory(index)}
+                  onFilterBySalon={(salon) => setSelectedSalonFilter(salon)}
+                  onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
+                />
+              ))
+            ) : (
+              <div className="py-16 text-center px-6 bg-slate-900/60 rounded-2xl border border-slate-800">
+                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 mb-3">
+                  <Compass className="w-8 h-8 text-[#20C933] animate-spin" />
+                </div>
+                <h3 className="text-base font-bold text-white font-['Poppins']">
+                  Nenhuma vaga encontrada
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                  {selectedSalonFilter
+                    ? `Não encontramos vagas adicionais para ${selectedSalonFilter} nesta categoria.`
+                    : 'Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.'}
+                </p>
+                <button
+                  onClick={() => {
+                    setSelectedSalonFilter(null);
+                    setSelectedCategory('todos');
+                    onSelectSegment?.('todos');
+                  }}
+                  className="mt-4 px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow cursor-pointer"
+                >
+                  Ver Todas as Vagas
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Fullscreen Story Viewer Modal */}
       <RadarStoryModal
