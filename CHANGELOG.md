@@ -15,6 +15,16 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-04] — Correção de Cache & Sincronização do Service Worker (PWA)
+- **Tipo:** `[Bug Fix]` / `[PWA]` / `[Cache Invalidation]`
+- **Motivo:** No app instalado pelo navegador (PWA), o Service Worker mantinha em cache arquivos legados da compilação anterior (ou falhava em puxar os chunks de CSS compilados pelo Vite), fazendo com que o app abrisse sem os estilos aplicados (fundo branco e elementos brutos sem Tailwind).
+- **Arquivos Impactados:**
+  - `public/sw.js`: Atualizada versão do cache para `vagou-cache-v6`, remoção automática de caches legados obsoletos em `activate`, desativação de interceptação de rotas `/api/` e Vite interno, e garantia de `Network-First` estrito para CSS, JS e HTML.
+  - `index.html`: Adicionado listener de `updatefound` e reload automático quando um novo Service Worker for ativado no PWA.
+- **Resumo Técnico:** Limpeza do cache do navegador para renderizar o app instalado exatamente igual à versão renderizada com estilos, modo escuro e layout imersivo.
+
+---
+
 ### [2026-09-04] — Teste Arquitetural: Radar Fullscreen (Estilo TikTok/Reels) + Aba Inspirar (Estilo Pinterest)
 - **Tipo:** `[Feature]` / `[UX]` / `[UI Architecture]`
 - **Motivo:** O usuário solicitou testar o formato de anúncio fullscreen vertical com rolagem imersiva e a segunda aba inspirada no mosaico do Pinterest.
