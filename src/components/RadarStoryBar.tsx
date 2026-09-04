@@ -145,13 +145,6 @@ export const RadarStoryBar: React.FC<RadarStoryBarProps> = ({
                 )}
               </div>
 
-              <span
-                className={`text-[10px] font-semibold mt-1.5 max-w-[66px] truncate text-center leading-tight font-['Poppins'] ${
-                  isSelected ? 'text-[#20C933] font-bold' : 'text-slate-300 group-hover:text-white'
-                }`}
-              >
-                {group.salonName}
-              </span>
             </motion.button>
           );
         })}

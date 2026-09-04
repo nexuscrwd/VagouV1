@@ -16,7 +16,7 @@ import {
   INITIAL_PARTNER_APPOINTMENTS,
 } from './data';
 import { HomeScreen } from './components/HomeScreen';
-import { SearchScreen } from './components/SearchScreen';
+import { PinterestExploreScreen } from './components/PinterestExploreScreen';
 import { MapScreen } from './components/MapScreen';
 import { OfferListScreen } from './components/OfferListScreen';
 import { OfferDetailScreen } from './components/OfferDetailScreen';
@@ -381,14 +381,13 @@ export const App: React.FC = () => {
               )}
 
               {currentScreen === 'busca' && (
-                <SearchScreen
+                <PinterestExploreScreen
                   offers={offers}
                   onSelectOffer={(off) => {
                     setSelectedOffer(off);
                     setCurrentScreen('detalhe-oferta');
                   }}
                   onConfirmBooking={handleConfirmBooking}
-                  onBack={() => setCurrentScreen('home')}
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
                 />

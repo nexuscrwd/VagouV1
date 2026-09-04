@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Star, MapPin, Zap, Repeat, Eye } from 'lucide-react';
+import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
-import { CountdownTimer } from './CountdownTimer';
 import { formatSlotDateTime } from '../utils/dateFormatter';
 
 interface RadarOfferCardProps {
@@ -134,11 +133,6 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
     }
   };
 
-  const discountPercent =
-    offer.originalPrice && offer.originalPrice > offer.price
-      ? Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100)
-      : null;
-
   return (
     <div
       onClick={() => {
@@ -173,7 +167,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 setIsMuted(!isMuted);
               }}
-              className="absolute bottom-24 right-4 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/70 transition shadow-md cursor-pointer"
+              className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/80 transition shadow-md cursor-pointer"
               aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -233,81 +227,13 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
           </div>
         )}
 
-        {/* Top Badges & Actions */}
-        <div className="absolute top-3 inset-x-3 z-10 flex items-start justify-between">
-          <div className="flex flex-col gap-1">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-[11px] font-black shadow-lg font-mono">
-              <i className="w-2 h-2 rounded-full bg-emerald-400 inline-block shrink-0" />
-              <span>{formatSlotDateTime(offer.timeSlot)}</span>
-              {offer.expiresInMinutes && (
-                <span className="text-white/90 font-mono font-medium">
-                  • {offer.expiresInMinutes}m
-                </span>
-              )}
-            </span>
+        {/* Top Gradient for text contrast */}
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-slate-950/90 via-slate-950/50 to-transparent pointer-events-none z-10" />
 
-            {offer.isFlashDeal && (
-              <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md w-fit">
-                <Zap className="w-3 h-3 fill-white" />
-                <span>Vaga Relâmpago {discountPercent ? `-${discountPercent}%` : ''}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            {gallery.length > 1 && (
-              <div className="flex items-center gap-1 bg-slate-900/80 backdrop-blur-md border border-white/20 px-2.5 py-2 rounded-full shadow-md">
-                {gallery.map((_, idx) => (
-                  <span
-                    key={idx}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      idx === carouselIndex ? 'w-3 bg-emerald-400' : 'w-1.5 bg-white/60'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite(offer.id);
-              }}
-              className="w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 flex items-center justify-center transition shadow-md cursor-pointer"
-              aria-label="Favoritar"
-            >
-              <Heart
-                className={`w-4 h-4 ${
-                  isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent pointer-events-none z-10" />
-
-        {/* Social Proof & Recurring Overlay */}
-        <div className="absolute bottom-24 left-3.5 z-20 flex flex-wrap gap-1.5">
-          {offer.activeViewers && (
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-medium text-slate-200">
-              <Eye className="w-3 h-3 text-emerald-400" />
-              <span>{offer.activeViewers} pessoas vendo agora</span>
-            </div>
-          )}
-
-          {offer.isRecurring && (
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 text-[10px] font-bold text-emerald-300">
-              <Repeat className="w-3 h-3 text-emerald-400" />
-              <span>Você já frequentou ({offer.recurringCount || 2}x)</span>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Bar Info & Action */}
-        <div className="absolute bottom-3 inset-x-3.5 z-20 flex items-end justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            {/* Salon Name with click-to-profile action */}
+        {/* Top Header - Reels / Stories Style: Salon Info + Favorite Inline & Action Top Right */}
+        <div className="absolute top-3 inset-x-3 z-20 flex items-start justify-between gap-2">
+          {/* Left: Salon & Service Info + Inline Micro-Favorite */}
+          <div className="flex-1 min-w-0 pr-1">
             <div className="flex items-center gap-2">
               {/* Mini Avatar / Click to open profile */}
               <button
@@ -320,7 +246,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                     onFilterBySalon(offer.salonName);
                   }
                 }}
-                className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-emerald-400 flex-shrink-0 bg-slate-800 hover:ring-2 hover:ring-white transition cursor-pointer"
+                className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-emerald-400 flex-shrink-0 bg-slate-800 hover:ring-2 hover:ring-white transition cursor-pointer shadow-md"
                 title={`Ver perfil de ${offer.salonName}`}
               >
                 {offer.professionalAvatar || offer.imageUrl ? (
@@ -331,76 +257,97 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="w-full h-full bg-emerald-700 text-white text-[9px] font-bold flex items-center justify-center">
+                  <div className="w-full h-full bg-emerald-700 text-white text-[10px] font-bold flex items-center justify-center">
                     {offer.salonName.slice(0, 1)}
                   </div>
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onOpenSalonProfile) {
-                    onOpenSalonProfile(offer.salonName);
-                  } else if (onFilterBySalon) {
-                    onFilterBySalon(offer.salonName);
-                  }
-                }}
-                className="text-[11px] font-bold uppercase tracking-wider text-[#20C933] hover:underline hover:text-emerald-300 transition-colors truncate text-left focus:outline-none cursor-pointer"
-                title={`Ver perfil completo de ${offer.salonName}`}
-              >
-                {offer.salonName}
-              </button>
-              <span className="text-[10px] text-slate-400">•</span>
-              <span className="text-[10px] text-slate-300 flex items-center gap-0.5">
-                <MapPin className="w-2.5 h-2.5 text-emerald-400" />
-                {offer.distance}
-              </span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenSalonProfile) {
+                      onOpenSalonProfile(offer.salonName);
+                    } else if (onFilterBySalon) {
+                      onFilterBySalon(offer.salonName);
+                    }
+                  }}
+                  className="text-xs font-bold text-white hover:text-emerald-400 truncate tracking-wide flex items-center gap-1 transition cursor-pointer shadow-sm drop-shadow"
+                  title={`Ver perfil completo de ${offer.salonName}`}
+                >
+                  <span className="truncate">{offer.salonName}</span>
+                  <ChevronRight className="w-3 h-3 text-emerald-400 shrink-0" />
+                </button>
+
+                {/* Inline Micro Favorite Heart (Opção 3) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(offer.id);
+                  }}
+                  className="p-1 -ml-0.5 rounded-full hover:bg-white/10 active:scale-90 transition cursor-pointer shrink-0"
+                  title={isFavorite ? "Remover dos favoritos" : "Salvar nos favoritos"}
+                  aria-label="Favoritar"
+                >
+                  <Heart
+                    className={`w-3.5 h-3.5 drop-shadow transition-colors ${
+                      isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white/80 hover:text-white'
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
 
-            <h3 className="text-sm sm:text-base font-black text-white leading-tight truncate mt-1">
+            <h3 className="text-sm font-black text-white leading-tight truncate mt-1 drop-shadow-md">
               {offer.serviceTitle}
             </h3>
 
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[11px] text-slate-300 font-medium">
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[11px] text-slate-200 font-medium drop-shadow truncate">
                 Com <strong className="text-white">{offer.professionalName}</strong>
-              </span>
-              <span className="text-[10px] text-slate-400">•</span>
-              <span className="text-[11px] text-amber-300 font-bold flex items-center gap-0.5">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                {offer.rating.toFixed(1)}
               </span>
             </div>
           </div>
 
-          <div className="flex flex-col items-end flex-shrink-0">
-            <span className="text-lg sm:text-[20px] font-black text-emerald-400 font-mono leading-tight tracking-tight">
-              <span>{formatSlotDateTime(offer.timeSlot)}</span>
-            </span>
-
-            <button
-              id={`btn-radar-agendar-${offer.id}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDirectBook(offer);
-              }}
-              className="mt-1.5 px-3.5 py-1.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer whitespace-nowrap"
-            >
-              <Zap className="w-3.5 h-3.5 fill-slate-950" />
-              <span>AGENDAR • R${offer.price.toFixed(0)}</span>
-            </button>
-          </div>
+          {/* Right Actions: Gallery Dots */}
+          {gallery.length > 1 && (
+            <div className="flex items-center gap-1 bg-slate-900/80 backdrop-blur-md border border-white/20 px-2 py-1 rounded-full shadow-sm shrink-0 pt-0.5">
+              {gallery.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1 rounded-full transition-all duration-300 ${
+                    idx === carouselIndex ? 'w-2.5 bg-emerald-400' : 'w-1 bg-white/60'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Countdown Progress Bottom Strip */}
-      <div className="px-3.5 py-2.5 bg-slate-950 border-t border-slate-800/80">
-        <CountdownTimer
-          initialMinutes={offer.expiresInMinutes || 25}
-          expiresTimestamp={offer.expiresTimestamp}
-        />
+        {/* Bottom subtle gradient for contrast */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/80 via-slate-950/40 to-transparent pointer-events-none z-10" />
+
+        {/* Bottom Left: Easy Thumb Access (Slot Time & Quick Book) */}
+        <div className="absolute bottom-3 left-3 z-20 flex flex-col items-start gap-1">
+          <span className="text-[11px] font-black text-emerald-400 font-mono tracking-tight drop-shadow-md bg-black/50 backdrop-blur-sm px-1.5 py-0.5 rounded leading-none border border-emerald-500/20">
+            {formatSlotDateTime(offer.timeSlot)}
+          </span>
+
+          <button
+            id={`btn-radar-agendar-${offer.id}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDirectBook(offer);
+            }}
+            className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-lg transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"
+          >
+            <Zap className="w-3.5 h-3.5 fill-slate-950 shrink-0" />
+            <span>AGENDAR • R${offer.price.toFixed(0)}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

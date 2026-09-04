@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Search, MapPin, Calendar } from 'lucide-react';
+import { Radio, Sparkles, MapPin, Calendar } from 'lucide-react';
 import { ScreenId } from '../types';
 
 interface BottomNavProps {
@@ -15,17 +15,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 }) => {
   const tabs = [
     { id: 'home' as ScreenId, label: 'Radar', icon: Radio },
-    { id: 'busca' as ScreenId, label: 'Buscar', icon: Search },
+    { id: 'busca' as ScreenId, label: 'Inspirar', icon: Sparkles },
     { id: 'mapa' as ScreenId, label: 'Mapa', icon: MapPin },
     { id: 'agenda' as ScreenId, label: 'Agenda', icon: Calendar },
   ];
 
   const handleTabClick = (tabId: ScreenId) => {
-    if (tabId === 'busca' && onOpenSearchModal) {
-      onOpenSearchModal();
-    } else {
-      onSelectScreen(tabId);
-    }
+    onSelectScreen(tabId);
   };
 
   return (

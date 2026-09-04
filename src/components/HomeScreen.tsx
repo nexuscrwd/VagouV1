@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Compass, X, ArrowLeft, Home } from 'lucide-react';
+import { ArrowUpDown, Compass, X, ArrowLeft, Home, Smartphone, LayoutGrid } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
-import { RadarStoryBar } from './RadarStoryBar';
 import { RadarStoryModal } from './RadarStoryModal';
 import { RadarOfferCard } from './RadarOfferCard';
+import { RadarFullscreenFeed } from './RadarFullscreenFeed';
 import { SalonProfileView } from './SalonProfileView';
 import { VagouLogo } from './VagouLogo';
 
@@ -47,6 +47,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedSalonFilter, setSelectedSalonFilter] = useState<string | null>(null);
   const [viewingSalonProfile, setViewingSalonProfile] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'urgency' | 'distance' | 'price'>('urgency');
+  const [feedLayoutMode, setFeedLayoutMode] = useState<'fullscreen' | 'cards'>('fullscreen');
 
   const [isStoryModalOpen, setIsStoryModalOpen] = useState<boolean>(false);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
@@ -158,7 +159,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     <div className="pb-28 bg-slate-950 min-h-screen text-slate-100">
       {/* Fixed Sticky Global Header */}
       <div className="sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
-        <div className="px-4 py-3 flex items-center justify-between gap-3">
+        <div className="px-4 h-[60px] w-full flex items-center justify-between gap-3">
           {viewingSalonProfile ? (
             /* Header com botão Voltar e Nome do Estabelecimento quando visualizando perfil */
             <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -250,30 +251,53 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 );
               })}
 
-              {/* Integrated Sort Selector */}
-              <div className="flex items-center gap-1 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 text-[11px] font-semibold text-slate-300 flex-shrink-0 ml-auto">
-                <ArrowUpDown className="w-3.5 h-3.5 text-[#20C933]" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-transparent border-none text-[11px] text-slate-200 font-bold focus:outline-none cursor-pointer pr-1"
-                  title="Ordenar vagas"
-                >
-                  <option value="urgency" className="bg-slate-900 text-white">⚡ Mais Urgentes</option>
-                  <option value="distance" className="bg-slate-900 text-white">📍 Mais Próximos</option>
-                  <option value="price" className="bg-slate-900 text-white">🏷️ Menor Preço</option>
-                </select>
-              </div>
-            </div>
+              {/* Integrated Sort Selector & Layout Toggle */}
+              <div className="flex items-center gap-1.5 flex-shrink-0 ml-auto">
+                {/* Toggle de Layout: Fullscreen (Reels) vs Cards tradicionais */}
+                <div className="flex items-center bg-slate-900 p-0.5 rounded-xl border border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setFeedLayoutMode('fullscreen')}
+                    className={`p-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 ${
+                      feedLayoutMode === 'fullscreen'
+                        ? 'bg-[#20C933] text-slate-950 font-bold shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="Modo Tela Cheia (Estilo Reels/TikTok)"
+                    aria-label="Modo Tela Cheia"
+                  >
+                    <Smartphone className="w-3.5 h-3.5" />
+                  </button>
 
-            {/* Carrossel de Ícones de Feeds / Stories dos Salões */}
-            <div className="border-t border-slate-900/90 bg-[#12161A]/90 backdrop-blur-sm">
-              <RadarStoryBar
-                offers={offers}
-                selectedSalonFilter={selectedSalonFilter}
-                onSelectSalon={(salon) => setSelectedSalonFilter(salon)}
-                onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
-              />
+                  <button
+                    type="button"
+                    onClick={() => setFeedLayoutMode('cards')}
+                    className={`p-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 ${
+                      feedLayoutMode === 'cards'
+                        ? 'bg-[#20C933] text-slate-950 font-bold shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="Modo Lista em Cards"
+                    aria-label="Modo Cards"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1 bg-slate-900 px-2 py-1 rounded-xl border border-slate-800 text-[11px] font-semibold text-slate-300">
+                  <ArrowUpDown className="w-3.5 h-3.5 text-[#20C933]" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="bg-transparent border-none text-[11px] text-slate-200 font-bold focus:outline-none cursor-pointer pr-0.5"
+                    title="Ordenar vagas"
+                  >
+                    <option value="urgency" className="bg-slate-900 text-white">⚡ Urgência</option>
+                    <option value="distance" className="bg-slate-900 text-white">📍 Distância</option>
+                    <option value="price" className="bg-slate-900 text-white">🏷️ Menor Preço</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -320,48 +344,61 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           )}
 
-          {/* Vertical Radar Feed */}
-          <div className="px-4 space-y-4 mt-3">
-            {filteredAndSortedOffers.length > 0 ? (
-              filteredAndSortedOffers.map((offer, index) => (
-                <RadarOfferCard
-                  key={offer.id}
-                  offer={offer}
-                  isFavorite={favorites.includes(offer.id)}
-                  onToggleFavorite={(id) => onToggleFavorite?.(id)}
-                  onSelectOffer={(off) => onNavigateToOfferDetail(off)}
-                  onDirectBook={handleDirectBook}
-                  onOpenStory={() => handleOpenStory(index)}
-                  onFilterBySalon={(salon) => setSelectedSalonFilter(salon)}
-                  onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
-                />
-              ))
-            ) : (
-              <div className="py-16 text-center px-6 bg-slate-900/60 rounded-2xl border border-slate-800">
-                <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 mb-3">
-                  <Compass className="w-8 h-8 text-[#20C933] animate-spin" />
+          {/* Alternância: Radar Fullscreen Feed vs Cards Tradicionais */}
+          {feedLayoutMode === 'fullscreen' ? (
+            <div className="h-[calc(100dvh-172px)] w-full overflow-hidden">
+              <RadarFullscreenFeed
+                offers={filteredAndSortedOffers}
+                favorites={favorites}
+                onToggleFavorite={(id) => onToggleFavorite?.(id)}
+                onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+                onDirectBook={handleDirectBook}
+                onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
+              />
+            </div>
+          ) : (
+            <div className="px-4 space-y-4 mt-3">
+              {filteredAndSortedOffers.length > 0 ? (
+                filteredAndSortedOffers.map((offer, index) => (
+                  <RadarOfferCard
+                    key={offer.id}
+                    offer={offer}
+                    isFavorite={favorites.includes(offer.id)}
+                    onToggleFavorite={(id) => onToggleFavorite?.(id)}
+                    onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+                    onDirectBook={handleDirectBook}
+                    onOpenStory={() => handleOpenStory(index)}
+                    onFilterBySalon={(salon) => setSelectedSalonFilter(salon)}
+                    onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
+                  />
+                ))
+              ) : (
+                <div className="py-16 text-center px-6 bg-slate-900/60 rounded-2xl border border-slate-800">
+                  <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 mb-3">
+                    <Compass className="w-8 h-8 text-[#20C933] animate-spin" />
+                  </div>
+                  <h3 className="text-base font-bold text-white font-['Poppins']">
+                    Nenhuma vaga encontrada
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                    {selectedSalonFilter
+                      ? `Não encontramos vagas adicionais para ${selectedSalonFilter} nesta categoria.`
+                      : 'Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.'}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSelectedSalonFilter(null);
+                      setSelectedCategory('todos');
+                      onSelectSegment?.('todos');
+                    }}
+                    className="mt-4 px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow cursor-pointer"
+                  >
+                    Ver Todas as Vagas
+                  </button>
                 </div>
-                <h3 className="text-base font-bold text-white font-['Poppins']">
-                  Nenhuma vaga encontrada
-                </h3>
-                <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-                  {selectedSalonFilter
-                    ? `Não encontramos vagas adicionais para ${selectedSalonFilter} nesta categoria.`
-                    : 'Tente selecionar outra categoria ou mudar para o perfil geral para ver todos os horários abertos.'}
-                </p>
-                <button
-                  onClick={() => {
-                    setSelectedSalonFilter(null);
-                    setSelectedCategory('todos');
-                    onSelectSegment?.('todos');
-                  }}
-                  className="mt-4 px-4 py-2 bg-[#20C933] text-slate-950 text-xs font-black rounded-xl shadow cursor-pointer"
-                >
-                  Ver Todas as Vagas
-                </button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </>
       )}
 

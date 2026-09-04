@@ -15,12 +15,148 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-04] — Teste Arquitetural: Radar Fullscreen (Estilo TikTok/Reels) + Aba Inspirar (Estilo Pinterest)
+- **Tipo:** `[Feature]` / `[UX]` / `[UI Architecture]`
+- **Motivo:** O usuário solicitou testar o formato de anúncio fullscreen vertical com rolagem imersiva e a segunda aba inspirada no mosaico do Pinterest.
+- **Arquivos Impactados:**
+  - `src/components/RadarFullscreenFeed.tsx`: Novo componente com feed vertical fullscreen (`snap-y snap-mandatory`), botões de agendamento na zona do polegar esquerdo (`bottom-4 left-4`), controle de áudio, tags de urgência e cabeçalho translúcido.
+  - `src/components/PinterestExploreScreen.tsx`: Nova tela de exploração em grade Masonry de 2 colunas com alturas orgânicas, pins visuais de inspiração com preços, distâncias e ações rápidas.
+  - `src/components/HomeScreen.tsx`: Adicionado alternador rápido no topo (`[📱 Tela Cheia] | [⊞ Cards]`) para comparação instantânea lado a lado pelo usuário.
+  - `src/components/BottomNav.tsx`: Aba de busca atualizada para "Inspirar" (`Sparkles`).
+  - `src/App.tsx`: Roteamento integrado com limpeza de imports não utilizados.
+- **Resumo Técnico:** Implementação de dual-mode de consumo (Urgência Imersiva no Radar + Inspiração e Descoberta no Pinterest).
+
+---
+
+### [2026-09-04] — Teste Ergonômico: Agendamento no Canto Inferior Esquerdo (Acesso Rápido com Polegar Canhoto)
+- **Tipo:** `[UX]` / `[Mobile Ergonomics]`
+- **Motivo:** O usuário propôs testar o posicionamento das informações de agendamento (horário e botão rápido de agendar) no canto inferior esquerdo do card para facilitar o toque direto com o polegar da mão esquerda.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Movido o bloco de horário com badge blur e o botão `AGENDAR • R$45` para `bottom-3 left-3`. Mantidos os indicadores de galeria no topo direito e o botão de áudio de vídeos no canto inferior direito (`bottom-3 right-3`), garantindo equilíbrio ergonômico bilateral.
+- **Resumo Técnico:** Otimização para uso ágil com uma mão só em celulares, liberando o topo do card para identificação do salão e do serviço.
+
+---
+
+### [2026-09-04] — Remoção da Avaliação por Estrelas no Card
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou a badge de avaliação (`span:nth-of-type(3)` contendo estrela e nota) e solicitou sua remoção para máxima síntese visual no cabeçalho do card.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removida a exibição de nota e estrela (`offer.rating`), bem como o separador `•`. Removido o import de `Star` de `lucide-react`.
+- **Resumo Técnico:** Cabeçalho ultra-resumido contendo apenas o nome do profissional ("Com [Profissional]"), reduzindo a poluição visual mobile.
+
+---
+
+### [2026-09-04] — Reposicionamento Compacto: Agendamento no Topo Direito & Favorito Inline (Opção 3)
+- **Tipo:** `[UI]` / `[UX]` / `[Clean Code]`
+- **Motivo:** O usuário solicitou subir as informações de agendamento de forma compacta para desocupar a base do card e escolheu a Opção 3 para posicionar o ícone de favorito.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: 
+    - Movido o horário e botão de agendamento em versão micro-pill compacta (`h-7 text-[11px] AGENDAR • R$45`) para o canto superior direito.
+    - Integrado o ícone de favorito (`Heart`) de forma sutil e inline ao lado do nome do salão.
+    - Removida a barra inferior e gradiente de base, liberando 100% da visualização da foto/vídeo do corte.
+    - Botão de controle de áudio de vídeos ajustado harmoniosamente para `bottom-3 right-3`.
+- **Resumo Técnico:** Layout superior estilo Reels/Stories com dados do salão e ações rápidas no topo, sem poluir a mídia.
+
+---
+
+### [2026-09-04] — Remoção da Distância no Topo do Card
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou a tag de distância do salão (`span:nth-of-type(3)`) e solicitou a remoção direta para despoluir ainda mais o cabeçalho superior do card.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removido o badge com ícone de pin e distância (`offer.distance`), bem como o bullet separador. Limpo o import de `MapPin` de `lucide-react`.
+- **Resumo Técnico:** Cabeçalho do salão simplificado, mantendo apenas o avatar com anel esmeralda e o nome do estabelecimento clicável.
+
+---
+
+### [2026-09-04] — Remoção de Selos de Prova Social e Frequência na Base do Card
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou os selos de "pessoas vendo agora" e "você já frequentou" na base inferior esquerda do card e solicitou a remoção direta para maximizar a visibilidade da foto/vídeo e despoluir o card.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removidos os badges de visualizadores ativos e status recorrente, alinhando a hora e botão de ação à direita. Removidos imports não utilizados (`Eye`, `Repeat`).
+- **Resumo Técnico:** Limpeza completa do overlay inferior esquerdo, mantendo foco visual direto na mídia e na ação de agendamento.
+
+---
+
+### [2026-09-04] — Remoção da Faixa Inferior de Contagem Regressiva (`CountdownTimer`)
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou a faixa inferior de contagem regressiva do card (`div:nth-of-type(2)`) e solicitou a remoção direta para deixar o card com acabamento mais limpo e visual integral.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removida a faixa inferior com o componente `CountdownTimer` e limpo o import correspondente sem deixar código morto.
+- **Resumo Técnico:** Cartão de oferta com bordas inferiores integradas e visual limpo focado na mídia, dados do salão e botão de ação.
+
+---
+
+### [2026-09-04] — Remoção de Selos Redundantes no Topo do Card
+- **Tipo:** `[UI]` / `[Clean Code]`
+- **Motivo:** O usuário selecionou os selos de horário e vaga relâmpago no topo do card e solicitou a remoção direta para despoluir a visualização superior.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removido o contêiner de badges duplicados (`span` de horário e `div` de vaga relâmpago) do cabeçalho superior. Ajustada a altura do gradiente superior para `h-28` e limpa a variável `discountPercent` sem uso.
+- **Resumo Técnico:** Despoluição visual do cabeçalho superior, mantendo o horário e ação de agendamento na base do card com visual limpo e alta legibilidade.
+
+---
+
+### [2026-09-04] — Reestruturação de Layout: Dados do Salão/Serviço no Topo (Estilo Stories/Reels)
+- **Tipo:** `[UI]` / `[UX]`
+- **Motivo:** O usuário escolheu a Opção 3 para mover o bloco de dados do salão (avatar, nome, distância, título do serviço e profissional com nota) para o topo do card, no estilo Stories/Reels.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Reestruturação do topo do card para abrigar a identidade do salão/serviço com gradiente de contraste superior, mantendo ações (favorito e galeria) à direita. A parte inferior do card agora hospeda os selos de prova social à esquerda e o botão de agendamento com horário à direita.
+- **Resumo Técnico:** Layout verticalizado no padrão Stories/Reels com hierarquia clara (Topo: Quem/O quê; Centro: Mídia/Vídeo; Base: Prova social e Ação de Agendamento).
+
+---
+
 ### [2026-09-02] — Correção de Visibilidade do Logo Oficial (`VagouLogo.tsx`)
 - **Tipo:** `[UI]` / `[Fix]`
 - **Motivo:** Ajuste fino na área de recorte (crop) para garantir que a base das letras do nome "Vagou" (como o 'g' e 'o') não sejam cortadas, mantendo o slogan oculto no cabeçalho.
 - **Arquivos Impactados:**
   - `src/components/VagouLogo.tsx`: Aumentada a proporção de visibilidade de 80% para 90% da altura total.
 - **Resumo Técnico:** Proporção refinada para tipografia específica da marca.
+
+---
+
+### [2026-09-04] — Validação e Atualização do Servidor de Desenvolvimento
+- **Tipo:** `[Fix]` / `[Build]`
+- **Motivo:** O usuário informou que as alterações não tinham sido aplicadas na prévia devido ao dev server estático/cache.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Validação do posicionamento em `top-14 right-3 z-20` para os selos de prova social / frequência.
+- **Resumo Técnico:** Reinicialização forçada do servidor de desenvolvimento com `restart_dev_server`, execução de `lint_applet` e validação com `compile_applet` para assegurar que a prévia recarregue com o código correto.
+
+---
+
+### [2026-09-04] — Reestilização de UI: Posicionamento de Selos de Prova Social
+- **Tipo:** `[UI]` / `[UX]`
+- **Motivo:** Melhoria na hierarquia visual movendo informações de visualização e frequência para o canto superior direito.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Movimentação do contêiner de `activeViewers` e `isRecurring` para o topo, com alinhamento à direita.
+- **Resumo Técnico:** Transição de layout absoluto inferior para superior direito para despoluir a área de conteúdo principal.
+
+---
+
+### [2026-09-04] — Correção de Layout: Restauração Vertical do Header
+- **Tipo:** `[UI]` / `[Fix]`
+- **Motivo:** Correção de sobreposição e cortes no logotipo causados por layout horizontal forçado.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Restauração da estrutura vertical (logo acima, categorias abaixo) com header de 60px.
+  - `src/components/VagouLogo.tsx`: Implementação de largura fixa (115px) para evitar cortes na tipografia da marca.
+- **Resumo Técnico:** Separação de fluxos de renderização no header para preservar integridade visual.
+
+---
+
+### [2026-09-04] — Ajuste de Dimensões: Logo e Header
+- **Tipo:** `[Branding]` / `[UI]`
+- **Motivo:** Aplicação de medidas exatas solicitadas pelo usuário (Logo: 115x43px, Header: 60px).
+- **Arquivos Impactados:**
+  - `src/components/VagouLogo.tsx`: Altura do tamanho `lg` ajustada para 43px.
+  - `src/components/HomeScreen.tsx`: Altura do cabeçalho fixada em 60px com centralização flexível.
+- **Resumo Técnico:** Padronização dimensional da interface de cabeçalho.
+
+---
+
+### [2026-09-04] — Simplificação de UI: Remoção da Seção de Stories
+- **Tipo:** `[UI]` / `[Removal]`
+- **Motivo:** Atendimento à solicitação de limpeza de interface via seleção de elementos.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Removida a renderização do `RadarStoryBar` e limpeza de código associado.
+- **Resumo Técnico:** Redução da densidade de informação no cabeçalho.
 
 ---
 

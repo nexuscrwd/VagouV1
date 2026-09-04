@@ -20,11 +20,20 @@ export const VagouLogo: React.FC<VagouLogoProps> = ({
     xs: 24,
     sm: 32,
     md: 40,
-    lg: 54,
+    lg: 43,
     xl: 80,
   };
 
+  const widthMap = {
+    xs: 64,
+    sm: 85,
+    md: 106,
+    lg: 115,
+    xl: 160,
+  };
+
   const h = heightMap[size] || 40;
+  const w = widthMap[size] || 'auto';
 
   // Standalone Icon (Green Checkmark V)
   if (variant === 'icon') {
@@ -61,12 +70,12 @@ export const VagouLogo: React.FC<VagouLogoProps> = ({
   return (
     <div 
       className={`inline-flex items-center justify-start shrink-0 select-none bg-transparent ${className}`}
-      style={{ height: h }}
+      style={{ height: h, width: w }}
     >
       <img
         src="/logo.png"
         alt="Vagou App"
-        style={{ height: h, width: 'auto' }}
+        style={{ height: h, width: w }}
         className="block object-contain"
         referrerPolicy="no-referrer"
       />
