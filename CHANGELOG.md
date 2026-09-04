@@ -15,6 +15,16 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-04] — Resolução Definitiva de Cache PWA: Service Worker v7 & Auto-Reload Transparente
+- **Tipo:** `[Bug Fix]` / `[PWA]` / `[Cache Purge]`
+- **Motivo:** O navegador do celular mantinha a folha de estilo legada presa no cache local do Service Worker (v5/v6), impedindo a aplicação das classes do Tailwind no app instalado e na visualização web móvel.
+- **Arquivos Impactados:**
+  - `public/sw.js`: Promovido para `vagou-cache-v7`, inclusão de handler de mensagens para `SKIP_WAITING` e `PURGE_ALL_CACHES`, e purga imediata de qualquer partição de cache anterior na ativação do worker.
+  - `index.html`: Implementado evento `controllerchange` que escuta a troca de controle do Service Worker e dispara um reload transparente imediato na primeira detecção, sem exigir intervenção manual do usuário.
+- **Resumo Técnico:** Desobstrução definitiva do cache para renderização plena em modo escuro Slate + Verde Vagou com layout mobile.
+
+---
+
 ### [2026-09-04] — Correção de Cache & Sincronização do Service Worker (PWA)
 - **Tipo:** `[Bug Fix]` / `[PWA]` / `[Cache Invalidation]`
 - **Motivo:** No app instalado pelo navegador (PWA), o Service Worker mantinha em cache arquivos legados da compilação anterior (ou falhava em puxar os chunks de CSS compilados pelo Vite), fazendo com que o app abrisse sem os estilos aplicados (fundo branco e elementos brutos sem Tailwind).

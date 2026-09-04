@@ -1,19 +1,19 @@
-// Service Worker for Vagou PWA - Network First & Auto Cache Invalidation
-const CACHE_NAME = 'vagou-cache-v6';
+// Service Worker for Vagou PWA - Network First, Auto-Update & Complete Cache Reset
+const CACHE_NAME = 'vagou-cache-v7';
 
+// Instalação: força ativação imediata sem esperar o fechamento de abas
 self.addEventListener('install', (event) => {
-  // Ativa imediatamente a nova versão
   self.skipWaiting();
 });
 
+// Ativação: apaga compulsoriamente TODOS os caches legados
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    // Deleta caches legados antigos para desobstruir CSS/JS quebrados
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Removendo cache legado:', cacheName);
+            console.log('[SW] Purgando cache antigo:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -22,13 +22,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Network-First strategy: Sempre busca da rede primeiro para garantir CSS e JS atualizados
+// Escuta mensagem explícita para pular espera ou limpar
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  if (event.data && event.data.type === 'PURGE_ALL_CACHES') {
+    caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+  }
+});
+
+// Estratégia Network-First estrita com bypass total para desenvolvimento
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   
   const url = new URL(event.request.url);
 
-  // Não intercepta chamadas do servidor de desenvolvimento Vite nem websockets
+  // Não intercepta chamadas de dev server, node_modules ou APIs
   if (
     url.pathname.startsWith('/@') ||
     url.pathname.includes('node_modules') ||
@@ -38,7 +48,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Requisições de navegação (HTML): sempre busca na rede
+  // HTML / Navegação: SEMPRE busca da rede para ter os hashes de CSS/JS mais recentes
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -56,14 +66,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Assets estáticos (CSS, JS, imagens, fontes): Network first, cache fallback
+  // Assets (CSS, JS, Imagens, Fontes): Tenta a rede primeiro; em caso de falha/offline, usa o cache
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
+          const copy = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, copy);
           });
         }
         return networkResponse;
