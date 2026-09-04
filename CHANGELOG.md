@@ -15,6 +15,76 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-04] — Redesign do Botão de Agendamento Fullscreen com Fundo Verde Oficial
+- **Tipo:** `[UI Style]` / `[Focus Mode]`
+- **Motivo:** Atualização do layout do botão `#btn-fullscreen-agendar-off-1` para incorporar o fundo verde padrão do app (`#20C933`), texto e ícone em tom escuro contrastante (`slate-950`) com sombra luminosa verde.
+- **Arquivos Impactados:**
+  - `src/components/RadarFullscreenFeed.tsx`: Atualizadas as classes tailwind e cores do botão de agendamento em tela cheia.
+- **Resumo Técnico:** Linter e build validados com sucesso.
+
+---
+- **Tipo:** `[Feature Restore]` / `[UX]`
+- **Motivo:** Atendimento ao pedido do usuário para restaurar o botão de busca rápida no rodapé (`BottomNav.tsx`) e o alternador de visualização Reels vs Grid no cabeçalho superior (`HomeScreen.tsx`).
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Adicionado o ícone e a ação de busca rápida integrada ao modal de busca.
+  - `src/components/HomeScreen.tsx`: Restaurados os botões de alternância de layout (Reels / Grid).
+- **Resumo Técnico:** Linter e build de produção validados sem erros.
+
+---
+- **Tipo:** `[UI Refactor]` / `[UX]`
+- **Motivo:** Remoção definitiva do botão/chip "Vagas" (`todos`) da barra superior de categorias conforme solicitação direta.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Removida a categoria 'todos' do array dinâmico e atualizado o estado inicial para 'flash'.
+- **Resumo Técnico:** Linter e build validados com sucesso.
+
+---
+
+### [2026-09-04] — Otimização do Chip "Todas as Vagas" para "Vagas"
+- **Tipo:** `[UI Refactor]` / `[UX Mobile]`
+- **Motivo:** Encurtamento do texto do chip principal de categorias de "Todas as Vagas" para "Vagas" para otimizar o espaço na barra superior em dispositivos móveis.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Atualizado o array de categorias para exibir o rótulo limpo "Vagas".
+- **Resumo Técnico:** Build e linter validados com sucesso.
+
+---
+
+### [2026-09-04] — Remoção do Seletor de Layout do Cabeçalho
+- **Tipo:** `[Refactor]` / `[UI Cleanup]`
+- **Motivo:** Remoção do elemento selecionado (alternador de layout Reels/Grid) do topo da tela conforme instrução via Focus Mode.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Removido o bloco de botões de alternância de layout do cabeçalho superior.
+- **Resumo Técnico:** Limpeza de interface mantendo o feed otimizado.
+
+---
+
+### [2026-09-04] — Correção de Erro de Referência de Índice (`index is not defined`)
+- **Motivo:** O parâmetro `index` não estava presente no loop `.map()` em `RadarFullscreenFeed.tsx`, causando erro de referência ao tentar renderizar o ID condicional `#btn-fullscreen-agendar-off-1`.
+- **Arquivos Impactados:**
+  - `src/components/RadarFullscreenFeed.tsx`: Adicionado o parâmetro `index` na função de mapeamento de ofertas.
+- **Resumo Técnico:** Correção validada com sucesso via linter e build de produção.
+
+---
+
+### [2026-09-04] — Estilização do Botão de Agendamento Fullscreen (Texto e Ícone Brancos)
+- **Tipo:** `[UI Style]` / `[Focus Mode]`
+- **Motivo:** Ajuste pontual solicitado via Focus Mode para garantir que o texto e o ícone de raio do botão `#btn-fullscreen-agendar-off-1` fiquem na cor branca com tipografia Arial.
+- **Arquivos Impactados:**
+  - `src/components/RadarFullscreenFeed.tsx`: Atribuído ID condicional para o primeiro item (`btn-fullscreen-agendar-off-1`) e estilizado o botão com fundo escuro elegante, borda translúcida, ícone `Zap` em `#ffffff` e texto em Arial branco.
+- **Resumo Técnico:** Atendimento preciso ao requisito de cor e tipografia em foco.
+
+---
+
+### [2026-09-04] — Unificação de Modos no Cabeçalho Principal (Reels/TikTok vs Pinterest Grid) & Remoção da Aba Inspirar
+- **Tipo:** `[Refactor]` / `[UX]` / `[UI Header]`
+- **Motivo:** Remoção da aba "Inspirar" do rodapé para priorizar síntese mobile; restauração do seletor de categorias dinâmicas (Todas as Vagas, Relâmpago, Barba, etc.) e inclusão direta do seletor de layout no cabeçalho principal (Reels/TikTok vertical vs Grid Pinterest quadriculado).
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Integrado o alternador de visualização diretamente no topo fixo junto ao avatar de perfil (`Smartphone` para Reels / `LayoutGrid` para Pinterest Grid).
+  - Integrada a visualização vertical em grade de 2 colunas estilo Pinterest (`aspect-ratio` orgânico, micro tag de preço, botão de favoritar Pin e agendamento direto com `Zap`) diretamente na HomeScreen ao selecionar o modo Pinterest.
+  - `src/components/BottomNav.tsx`: Rodapé limpo e objetivo, mantendo apenas navegações fundamentais (Radar, Mapa, Agenda).
+- **Resumo Técnico:** Agilidade de navegação com 1 clique no cabeçalho para alternar entre feed imersivo vertical ou mosaico Pinterest mantendo as categorias ativas.
+
+---
+
 ### [2026-09-04] — Resolução Definitiva de Cache PWA: Service Worker v7 & Auto-Reload Transparente
 - **Tipo:** `[Bug Fix]` / `[PWA]` / `[Cache Purge]`
 - **Motivo:** O navegador do celular mantinha a folha de estilo legada presa no cache local do Service Worker (v5/v6), impedindo a aplicação das classes do Tailwind no app instalado e na visualização web móvel.
@@ -681,3 +751,11 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 - **Arquivos Impactados:**
   - `src/components/RadarStoryModal.tsx` (Encapsulamento seguro do callback `onClose` fora do ciclo de renderização e estabilização do sincronismo de `initialIndex` e `progress`).
 - **Resumo Técnico:** Eliminação de warnings no console, linter e build 100% aprovados.
+
+### [2026-09-04] — Limpeza Pós-Obra (Clean Code) e Remoção de Componentes Obsoletos
+- **Tipo:** `[Clean Code]` / `[Pós-Obra]`
+- **Motivo:** Execução do protocolo rigoroso de "Limpeza Pós-Obra" previsto no `AGENTS.md` para eliminar arquivos que perderam utilidade após a simplificação e reestruturação do aplicativo, reduzindo assim o peso da base de código.
+- **Arquivos Impactados:**
+  - Removidos: `SearchScreen.tsx`, `CountdownTimer.tsx`, `DriveExplorer.tsx`, `FigmaShortcutsDrawer.tsx`, `FileViewerModal.tsx`, `StructureAnalyzerModal.tsx` e `RadarStoryBar.tsx` (códigos mortos e não mais utilizados).
+  - Limpeza de imports não utilizados nas telas de `HomeScreen.tsx`.
+- **Resumo Técnico:** A base de código está validada e super limpa (0 erros).

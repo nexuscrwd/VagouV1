@@ -346,6 +346,8 @@ export const App: React.FC = () => {
     setPartnerAppointments((prev) => [newPartnerAppt, ...prev]);
   };
 
+  const [clientSelectedCategory, setClientSelectedCategory] = useState<string>('flash');
+
   return (
     <div className="h-[100dvh] w-full bg-[#151A1E] sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-slate-950 overflow-hidden">
       {/* Real Fullscreen Mobile Container */}
@@ -359,6 +361,8 @@ export const App: React.FC = () => {
               {currentScreen === 'home' && (
                 <HomeScreen
                   offers={offers}
+                  externalSelectedCategory={clientSelectedCategory}
+                  onCategoryChange={setClientSelectedCategory}
                   onNavigateToOffers={() => setCurrentScreen('busca')}
                   onNavigateToOfferDetail={(off) => {
                     setSelectedOffer(off);
@@ -489,6 +493,11 @@ export const App: React.FC = () => {
               currentScreen={currentScreen}
               onSelectScreen={(screen) => setCurrentScreen(screen)}
               onOpenSearchModal={() => setIsSearchModalOpen(true)}
+              onSelectFlashCategory={() => {
+                setCurrentScreen('home');
+                setClientSelectedCategory('flash');
+              }}
+              isFlashActive={currentScreen === 'home' && clientSelectedCategory === 'flash'}
             />
 
             {/* Profile Drawer Component */}
