@@ -160,10 +160,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     }
   };
 
+  const isFullscreenFeed = feedLayoutMode === 'fullscreen' && !viewingSalonProfile;
+
   return (
-    <div className="pb-28 bg-slate-950 min-h-screen text-slate-100">
+    <div className={`bg-slate-950 text-slate-100 ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
       {/* Fixed Sticky Global Header */}
-      <div className="sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
+      <div className="flex-shrink-0 sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
         <div className="px-4 h-[60px] w-full flex items-center justify-between gap-3">
           {viewingSalonProfile ? (
             /* Header com botão Voltar e Nome do Estabelecimento quando visualizando perfil */
@@ -323,25 +325,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               })}
             </div>
 
-            {/* Category Chips Bar with Integrated Sort Filter & Count Badge */}
-            <div className="px-4 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {/* Category Chips Bar with Integrated Sort Filter & Count Badge - Converted to Square Cards */}
+            <div className="px-3 py-1.5 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 const isAll = cat.id === 'todos';
+
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 font-['Poppins'] flex-shrink-0 cursor-pointer ${
+                    className={`flex-1 min-w-[64px] max-w-[100px] aspect-square rounded-xl flex flex-col items-center justify-center p-1.5 text-center transition-all cursor-pointer font-['Poppins'] ${
                       isActive
-                        ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
-                        : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                        ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02] ring-2 ring-[#20C933]'
+                        : 'bg-slate-900 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800/80 hover:border-slate-700'
                     }`}
                   >
-                    <span>{cat.label}</span>
+                    <span className="text-[11px] font-bold leading-tight line-clamp-2 select-none px-0.5">
+                      {cat.label}
+                    </span>
                     {isAll && (
                       <span
-                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                        className={`mt-1 px-1.5 py-0.2 rounded text-[9px] font-black ${
                           isActive
                             ? 'bg-slate-950 text-[#20C933]'
                             : 'bg-[#20C933]/20 text-[#20C933]'
@@ -373,7 +378,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <>
           {/* Active Salon Filter Ribbon */}
           {selectedSalonFilter && (
-            <div className="px-4 pt-3 flex items-center justify-between">
+            <div className="px-4 pt-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs text-emerald-200 font-medium">
                 <span>
                   Filtrando vagas de: <strong className="text-white font-bold">{selectedSalonFilter}</strong>
@@ -389,8 +394,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           )}
 
-          {/* PWA Install Banner */}
-          {onOpenInstallModal && (
+          {/* PWA Install Banner (apenas no modo grid para manter o reels 100% fullscreen) */}
+          {onOpenInstallModal && feedLayoutMode !== 'fullscreen' && (
             <div className="px-4 pt-2">
               <InstallBanner
                 onOpenInstallModal={onOpenInstallModal}
@@ -401,7 +406,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* Alternância: Radar Fullscreen Feed vs Grid Pinterest vs Cards */}
           {feedLayoutMode === 'fullscreen' ? (
-            <div className="h-[calc(100dvh-172px)] w-full overflow-hidden">
+            <div className="flex-1 min-h-0 w-full overflow-hidden">
               <RadarFullscreenFeed
                 offers={filteredAndSortedOffers}
                 favorites={favorites}

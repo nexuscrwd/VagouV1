@@ -46,7 +46,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
   }
 
   return (
-    <div className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-black">
+    <div className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar bg-black overscroll-contain">
       {offers.map((offer, index) => {
         const isFavorite = favorites.includes(offer.id);
         const isMuted = mutedStates[offer.id] ?? true;

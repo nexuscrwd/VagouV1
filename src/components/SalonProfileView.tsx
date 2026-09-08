@@ -27,9 +27,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   isFavorite = false,
   onToggleFavorite,
 }) => {
-  const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'avaliacoes'>('vagas');
+  const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'espaco'>('vagas');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
+  const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
 
   // Filter all offers belonging to this salon
   const salonOffers = offers.filter((o) => o.salonName === salonName);
@@ -139,8 +140,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     }
   ];
 
-  const handleOpenBooking = (srv?: CatalogServiceItem) => {
+  const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false) => {
     setBookingService(srv || catalogServices[0]);
+    setSkipDateStep(directToTimeGrid);
     setIsBookingModalOpen(true);
   };
 
@@ -173,7 +175,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-950 text-slate-100 min-h-screen pb-24">
+    <div className="w-full bg-slate-950 text-slate-100 min-h-full pb-6">
       {/* 1. Header Próprio do Estabelecimento / Capa Super Compacta */}
       <div className="relative w-full h-24 sm:h-28 bg-slate-900 overflow-hidden">
         <img
@@ -195,14 +197,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             >
               <ArrowLeft className="w-3.5 h-3.5 text-[#20C933]" />
               <span>Voltar</span>
-            </button>
-            <button
-              onClick={onBack}
-              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
-              title="Tela Inicial"
-              aria-label="Ir para a tela inicial"
-            >
-              <Home className="w-3.5 h-3.5 text-slate-200" />
             </button>
           </div>
 
@@ -275,57 +269,50 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         </div>
 
-        {/* Localização e Horário */}
-        <div className="mt-3 flex flex-col gap-1 bg-slate-900/60 border border-slate-800 rounded-xl p-3 text-xs text-slate-300">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
-            <span className="truncate">{salonInfo.address}, {salonInfo.city}</span>
-          </div>
-          <div className="flex items-center gap-2 text-slate-400">
-            <Clock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-            <span>{salonInfo.hours}</span>
-          </div>
+
+
+        {/* Botão Principal de Agendamento */}
+        <div className="mt-3">
+          <button
+            onClick={() => handleOpenBooking(undefined, true)}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-[#20C933] hover:bg-[#1bb52e] text-slate-950 rounded-2xl text-sm font-bold transition shadow-md shadow-emerald-500/25 font-['Poppins'] cursor-pointer"
+          >
+            <Calendar className="w-4 h-4 text-slate-950" />
+            <span>HORARIOS HOJE</span>
+          </button>
         </div>
 
-        {/* Botão de Ação Rápida */}
-        <div className="mt-3">
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-bold transition shadow-sm"
-          >
-            <MapPin className="w-3.5 h-3.5 text-[#20C933]" />
-            <span>Como Chegar</span>
-          </a>
-        </div>
+
+
+
       </div>
 
       {/* 3. Navegação por Abas do Perfil */}
-      <div className="mt-5 px-4 sticky top-14 z-30 bg-slate-950/95 backdrop-blur-md pt-2 pb-2 border-b border-slate-800/80">
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-          {[
-            { id: 'vagas', label: `⚡ Vagas Hoje (${salonOffers.length})` },
-            { id: 'servicos', label: '✂️ Todos os Serviços' },
-            { id: 'sobre', label: '🏢 Sobre & Equipe' },
-            { id: 'avaliacoes', label: `⭐ Avaliações (${salonInfo.reviewsCount})` },
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all font-['Poppins'] flex-shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02]'
-                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      <div className="mt-3 px-3 sticky top-14 z-30 bg-slate-950/95 backdrop-blur-md pt-1 pb-1.5 border-b border-slate-800/80 grid grid-cols-4 gap-2">
+        {[
+          { id: 'vagas', icon: '📅', title: 'Agenda' },
+          { id: 'servicos', icon: '✂️', title: 'Serviços' },
+          { id: 'sobre', icon: '👤', title: 'Equipe' },
+          { id: 'espaco', icon: '🏛️', title: 'Espaço' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`aspect-square w-full rounded-xl flex flex-col items-center justify-center p-1 text-center transition-all cursor-pointer font-['Poppins'] relative ${
+                isActive
+                  ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 ring-2 ring-[#20C933]'
+                  : 'bg-slate-900 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800/80'
+              }`}
+            >
+              <span className="text-xl sm:text-2xl leading-none mb-1.5">{tab.icon}</span>
+              <span className="text-xs sm:text-sm font-bold leading-tight select-none truncate w-full px-0.5">
+                {tab.title}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* 4. Conteúdo das Abas */}
@@ -371,10 +358,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     </div>
 
                     <div className="text-right flex-shrink-0 flex flex-col items-end">
-                      <span className="text-xs font-black text-emerald-400 font-mono flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-[#20C933]" />
-                        <span>{formatSlotDateTime(offer.timeSlot)}</span>
-                      </span>
                       {offer.originalPrice && offer.originalPrice > offer.price && (
                         <span className="text-[10px] text-slate-400 line-through block mt-0.5">
                           R${offer.originalPrice.toFixed(0)}
@@ -479,43 +462,28 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           <div className="space-y-4">
             {/* Descrição */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] mb-2">Sobre o Espaço</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">{salonInfo.description}</p>
+              <h3 className="text-sm font-bold text-white font-['Poppins'] mb-2">Nossa Equipe & Especialistas</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">Profissionais altamente qualificados com anos de experiência em visagismo, cortes modernos e tratamentos capilares de alto padrão.</p>
             </div>
 
-            {/* Comodidades */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] mb-3">Comodidades & Diferenciais</h3>
-              <div className="grid grid-cols-2 gap-2.5">
-                {salonInfo.amenities.map((amenity, idx) => (
-                  <div key={idx} className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs text-slate-200">
-                    <amenity.icon className="w-4 h-4 text-[#20C933]" />
-                    <span>{amenity.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Equipe / Profissionais */}
+
+            {/* Equipe / Profissionais em Grid */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
               <h3 className="text-sm font-bold text-white font-['Poppins'] mb-3">Profissionais da Equipe</h3>
-              <div className="space-y-2.5">
+              <div className="grid grid-cols-2 gap-3">
                 {salonInfo.professionals.map((prof, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={prof.avatar}
-                        alt={prof.name}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/40"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div>
-                        <h4 className="text-xs font-bold text-white">{prof.name}</h4>
-                        <p className="text-[11px] text-slate-400">{prof.role}</p>
-                      </div>
-                    </div>
+                  <div key={idx} className="flex flex-col items-center p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 text-center shadow-md">
+                    <img
+                      src={prof.avatar}
+                      alt={prof.name}
+                      className="w-14 h-14 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
+                      referrerPolicy="no-referrer"
+                    />
+                    <h4 className="text-xs font-bold text-white truncate w-full">{prof.name}</h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-1 mb-2">{prof.role}</p>
 
-                    <span className="flex items-center gap-1 text-xs font-bold text-amber-400 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
+                    <span className="mt-auto inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800">
                       <Star className="w-3 h-3 fill-amber-400" />
                       {prof.rating.toFixed(1)}
                     </span>
@@ -526,54 +494,87 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         )}
 
-        {/* ABA: AVALIAÇÕES */}
-        {activeTab === 'avaliacoes' && (
-          <div className="space-y-3.5">
-            {/* Card de Resumo das Avaliações */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-3xl font-black text-amber-400 font-['Poppins']">
-                  {salonInfo.rating.toFixed(1)}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <span className="text-xs text-slate-400 mt-0.5 block">
-                    Baseado em {salonInfo.reviewsCount} atendimentos verificados
-                  </span>
-                </div>
+        {/* ABA: ESPAÇO */}
+        {activeTab === 'espaco' && (
+          <div className="space-y-4 font-['Poppins']">
+            {/* Localização e Horário */}
+            <div className="flex flex-col gap-1 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-300 shadow-lg">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#20C933] flex-shrink-0" />
+                <span className="font-semibold text-white truncate">{salonInfo.address}, {salonInfo.city}</span>
               </div>
-              <Award className="w-8 h-8 text-[#20C933]" />
+              <div className="flex items-center gap-2 text-slate-400 pt-1 border-t border-slate-800/80 mt-1">
+                <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>{salonInfo.hours}</span>
+              </div>
             </div>
 
-            {/* Lista de Avaliações */}
-            {salonInfo.reviews.map((rev) => (
-              <div key={rev.id} className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <img
-                      src={rev.avatar}
-                      alt={rev.author}
-                      className="w-7 h-7 rounded-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <span className="text-xs font-bold text-white">{rev.author}</span>
+            {/* Informações de Estrutura do Espaço */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Home className="w-4 h-4 text-[#20C933]" />
+                <span>Estrutura do Espaço</span>
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {salonInfo.description}
+              </p>
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                {salonInfo.amenities.map((amenity, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs text-slate-200">
+                    <amenity.icon className="w-4 h-4 text-[#20C933] flex-shrink-0" />
+                    <span className="truncate">{amenity.label}</span>
                   </div>
-                  <span className="text-[10px] text-slate-500">{rev.date}</span>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  {[...Array(rev.rating)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-
-                <p className="text-xs text-slate-300 leading-relaxed">{rev.comment}</p>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Mapa (Google Maps Embed / Simulador de Localização) */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+              <div className="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-[#20C933]" />
+                  <span className="text-xs font-bold text-white">{salonInfo.address}</span>
+                </div>
+                <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">
+                  {salonInfo.distance} de você
+                </span>
+              </div>
+              <div className="relative w-full h-44 bg-slate-950 flex items-center justify-center overflow-hidden">
+                {/* Visual simulado de mapa interativo com pin */}
+                <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#20C933_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/50"></div>
+                
+                {/* Pin Centralizado */}
+                <div className="z-10 flex flex-col items-center animate-bounce">
+                  <div className="w-10 h-10 rounded-full bg-[#20C933] text-slate-950 flex items-center justify-center shadow-xl shadow-emerald-500/50 border-2 border-white">
+                    <MapPin className="w-5 h-5 fill-slate-950 text-[#20C933]" />
+                  </div>
+                  <span className="mt-1 px-2.5 py-1 bg-slate-900/95 border border-slate-700 text-white text-[11px] font-bold rounded-full shadow-lg">
+                    {salonInfo.name}
+                  </span>
+                </div>
+
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-white text-[11px] font-bold rounded-xl shadow-lg transition flex items-center gap-1.5 backdrop-blur-md cursor-pointer"
+                >
+                  <span>Abrir no Google Maps</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Botão Como Chegar */}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 bg-slate-900 hover:bg-slate-850 border border-emerald-500/40 text-emerald-400 hover:text-emerald-300 rounded-2xl text-sm font-bold shadow-lg shadow-emerald-500/10 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            >
+              <MapPin className="w-4 h-4 text-[#20C933]" />
+              <span>COMO CHEGAR</span>
+            </a>
           </div>
         )}
       </div>
@@ -588,6 +589,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         professionals={salonInfo.professionals}
         initialService={bookingService}
         baseOffer={primaryOffer}
+        skipDateStep={skipDateStep}
         onConfirmAppointment={handleConfirmSchedule}
       />
     </div>

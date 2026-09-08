@@ -15,6 +15,207 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-08] — Conversão da Equipe para Formato Grid de Cards
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** A listagem vertical de profissionais na aba **"Equipe"** foi convertida para um layout em grid de cards (`grid grid-cols-2`), exibindo foto ampliada, cargo, nome e avaliação em destaque.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualização do componente de exibição dos profissionais.
+- **Resumo Técnico:** Layout responsivo em grid.
+
+---
+### [2026-09-08] — Atualização do Card Inicial da Aba Equipe
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** O primeiro bloco da aba **"Equipe"** foi atualizado para destacar a equipe e especialistas do salão.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajuste de título e texto descritivo.
+- **Resumo Técnico:** Foco na apresentação dos profissionais.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** O bloco de endereço e horário de funcionamento foi transferido do topo do perfil para o início da aba **"Espaço"**, proporcionando uma organização mais limpa e contextualizada.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Realocação do card de localização e horários.
+- **Resumo Técnico:** Reestruturação de layout de abas.
+
+---
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção definitiva do botão redundante "Como Chegar" logo abaixo do botão de agendamento no topo do perfil do salão.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do link de geolocalização do cabeçalho.
+- **Resumo Técnico:** Limpeza visual do perfil.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Conversão do botão "Calcular Distância & Rota" na aba **"Espaço"** em um link direto **"COMO CHEGAR"** integrado ao Google Maps.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituição do botão de alerta por link externo de geolocalização.
+- **Resumo Técnico:** Acesso direto à rota do estabelecimento.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Renomeação da aba de localização/estrutura para **"Espaço"** (`🏛️ Espaço`) com ícone representativo.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualização do identificador e título da aba.
+- **Resumo Técnico:** Padronização da nomenclatura da seção.
+
+---
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção do card de comodidades da aba "Equipe" (`sobre`) conforme solicitação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do bloco de comodidades.
+- **Resumo Técnico:** Limpeza de seção redundante.
+
+---
+### [2026-09-08] — Remoção do Botão "Como Chegar"
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção do botão secundário "Como Chegar" abaixo do botão principal de agendamento conforme solicitação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do elemento de link externo.
+- **Resumo Técnico:** Limpeza visual do cabeçalho do perfil.
+
+---
+### [2026-09-08] — Conversão da Aba Mensagens em Local
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Conversão da aba de mensagens para a nova aba `Local` (`📍 Local`).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituição da aba de avaliações/mensagens pela aba de Local contendo informações de estrutura do espaço, mapa interativo e botão de calcular distância e rota.
+- **Resumo Técnico:** Adição de seção estruturada com mapa do estabelecimento e cálculo de distância.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Renomeação do texto do botão principal de agendamento para `HORARIOS HOJE` em letras maiúsculas conforme solicitado.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Texto do botão atualizado.
+- **Resumo Técnico:** Atualização textual e tipográfica.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Ao clicar no botão `Agendar Horário Hoje` no perfil do salão, o usuário agora é levado diretamente para o passo de profissionais e grade de horários (`professionals_and_time`), ignorando a etapa de seleção de data no calendário mensal.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Adição da prop `skipDateStep`.
+  - `src/components/SalonProfileView.tsx`: Controle de estado `skipDateStep` ativado pelo botão principal.
+- **Resumo Técnico:** Otimização do fluxo de agendamento rápido para o dia atual.
+
+---
+- **Tipo:** `[UI/UX Enhancement]`
+- **Motivo:** Ajuste no botão principal de agendamento (`Agendar Horário Hoje`) para abrir diretamente o modal de horários do dia atual.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualização do texto e chamada de abertura do modal de agendamento.
+- **Resumo Técnico:** Acesso imediato à grade de horários do dia.
+
+---
+- **Tipo:** `[UI/UX Update]`
+- **Motivo:** Conversão do primeiro botão de navegação do perfil do salão de "Vagas" para "Agenda" (`📅 Agenda`), conforme solicitação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Alteração do item da aba no array de navegação.
+- **Resumo Técnico:** Atualização de rótulo e ícone na barra de abas responsiva.
+
+---
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção do horário duplicado no lado direito dos cards de oferta do Radar para limpar o layout e evitar redundância visual.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do badge redundante de relógio/horário à direita.
+- **Resumo Técnico:** Limpeza visual e otimização do espaço nos cards.
+
+---
+
+### [2026-09-08] — Remoção do Botão de Início do Cabeçalho
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção do botão de "Início" do cabeçalho superior do perfil do salão, conforme solicitado pelo usuário.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do botão Home.
+- **Resumo Técnico:** Limpeza de elementos redundantes na navegação superior.
+
+---
+
+### [2026-09-08] — Aumento Responsivo de Ícones e Textos das Abas
+- **Tipo:** `[UI/UX Enhancement]` / `[Accessibility]`
+- **Motivo:** Aumento proporcional dos ícones (`text-xl sm:text-2xl`) e textos (`text-xs sm:text-sm`) dentro dos botões de abas responsivos para garantir excelente visibilidade e usabilidade em telas móveis e desktop.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajuste de tamanho de fontes e espaçamentos internos dos botões em grade.
+- **Resumo Técnico:** Melhoria significativa na legibilidade e experiência tátil.
+
+---
+
+### [2026-09-08] — Ajuste Exato dos Cards Quadrados Compactos (Menores com Padding Mínimo)
+- **Tipo:** `[UI/UX Enhancement]` / `[Focus Mode]`
+- **Motivo:** Ajuste rigoroso solicitado pelo usuário para que os 4 cards sejam menores (`w-14 h-14` / 56x56px) com espaçamento interno mínimo (`p-0.5`) entre os ícones/textos e as paredes das bordas, idênticos à imagem de referência ("Serviços", "Serviços", "Especialistas", "Mensagens" com badge 2).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Dimensões fixas compactas `w-14 h-14`, bordas arredondadas `rounded-xl`, espaçamento mínimo e ícones centralizados.
+- **Resumo Técnico:** Perfeita conformidade visual com o design de referência fornecido.
+
+---
+
+### [2026-09-08] — Refinamento dos Cards Quadrados no Perfil do Estabelecimento (Estilo Exemplo)
+- **Tipo:** `[UI/UX Enhancement]` / `[Visual Alignment]`
+- **Motivo:** Ajuste milimétrico dos 4 cards quadrados de abas do perfil do salão para ficarem menores, compactos e sem espaçamentos internos excessivos entre as bordas, ícones e textos, correspondendo exatamente à imagem de exemplo ("Serviços", "Agenda", "Especialistas", "Mensagens" com badge de notificação).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Redução de tamanho (`min-w-[56px] max-w-[80px]`), padding interno mínimo (`p-0.5`), ícones compactos no topo e badge de mensagens igual ao modelo.
+- **Resumo Técnico:** Máxima fidelidade visual ao layout de referência do usuário.
+
+---
+
+### [2026-09-08] — Adição do Botão Principal "Agendar Horário" Conforme Referência Visual
+- **Tipo:** `[UI/UX Enhancement]` / `[Layout alignment]`
+- **Motivo:** Baseado na imagem de exemplo enviada pelo usuário, adicionado o botão principal "Agendar Horário" em destaque acima da barra de navegação por abas em formato de cards quadrados no perfil do estabelecimento.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Inclusão do botão de agendamento em destaque (`bg-[#20C933] text-slate-950 rounded-2xl py-3 font-bold font-['Poppins']`) exatamente acima dos 4 cards quadrados de abas.
+- **Resumo Técnico:** Fidelidade visual completa à interface de exemplo solicitada.
+
+---
+
+### [2026-09-08] — Ajuste de Enquadramento Compacto e Otimização de Margens dos Botões Quadrados
+- **Tipo:** `[UI/UX Enhancement]` / `[Focus Mode]`
+- **Motivo:** O usuário solicitou ajustar os botões dentro da div para caberem com precisão no contêiner, eliminando espaçamentos excessivos de margens.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Redução de padding horizontal para `px-3 py-1.5`, gap reduzido para `gap-1.5` e distribuição fluida com `flex-1 min-w-[64px] max-w-[100px] aspect-square`, encaixando perfeitamente sem sobras.
+  - `src/components/SalonProfileView.tsx`: Aplicado o mesmo padrão de ajuste compacto (`px-3 py-1.5`, `gap-1.5`, `flex-1 min-w-[64px] max-w-[96px] aspect-square`) para as abas do perfil.
+- **Resumo Técnico:** Layout equilibrado de ponta a ponta sem vazamento ou margens desnecessárias.
+
+---
+
+### [2026-09-08] — Conversão dos Botões de Abas do Perfil do Estabelecimento em Cards Quadrados
+- **Tipo:** `[UI/UX Enhancement]` / `[Visual Consistency]`
+- **Motivo:** O usuário estava navegando na tela de Perfil do Estabelecimento (`SalonProfileView`) e solicitou que os botões de abas ("Vagas Hoje", "Todos os Serviços", "Sobre & Equipe", "Avaliações") fossem convertidos no formato de cards quadrados.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Os botões de navegação das abas do salão foram remodelados para `aspect-square w-[72px] h-[72px] rounded-xl`, com ícone no topo, título e subtítulo centralizados e anel de destaque verde no estado ativo.
+- **Resumo Técnico:** Padronização visual em harmonia com a barra de categorias quadrada da HomeScreen.
+
+---
+
+### [2026-09-08] — Formatação dos Botões de Categoria em Cards Quadrados Estritos
+- **Tipo:** `[UI/UX Enhancement]` / `[Focus Mode]`
+- **Motivo:** Ajuste de proporção para cards perfeitamente quadrados (`aspect-square w-[72px] h-[72px] rounded-xl`) nos botões de categorias.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Os botões da barra de categorias foram ajustados para proporção estritamente quadrada (1:1 com `aspect-square`), mantendo cantos levemente arredondados (`rounded-xl`), texto centralizado e estados de seleção em destaque.
+- **Resumo Técnico:** Proporção 1:1 rigorosa sem distorção visual em nenhum dispositivo.
+
+---
+
+### [2026-09-06] — Criação do Contrato de Ecossistema de Duas Pontas (`ECOSYSTEM_CONTRACT.md`)
+- **Tipo:** `[Docs]` / `[Ecosystem Architecture]`
+- **Motivo:** Estruturação da divisão do ecossistema Vagou em duas aplicações irmãs: **Vagou (App Consumidor)** e **Vagou Pro (App Empresário / Estabelecimentos)** no Ionic Studio, compartilhando a mesma base de dados.
+- **Arquivos Impactados:**
+  - `ECOSYSTEM_CONTRACT.md`: Criado com diagrama ASCII da arquitetura, dicionário de dados compartilhado (`salons`, `professionals`, `service_offers`, `appointments`, `salon_media_library`), especificação de theming dinâmico (White-label) com tokens CSS, dimensões de tela, padrões de layout mobile e máquina de estados da vaga relâmpago.
+- **Resumo Técnico:** Documento central pronto para servir como base de inicialização do primeiro prompt do projeto irmão no Ionic Studio.
+
+---
+
+### [2026-09-06] — Remoção do Espaço Vazio Acima do Menu Rodapé (Reels & Feed Fullscreen)
+- **Tipo:** `[Bug Fix]` / `[Layout & Mobile UI]`
+- **Motivo:** O usuário identificou que ao rolar o feed de ofertas (Reels), surgia uma faixa preta vazia/espaço morto entre a base do card de oferta e a barra de navegação inferior (`BottomNav`).
+- **Causa Raiz Identificada:**
+  1. O contêiner de feed no modo fullscreen utilizava altura fixa `h-[calc(100dvh-172px)]` com `pb-28` (112px de padding inferior no contêiner raiz da `HomeScreen`), causando scroll no elemento pai e revelando uma área vazia de 112px ao final da rolagem.
+  2. A falta de `flex-1 min-h-0` no contêiner do feed impedia que o card se ajustasse com precisão matemática até a borda superior do `BottomNav`.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Alterado o contêiner raiz para `h-full flex flex-col overflow-hidden` quando em modo fullscreen (eliminando o `pb-28` indevido), contêiner do feed atualizado para `flex-1 min-h-0 w-full overflow-hidden`, e `InstallBanner` reservado apenas para o modo grid/pinterest para não roubar altura do Reels.
+  - `src/components/RadarFullscreenFeed.tsx`: Adicionado `overscroll-contain` para reter o gesto de snap e evitar rolagem no contêiner externo.
+  - `src/App.tsx`: Adicionado `min-h-0` no contêiner `flex-1` do cliente para evitar transbordamento de sub-pixel em navegadores mobile.
+  - `src/components/SalonProfileView.tsx`: Reduzido padding inferior de `pb-24` para `pb-6` para evitar espaços mortos ao final do perfil.
+- **Resumo Técnico:** O card de vídeo/imagem agora preenche com exatidão 100% da área útil entre o cabeçalho superior e o `BottomNav`, sem nenhuma faixa vazia ou corte visual. Validação aprovada com 0 erros no lint e compilação de produção bem-sucedida.
+
+---
+
 ### [2026-09-04] — Redesign do Botão de Agendamento Fullscreen com Fundo Verde Oficial
 - **Tipo:** `[UI Style]` / `[Focus Mode]`
 - **Motivo:** Atualização do layout do botão `#btn-fullscreen-agendar-off-1` para incorporar o fundo verde padrão do app (`#20C933`), texto e ícone em tom escuro contrastante (`slate-950`) com sombra luminosa verde.

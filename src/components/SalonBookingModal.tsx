@@ -30,6 +30,7 @@ interface SalonBookingModalProps {
   professionals: SalonProfessionalItem[];
   initialService?: CatalogServiceItem | null;
   baseOffer?: ServiceOffer;
+  skipDateStep?: boolean;
   onConfirmAppointment: (bookingData: {
     service: CatalogServiceItem;
     professional: string;
@@ -54,6 +55,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   professionals,
   initialService,
   baseOffer,
+  skipDateStep = false,
   onConfirmAppointment,
 }) => {
   // Step state: 'date' (Phase 1: Monthly Calendar only) -> 'professionals_and_time' (Phase 2: Professionals + Time Table below) -> 'confirmation' (Phase 3: Summary)
@@ -112,7 +114,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   // Sync state when modal opens or initialService/baseOffer changes
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep('date');
+      setCurrentStep(skipDateStep ? 'professionals_and_time' : 'date');
       setSelectedTimeSlot(null);
       setSelectedProfessional('any');
       if (initialService) {
@@ -130,7 +132,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         setSelectedService(services[0]);
       }
     }
-  }, [isOpen, initialService, baseOffer, services]);
+  }, [isOpen, initialService, baseOffer, services, skipDateStep]);
 
   // Monthly Calendar Generation
   const monthData = useMemo(() => {

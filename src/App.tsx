@@ -357,7 +357,7 @@ export const App: React.FC = () => {
         {appMode === 'client' && (
           <div className="flex flex-col h-full w-full overflow-hidden">
             {/* Scrollable Screen Content Container */}
-            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden relative bg-slate-950">
+            <div className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden relative bg-slate-950">
               {currentScreen === 'home' && (
                 <HomeScreen
                   offers={offers}
