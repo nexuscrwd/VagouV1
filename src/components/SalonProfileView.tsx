@@ -485,8 +485,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     <h4 className="text-xs font-bold text-slate-900 truncate w-full">{prof.name}</h4>
                     <p className="text-[10px] text-slate-500 line-clamp-1 mb-2">{prof.role}</p>
 
-                    <span className="mt-auto inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
-                      <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                    <span className="mt-auto inline-flex items-center gap-1 text-[11px] font-extrabold text-slate-900 bg-amber-100 px-2 py-0.5 rounded-lg border border-amber-300">
+                      <Star className="w-3 h-3 fill-amber-500 text-amber-600" />
                       {prof.rating.toFixed(1)}
                     </span>
                   </div>

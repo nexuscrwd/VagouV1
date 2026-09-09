@@ -414,7 +414,7 @@ export const PartnerAgendaScreen: React.FC<PartnerAgendaScreenProps> = ({
                       </span>
                     )}
                     {isVagaPublicada && (
-                      <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full inline-block mt-1 border border-amber-300">
+                      <span className="text-[10px] font-extrabold bg-amber-100 text-slate-900 px-2 py-0.5 rounded-full inline-block mt-1 border border-amber-300">
                         ⚡ Vaga no App
                       </span>
                     )}
@@ -429,7 +429,7 @@ export const PartnerAgendaScreen: React.FC<PartnerAgendaScreenProps> = ({
                       </span>
                     )}
                     {isNoShow && (
-                      <span className="text-[10px] font-bold bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full inline-block mt-1 border border-rose-200">
+                      <span className="text-[10px] font-bold bg-rose-100 text-slate-900 px-2 py-0.5 rounded-full inline-block mt-1 border border-rose-300">
                         Faltou (No-Show)
                       </span>
                     )}

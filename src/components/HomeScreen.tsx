@@ -329,8 +329,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               })}
             </div>
 
-            {/* Category Chips Bar with Integrated Sort Filter & Count Badge - Converted to Square Cards */}
-            <div className="px-3 py-1.5 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
+            {/* Category Chips Bar with Integrated Sort Filter & Count Badge - Restaurada Compacta / Estreita */}
+            <div className="px-3 py-1 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 const isAll = cat.id === 'todos';
@@ -339,18 +339,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`flex-1 min-w-[64px] max-w-[100px] aspect-square rounded-xl flex flex-col items-center justify-center p-1.5 text-center transition-all cursor-pointer font-['Poppins'] ${
+                    className={`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold text-center transition-all cursor-pointer font-['Poppins'] whitespace-nowrap ${
                       isActive
-                        ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.02] ring-2 ring-[#20C933]'
+                        ? 'bg-[#20C933] text-slate-950 shadow-sm font-extrabold'
                         : 'bg-slate-900 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800/80 hover:border-slate-700'
                     }`}
                   >
-                    <span className="text-[11px] font-bold leading-tight line-clamp-2 select-none px-0.5">
+                    <span className="leading-none select-none">
                       {cat.label}
                     </span>
                     {isAll && (
                       <span
-                        className={`mt-1 px-1.5 py-0.2 rounded text-[9px] font-black ${
+                        className={`ml-1.5 px-1.5 py-0.2 rounded text-[9px] font-black inline-block ${
                           isActive
                             ? 'bg-slate-950 text-[#20C933]'
                             : 'bg-[#20C933]/20 text-[#20C933]'

@@ -22,7 +22,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
       <div className="w-full max-w-sm bg-white rounded-xl p-5 shadow-2xl space-y-4 border border-slate-100 animate-in zoom-in-95 duration-200">
         {/* Warning Header */}
         <div className="flex items-start justify-between">
-          <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100 shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-rose-50 text-slate-900 flex items-center justify-center border border-rose-200 shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
           <button
@@ -61,7 +61,7 @@ export const CancelModal: React.FC<CancelModalProps> = ({
           </div>
         </div>
 
-        <div className="text-[11px] text-slate-500 bg-amber-50 text-amber-800 p-2.5 rounded-md border border-amber-200">
+        <div className="text-[11px] bg-amber-50 text-slate-900 p-2.5 rounded-md border border-amber-300 font-medium">
           ⚠️ O cancelamento é gratuito e sem taxas até 1 hora antes do serviço.
         </div>
 

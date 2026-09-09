@@ -28,6 +28,9 @@ Os badges de urgência dos cards (*"VAGA AGORA"*, *"VAGA RELÂMPAGO"*) e botões
 - **Grafite Vagou (Fundo/Superfícies):** `#151A1E` (RGB: 21, 26, 30 | Fundo do app, containers escuros)
 - **Branco:** `#FFFFFF`
 - **Tipografia:** Família `Poppins` (Bold 700, Medium 500, Regular 400).
+- **Regra de Contraste e Temperatura Cromática (Fontes & Fundos):**
+  - **Fontes sobre fundos de cores quentes:** Em superfícies quentes (âmbar, amarelo, laranja, vermelho ou rose, como `bg-amber-100`, `bg-amber-50`, `bg-rose-100`), a tipografia e ícones **devem ser de tom frio** (`text-slate-900`, `text-slate-950`). É proibido usar texto quente sobre fundo quente (ex: `text-amber-800` em `bg-amber-50`).
+  - **Fontes sobre fundos de cores frias:** Em superfícies frias/escuras (`bg-slate-950`, `#151A1E`, `bg-slate-900`), destaques e alertas de urgência adotam **temperatura quente** (`text-amber-400`, `text-rose-400`, `text-orange-400`) para corte térmico e visibilidade imediata.
 - **Slogan Oficial:** *"Vagou achou."* (Sempre com o ponto final).
 - **Componentes Oficiais:**
   - `src/components/VagouLogo.tsx`: Suporta `variant="header"`, `variant="full"`, `variant="icon"`, `variant="splash"`.
@@ -51,3 +54,27 @@ Antes de finalizar qualquer tarefa, passe por este checklist mental:
 - [ ] O `npm run lint` (`tsc --noEmit`) rodou com **zero erros**?
 - [ ] O `npm run build` compilou com sucesso?
 - [ ] O arquivo `CHANGELOG.md` foi devidamente atualizado?
+
+---
+
+## ⚡ 5. Padrão Consolidado: Deploy no Cloudflare Workers (Static Assets)
+
+### Configuração Validada do `wrangler.toml`:
+```toml
+name = "vagouv1"
+compatibility_date = "2024-09-23"
+
+# Cloudflare Workers com Static Assets (SPA)
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
+```
+
+### Regras Críticas de Compatibilidade:
+1. **Zero `_redirects` em Workers:** Arquivos `_redirects` com regras do tipo `/* /index.html 200` geram erro `[code: 100324]` (infinite loop). O roteamento SPA é feito exclusivamente por `not_found_handling = "single-page-application"` no `wrangler.toml`.
+2. **Sem `binding = "ASSETS"` em workers apenas de assets:** O binding é proibido em workers sem script de entrada (`main`).
+3. **Gerenciamento de Lockfiles:** `bun.lock` e `package-lock.json` são ignorados no repositório (`.gitignore`) para evitar que a diferença de versão do Bun/npm trave a instalação no runner CI do Cloudflare (`bun install` dinâmico em 5s).
+4. **Comandos no painel Cloudflare:**
+   - **Build command:** `bun run build`
+   - **Deploy command:** `npx wrangler deploy`
+

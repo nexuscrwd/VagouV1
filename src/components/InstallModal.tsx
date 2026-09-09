@@ -171,7 +171,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
           {activeTab === 'opera' && (
             <div className="space-y-2.5 text-slate-700">
               <div className="flex items-center gap-2 text-slate-900 font-bold">
-                <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-[10px] font-black">O</span>
+                <span className="w-5 h-5 rounded-full bg-rose-100 text-slate-950 flex items-center justify-center text-[10px] font-black border border-rose-200">O</span>
                 <span>Como instalar no Opera / Opera GX:</span>
               </div>
               <ol className="space-y-2.5 list-decimal list-inside text-slate-600 leading-relaxed font-medium">

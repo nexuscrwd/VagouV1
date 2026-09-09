@@ -15,6 +15,40 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Restauração da Barra de Categorias Rápidas em Formato Compacto e Estreito
+- **Tipo:** `[UI/UX Enhancement]` / `[Focus Mode]`
+- **Motivo:** Atendimento ao ajuste de Focus Mode no elemento exato (`div:nth-of-type(3)` do cabeçalho superior), restaurando a div de sugestão de categorias rápidas para o formato estreito e compacto original, eliminando a altura excessiva de cards quadrados que ocupava espaço desnecessário no topo móvel.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Reduzido padding da div para `px-3 py-1`, botões remodelados de `aspect-square` para chips horizontais fluidos (`flex-1 py-1.5 px-2.5 rounded-lg text-[11px] font-bold whitespace-nowrap`), recuperando mais de 50px de altura útil na tela para o feed de vagas.
+- **Resumo Técnico:** Fita horizontal estreita, leve e fluida sem quebra de linha ou distorção em telas mobile, validada com 0 erros de lint e build aprovado.
+
+---
+
+### [2026-09-09] — Padronização Cromática: Fontes Frias sobre Cores Quentes (e Vice-Versa)
+- **Tipo:** `[Design System & UI/UX Contrast]`
+- **Motivo:** Aplicação da diretriz de corte térmico e acessibilidade visual: fontes sobre fundos de cores quentes (âmbar, rose, vermelho) devem adotar tons frios (`text-slate-900`/`slate-950`) para contraste nítido, e fontes sobre fundos frios/escuros adotam destaques quentes (`text-amber-400`, `text-rose-400`).
+- **Arquivos Impactados:**
+  - `src/components/CancelModal.tsx`: Atualizado ícone de alerta e caixa de aviso de cancelamento para texto frio (`text-slate-900`) sobre `bg-rose-50` e `bg-amber-50`.
+  - `src/components/PartnerAgendaScreen.tsx`: Badges de status de vaga (`bg-amber-100`) e no-show (`bg-rose-100`) atualizados para texto frio (`text-slate-900`).
+  - `src/components/AgendaScreen.tsx`: Badge de agendamento cancelado (`bg-rose-100`) atualizado para `text-slate-900`.
+  - `src/components/SalonProfileView.tsx`: Badge de avaliação com estrela (`bg-amber-100`) atualizado para `text-slate-900`.
+  - `src/components/InstallModal.tsx`: Badge de identificação do navegador Opera (`bg-rose-100`) atualizado para `text-slate-950`.
+  - `KNOWLEDGE_BASE.md`: Registrada a Regra de Contraste e Temperatura Cromática na Seção 2.
+- **Resumo Técnico:** Eliminação de homogeneidade cromática de baixa legibilidade (texto quente sobre fundo quente); aplicação de contraste frio/quente com validação completa em `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-09] — Sucesso e Validação da Implantação no Cloudflare Workers (`vagouv1`)
+- **Tipo:** `[Milestone & Production Deployment]`
+- **Motivo:** Confirmação de implantação em produção com 100% de sucesso no Cloudflare Workers (`vagouv1`).
+- **Arquivos & Configurações Consolidadas:**
+  - `wrangler.toml`: Configurado com `name = "vagouv1"`, `compatibility_date = "2024-09-23"` e `not_found_handling = "single-page-application"`.
+  - `KNOWLEDGE_BASE.md`: Registrado na Seção 5 o protocolo técnico oficial para builds e deploys no Cloudflare Workers (regras de roteamento nativo SPA, eliminação de `_redirects` conflitantes e isolamento de lockfiles de ambiente CI).
+  - `.gitignore`: Proteção permanente de lockfiles de ambientes locais/externos (`bun.lock*`, `package-lock.json`).
+- **Resumo Técnico:** Ciclo completo de CI/CD validado: instalação ultrarrápida via Bun (4.85s), build de produção Vite (3.8s), upload e publicação de assets no Cloudflare Workers sem conflitos de redirecionamento ou mismatch de configuração.
+
+---
+
 ### [2026-09-09] — Correção Definitiva para Deploy em Cloudflare Workers
 - **Tipo:** `[Fix & DevOps]`
 - **Motivo:** O estágio de instalação e build passaram 100%, mas a publicação pelo Cloudflare Worker falhou com `Invalid _redirects configuration: Line 1: Infinite loop detected in this rule. [code: 100324]` devido ao arquivo `_redirects` herdado do Cloudflare Pages que conflita com o roteamento nativo de SPA do Cloudflare Workers Static Assets. Além disso, havia divergência no nome do Worker (`vagou` vs `vagouv1`).

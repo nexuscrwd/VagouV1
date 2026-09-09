@@ -172,7 +172,7 @@ export const AgendaScreen: React.FC<AgendaScreenProps> = ({
                                   item.status === 'EM ANDAMENTO'
                                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                     : item.status === 'CANCELADO'
-                                    ? 'bg-rose-100 text-rose-700 border border-rose-200'
+                                    ? 'bg-rose-100 text-slate-900 border border-rose-300 font-extrabold'
                                     : 'bg-slate-100 text-slate-700'
                                 }`}
                               >
