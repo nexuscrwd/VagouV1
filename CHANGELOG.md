@@ -15,6 +15,45 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Implementação de Tema Claro & Escuro (Theme Switcher) e Documentação na Base de Conhecimento
+- **Tipo:** `[Feat, Theming & Documentation]`
+- **Motivo:** Implementação do suporte nativo a Tema Claro (Light Pearl) e Tema Escuro (Dark Slate) em toda a aplicação, com botão dinâmico de alternância no cabeçalho do micro-app do salão e na gaveta de perfil, refatoração de contraste para eliminar texto preto pesado sobre o verde, e registro formal dos padrões cromáticos e iconográficos na `KNOWLEDGE_BASE.md`.
+- **Arquivos Impactados:**
+  - `src/context/ThemeContext.tsx`: Criação do provider de tema (`dark` | `light`) com persistência em `localStorage`.
+  - `src/main.tsx`: Envolvimento da aplicação com `ThemeProvider`.
+  - `src/App.tsx`: Consumo do tema dinâmico nos contêineres principais.
+  - `src/components/BottomNav.tsx`: Suporte a estados e cores dinâmicas para modo claro e escuro.
+  - `src/components/SalonProfileView.tsx`: Refatoração visual completa para alternância instantânea entre Dark Slate e Light Pearl (cabeçalho com botão de sol/lua, carrossel de portfólio, botão de alta conversão "HORÁRIOS HOJE", abas e conteúdo).
+  - `src/components/ProfileDrawer.tsx`: Adicionado botão de alternância de tema nas opções e estilização adaptativa.
+  - `KNOWLEDGE_BASE.md`: Registrada a Seção 7 com a escala cromática comparativa (Dark Slate vs. Light Pearl), regras de relevo com gradientes, eliminação de preto sobre verde e transições fluidas com `motion/react`.
+- **Resumo Técnico:** Clean code aplicado, zero dependências ou variáveis não utilizadas, conformidade total com as diretrizes de design system e acessibilidade WCAG AA.
+
+---
+
+### [2026-09-09] — Documentação Técnica de Ícones Semânticos no Micro-App do Estabelecimento
+- **Tipo:** `[Documentation & Design System]`
+- **Motivo:** Registro formal no `KNOWLEDGE_BASE.md` dos padrões consolidados de iconografia (`lucide-react`) para as abas de navegação, cabeçalho e catálogo do micro-app do salão (`Calendar` para Agenda, `Scissors` para Serviços, `Users`/`UserCheck` para Equipe/Perfil, `Store`/`Car` para Espaço/Atendimento, e ações rápidas).
+- **Arquivos Impactados:**
+  - `KNOWLEDGE_BASE.md`: Adicionada seção 6 com tabela de mapeamento de ícones primários, condicionais e regras de negócio/UI.
+
+---
+
+### [2026-09-09] — Conversão da Seção do Salão em Aplicativo Dedicado do Estabelecimento
+- **Tipo:** `[Feat & UI/UX Refactor]`
+- **Motivo:** Conversão da visualização de perfil de salão (que apresentava aspecto de rede social/feed genérico) em uma interface dedicada de aplicativo nativo do estabelecimento, com cabeçalho exclusivo, carrossel compacto de portfólio, botão de alta conversão "HORÁRIOS HOJE", grade de 4 abas dinâmicas e paleta cromática sofisticada Dark Slate + Emerald Silk (eliminando texto preto sobre fundo verde).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`:
+    - **Cabeçalho de Aplicativo:** Integrado logotipo do estabelecimento com selo verificado, saudação personalizada ("Olá, Lucas 👋"), botão sutil de retorno ao Radar do Vagou, botão de notificações com badge, avatar do usuário e ícone de menu de configurações (três tracinhos horizontais).
+    - **Slide / Carrossel de Portfólio Compacto:** Container de ~135px de altura com imagem fotográfica de alta qualidade em segundo plano, degradê linear lateral escuro para legibilidade perfeita, tag de categoria, título resumido do serviço, frase de chamada publicitária ("Aproveite para dar um up no seu visual hoje mesmo") e botão translúcido sutil "Agendar".
+    - **Botão "HORÁRIOS HOJE":** Formatado com bordas curvas de 5px (`rounded-[5px]`), gradiente linear esmeralda luminoso, texto em branco puro com micro sombra de relevo (`drop-shadow`) e borda fina de luz superior.
+    - **Grade de 4 Opções Dinâmica:** Abas para Agenda, Serviços, Equipe (ou Perfil caso profissional único) e Espaço (ou Atendimento caso domicílio), com gradientes sutis e estados ativos com anel de luz esmeralda.
+    - **Transições Suaves:** Integração com `motion/react` para animação fluida entre seções.
+  - `src/components/HomeScreen.tsx`:
+    - Early return de `SalonProfileView` quando `viewingSalonProfile` estiver ativo, eliminando duplicação de cabeçalhos e poluição de código.
+- **Resumo Técnico:** Clean code aplicado (zero imports ou estados zumbis), tipagem TypeScript 100% íntegra, build de produção validado com sucesso e total obediência às diretrizes de síntese mobile.
+
+---
+
 ### [2026-09-09] — Restauração da Barra de Categorias Rápidas em Formato Compacto e Estreito
 - **Tipo:** `[UI/UX Enhancement]` / `[Focus Mode]`
 - **Motivo:** Atendimento ao ajuste de Focus Mode no elemento exato (`div:nth-of-type(3)` do cabeçalho superior), restaurando a div de sugestão de categorias rápidas para o formato estreito e compacto original, eliminando a altura excessiva de cards quadrados que ocupava espaço desnecessário no topo móvel.

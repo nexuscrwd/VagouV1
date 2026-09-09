@@ -10,8 +10,11 @@ import {
   ChevronRight,
   UserCheck,
   Heart,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { VagouLogo } from './VagouLogo';
+import { useTheme } from '../context/ThemeContext';
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -42,6 +45,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   userName = 'Anderson Silva',
   userAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
 }) => {
+  const { isDark, toggleTheme } = useTheme();
+
   if (!isOpen) return null;
 
   return (
@@ -50,14 +55,20 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className="flex-1" onClick={onClose} />
 
       {/* Drawer Container */}
-      <div className="w-full max-w-xs h-full bg-[#151A1E] border-l border-slate-800 text-white flex flex-col justify-between shadow-2xl p-5 overflow-y-auto">
+      <div className={`w-full max-w-xs h-full border-l flex flex-col justify-between shadow-2xl p-5 overflow-y-auto transition-colors duration-200 ${
+        isDark ? 'bg-[#151A1E] border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+      }`}>
         {/* Top Header */}
         <div>
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-            <VagouLogo variant="header" size="xs" theme="dark" />
+          <div className={`flex items-center justify-between pb-4 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+            <VagouLogo variant="header" size="xs" theme={isDark ? "dark" : "light"} />
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition"
+              className={`p-1.5 rounded-full border transition cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                  : 'bg-white border-slate-200 text-slate-500 hover:text-slate-900 shadow-xs'
+              }`}
               aria-label="Fechar menu"
             >
               <X className="w-4 h-4" />
@@ -65,7 +76,9 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* User Profile Card */}
-          <div className="mt-4 p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center gap-3">
+          <div className={`mt-4 p-3.5 rounded-2xl border flex items-center gap-3 ${
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+          }`}>
             <div className="relative">
               <img
                 src={userAvatarUrl}
@@ -79,30 +92,32 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-black text-white truncate font-['Poppins']">
+              <h3 className={`text-sm font-black truncate font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {userName}
               </h3>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[10px] text-[#20C933] font-bold bg-[#20C933]/10 px-2 py-0.5 rounded-full border border-[#20C933]/20">
+                <span className="text-[10px] text-[#087A2A] dark:text-[#20C933] font-bold bg-[#20C933]/15 px-2 py-0.5 rounded-full border border-[#20C933]/30">
                   Cliente VIP
                 </span>
-                <span className="text-[10px] text-slate-400">São Paulo, SP</span>
+                <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>São Paulo, SP</span>
               </div>
             </div>
           </div>
 
           {/* Quick Segment Switcher (Netflix Profiles) */}
           <div className="mt-5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2 font-['Poppins']">
+            <span className={`text-[10px] font-bold uppercase tracking-wider block mb-2 font-['Poppins'] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               Perfil de Preferência (Feed)
             </span>
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800/90">
+            <div className={`grid grid-cols-3 gap-1.5 p-1 rounded-xl border ${
+              isDark ? 'bg-slate-950 border-slate-800/90' : 'bg-slate-200/80 border-slate-300'
+            }`}>
               <button
                 onClick={() => onSelectSegment('barbearia')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 ${
+                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'barbearia'
                     ? 'bg-[#20C933] text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <span>Barbearia</span>
@@ -111,10 +126,10 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
               <button
                 onClick={() => onSelectSegment('salao')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 ${
+                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'salao'
                     ? 'bg-[#20C933] text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <span>Salão</span>
@@ -123,10 +138,10 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
               <button
                 onClick={() => onSelectSegment('todos')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 ${
+                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'todos'
                     ? 'bg-[#20C933] text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <span>Geral</span>
@@ -136,24 +151,61 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Navigation Links */}
-          <div className="mt-5 space-y-1.5">
+          <div className="mt-5 space-y-2">
+            {/* Botão de Alternar Tema (Claro / Escuro) */}
+            <button
+              onClick={toggleTheme}
+              className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900/60 hover:bg-slate-800 border-slate-800/80 text-white'
+                  : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-900 shadow-xs'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
+                  isDark
+                    ? 'bg-amber-950/60 text-amber-400 border-amber-500/20'
+                    : 'bg-amber-50 text-amber-600 border-amber-200'
+                }`}>
+                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </div>
+                <div>
+                  <span className={`text-xs font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    {isDark ? 'Tema Claro' : 'Tema Escuro'}
+                  </span>
+                  <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {isDark ? 'Alternar para visual claro perolado' : 'Alternar para tema escuro slate'}
+                  </span>
+                </div>
+              </div>
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                isDark ? 'bg-slate-800 text-amber-300' : 'bg-slate-100 text-slate-700'
+              }`}>
+                {isDark ? 'Ativar Claro' : 'Ativar Escuro'}
+              </span>
+            </button>
+
             <button
               onClick={() => {
                 onClose();
                 onNavigateToAgenda();
               }}
-              className="w-full p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 text-left flex items-center justify-between transition group"
+              className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900/60 hover:bg-slate-800 border-slate-800/80 text-white'
+                  : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-900 shadow-xs'
+              }`}
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-emerald-950/60 text-[#20C933] flex items-center justify-center border border-emerald-500/20">
                   <Calendar className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-white block">Meus Agendamentos</span>
-                  <span className="text-[10px] text-slate-400">Ver vagas confirmadas</span>
+                  <span className={`text-xs font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>Meus Agendamentos</span>
+                  <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Ver vagas confirmadas</span>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
+              <ChevronRight className={`w-4 h-4 transition ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
             </button>
 
             {onNavigateToFavorites && (
@@ -162,7 +214,11 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                   onClose();
                   onNavigateToFavorites();
                 }}
-                className="w-full p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 text-left flex items-center justify-between transition group cursor-pointer"
+                className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer ${
+                  isDark
+                    ? 'bg-slate-900/60 hover:bg-slate-800 border-slate-800/80 text-white'
+                    : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-900 shadow-xs'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-rose-950/60 text-rose-500 flex items-center justify-center border border-rose-500/20">
@@ -170,17 +226,17 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-white block">Favoritos</span>
+                      <span className={`text-xs font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>Favoritos</span>
                       {favoriteCount !== undefined && favoriteCount > 0 && (
                         <span className="text-[10px] bg-rose-500/20 text-rose-400 font-bold font-mono px-1.5 py-0.2 rounded-full border border-rose-500/30">
                           {favoriteCount}
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-400">Salões e serviços salvos</span>
+                    <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Salões e serviços salvos</span>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
+                <ChevronRight className={`w-4 h-4 transition ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
               </button>
             )}
 
@@ -189,18 +245,24 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClose();
                 onOpenInterestConfig();
               }}
-              className="w-full p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-slate-800/80 text-left flex items-center justify-between transition group"
+              className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900/60 hover:bg-slate-800 border-slate-800/80 text-white'
+                  : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-900 shadow-xs'
+              }`}
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center border border-slate-700">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
+                  isDark ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-600 border-slate-200'
+                }`}>
                   <SlidersHorizontal className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-white block">Personalizar Categorias</span>
-                  <span className="text-[10px] text-slate-400">Ajustar interesses do feed</span>
+                  <span className={`text-xs font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>Personalizar Categorias</span>
+                  <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Ajustar interesses do feed</span>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white transition" />
+              <ChevronRight className={`w-4 h-4 transition ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
             </button>
 
             <button
@@ -208,7 +270,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClose();
                 onSwitchToPartnerMode();
               }}
-              className="w-full p-3 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-[#20C933]/30 text-left flex items-center justify-between transition group"
+              className="w-full p-3 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-[#20C933]/30 text-left flex items-center justify-between transition group cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-[#20C933] text-slate-950 flex items-center justify-center font-bold">
@@ -224,21 +286,23 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
           </div>
 
           {/* Quick Help & Info */}
-          <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-1">
+          <div className={`mt-4 pt-4 border-t space-y-1 ${isDark ? 'border-slate-800/80' : 'border-slate-200'}`}>
             {onOpenHelpModal && (
               <button
                 onClick={() => {
                   onClose();
                   onOpenHelpModal();
                 }}
-                className="w-full py-2 px-3 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-900 flex items-center gap-2 transition"
+                className={`w-full py-2 px-3 rounded-lg text-xs flex items-center gap-2 transition cursor-pointer ${
+                  isDark ? 'text-slate-300 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
+                }`}
               >
                 <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
                 <span>Como funciona o Vagou?</span>
               </button>
             )}
 
-            <div className="py-2 px-3 text-[11px] text-slate-400 flex items-center gap-2">
+            <div className={`py-2 px-3 text-[11px] flex items-center gap-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               <ShieldCheck className="w-3.5 h-3.5 text-[#20C933]" />
               <span>Agendamento Imediato Garantido</span>
             </div>
@@ -246,9 +310,9 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-slate-800/80 flex flex-col items-center text-center gap-1">
-          <VagouLogo variant="header" size="xs" theme="dark" showTagline={false} />
-          <span className="text-[10px] text-slate-500 font-medium">
+        <div className={`pt-4 border-t flex flex-col items-center text-center gap-1 ${isDark ? 'border-slate-800/80' : 'border-slate-200'}`}>
+          <VagouLogo variant="header" size="xs" theme={isDark ? "dark" : "light"} showTagline={false} />
+          <span className={`text-[10px] font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
             Vagou v1.2.0 • PWA Mobile
           </span>
         </div>

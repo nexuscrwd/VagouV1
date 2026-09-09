@@ -160,113 +160,90 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     }
   };
 
-  const isFullscreenFeed = feedLayoutMode === 'fullscreen' && !viewingSalonProfile;
+  // Se estiver visualizando o aplicativo exclusivo do estabelecimento
+  if (viewingSalonProfile) {
+    return (
+      <SalonProfileView
+        salonName={viewingSalonProfile}
+        offers={offers}
+        onBack={() => setViewingSalonProfile(null)}
+        onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+        onDirectBook={handleDirectBook}
+        isFavorite={favorites.includes(viewingSalonProfile)}
+        onToggleFavorite={() => onToggleFavorite?.(viewingSalonProfile)}
+        userName={userName}
+        userAvatarUrl={userAvatarUrl}
+        onOpenProfileDrawer={onOpenProfileDrawer}
+      />
+    );
+  }
+
+  const isFullscreenFeed = feedLayoutMode === 'fullscreen';
 
   return (
-    <div className={`${viewingSalonProfile ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-100'} ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
+    <div className={`bg-slate-950 text-slate-100 ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
       {/* Fixed Sticky Global Header */}
-      <div className={`flex-shrink-0 sticky top-0 z-40 transition-colors ${
-        viewingSalonProfile
-          ? 'bg-white shadow-xs border-b border-slate-200'
-          : 'bg-[#151A1E] shadow-xl border-b border-slate-800'
-      }`}>
+      <div className="flex-shrink-0 sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
         <div className="px-4 h-[60px] w-full flex items-center justify-between gap-3">
-          {viewingSalonProfile ? (
-            /* Header com botão Voltar e Nome do Estabelecimento quando visualizando perfil */
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <button
-                id="btn-voltar-radar-perfil"
-                onClick={() => setViewingSalonProfile(null)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 hover:border-[#20C933] text-slate-900 transition active:scale-95 cursor-pointer flex-shrink-0"
-                aria-label="Voltar para o Radar / Início"
-                title="Voltar ao Radar"
-              >
-                <ArrowLeft className="w-4 h-4 text-[#20C933]" />
-                <span className="text-xs font-black">Radar</span>
-              </button>
-              <div className="min-w-0">
-                <span className="text-xs font-bold text-slate-900 truncate block">
-                  {viewingSalonProfile}
-                </span>
-                <span className="text-[10px] text-emerald-700 font-semibold">Perfil do Estabelecimento</span>
-              </div>
-            </div>
-          ) : (
-            /* Brand Logo */
-            <div className="flex items-center gap-2">
-              <VagouLogo size="lg" variant="full" />
-            </div>
-          )}
+          {/* Brand Logo */}
+          <div className="flex items-center gap-2">
+            <VagouLogo size="lg" variant="full" />
+          </div>
 
           {/* Layout Mode Toggle, Filter & Profile */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {!viewingSalonProfile && (
-              <>
-                {/* Botão de Filtro (Ordenação) */}
-                <div className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] transition-colors shadow-sm group">
-                  <Filter className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-300 group-hover:text-[#20C933] transition-colors" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    title="Filtrar e Ordenar vagas"
-                  >
-                    <option value="urgency">⚡ Urgência</option>
-                    <option value="distance">📍 Distância</option>
-                    <option value="price">🏷️ Menor Preço</option>
-                  </select>
-                  {/* Ponto indicador se não for o padrão */}
-                  {sortBy !== 'urgency' && (
-                    <span className="absolute top-1.5 right-1.5 md:top-2 md:right-2 w-1.5 h-1.5 rounded-full bg-[#20C933] animate-pulse"></span>
-                  )}
-                </div>
-
-                <div className="flex items-center bg-slate-900 p-0.5 md:p-1 rounded-xl border border-slate-800 shadow-inner">
-                  {/* Botão Reels / Insta / TikTok (Tela Cheia) */}
-                <button
-                  type="button"
-                  onClick={() => setFeedLayoutMode('fullscreen')}
-                  className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
-                    feedLayoutMode === 'fullscreen'
-                      ? 'bg-[#20C933] text-slate-950 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title="Modo Vertical Reels / TikTok"
-                  aria-label="Modo Vertical Reels / TikTok"
-                >
-                  <Smartphone className="w-3.5 h-3.5" />
-                  <span className="hidden xs:inline text-[11px]">Reels</span>
-                </button>
-
-                {/* Botão Pinterest / Grid (Quadriculadinho) */}
-                <button
-                  type="button"
-                  onClick={() => setFeedLayoutMode('pinterest')}
-                  className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
-                    feedLayoutMode === 'pinterest' || feedLayoutMode === 'cards'
-                      ? 'bg-[#20C933] text-slate-950 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title="Modo Pinterest (Grid de Inspirações e Vagas)"
-                  aria-label="Modo Pinterest Grid"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span className="hidden xs:inline text-[11px]">Grid</span>
-                </button>
-              </div>
-              </>
-            )}
-
-            {viewingSalonProfile && (
-              <button
-                onClick={() => setViewingSalonProfile(null)}
-                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
-                title="Página Inicial (Radar)"
-                aria-label="Ir para a página inicial"
+            {/* Botão de Filtro (Ordenação) */}
+            <div className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] transition-colors shadow-sm group">
+              <Filter className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-300 group-hover:text-[#20C933] transition-colors" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                title="Filtrar e Ordenar vagas"
               >
-                <Home className="w-4 h-4 text-[#20C933]" />
+                <option value="urgency">⚡ Urgência</option>
+                <option value="distance">📍 Distância</option>
+                <option value="price">🏷️ Menor Preço</option>
+              </select>
+              {/* Ponto indicador se não for o padrão */}
+              {sortBy !== 'urgency' && (
+                <span className="absolute top-1.5 right-1.5 md:top-2 md:right-2 w-1.5 h-1.5 rounded-full bg-[#20C933] animate-pulse"></span>
+              )}
+            </div>
+
+            <div className="flex items-center bg-slate-900 p-0.5 md:p-1 rounded-xl border border-slate-800 shadow-inner">
+              {/* Botão Reels / Insta / TikTok (Tela Cheia) */}
+              <button
+                type="button"
+                onClick={() => setFeedLayoutMode('fullscreen')}
+                className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
+                  feedLayoutMode === 'fullscreen'
+                    ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Modo Vertical Reels / TikTok"
+                aria-label="Modo Vertical Reels / TikTok"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline text-[11px]">Reels</span>
               </button>
-            )}
+
+              {/* Botão Pinterest / Grid (Quadriculadinho) */}
+              <button
+                type="button"
+                onClick={() => setFeedLayoutMode('pinterest')}
+                className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
+                  feedLayoutMode === 'pinterest' || feedLayoutMode === 'cards'
+                    ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Modo Pinterest (Grid de Inspirações e Vagas)"
+                aria-label="Modo Pinterest Grid"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline text-[11px]">Grid</span>
+              </button>
+            </div>
 
             {/* Profile Avatar Button */}
             <button
@@ -285,11 +262,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
 
-        {/* Renderiza a Barra de Categorias, Stories de Salões e Filtros */}
-        {!viewingSalonProfile && (
-          <>
-            {/* Stories / Carrossel de Salões */}
-            <div className="px-4 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar border-b border-slate-800/60 bg-slate-950/40">
+        {/* Stories / Carrossel de Salões */}
+        <div className="px-4 py-2.5 flex items-center gap-3 overflow-x-auto no-scrollbar border-b border-slate-800/60 bg-slate-950/40">
               {Array.from(new Set(offers.map((o) => o.salonName))).map((salonName) => {
                 const salonOffer = offers.find((o) => o.salonName === salonName);
                 const isSelected = selectedSalonFilter === salonName;
@@ -363,24 +337,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 );
               })}
             </div>
-          </>
-        )}
       </div>
 
-      {/* RENDERIZAÇÃO CONDICIONAL: SEÇÃO/PÁGINA DO SALÃO vs FEED GERAL */}
-      {viewingSalonProfile ? (
-        <SalonProfileView
-          salonName={viewingSalonProfile}
-          offers={offers}
-          onBack={() => setViewingSalonProfile(null)}
-          onSelectOffer={(off) => onNavigateToOfferDetail(off)}
-          onDirectBook={handleDirectBook}
-          isFavorite={favorites.includes(viewingSalonProfile)}
-          onToggleFavorite={() => onToggleFavorite?.(viewingSalonProfile)}
-        />
-      ) : (
-        <>
-          {/* Active Salon Filter Ribbon */}
+      {/* Active Salon Filter Ribbon */}
           {selectedSalonFilter && (
             <div className="px-4 pt-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-2 bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs text-emerald-200 font-medium">
@@ -583,8 +542,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               )}
             </div>
           )}
-        </>
-      )}
 
       {/* Fullscreen Story Viewer Modal */}
       <RadarStoryModal

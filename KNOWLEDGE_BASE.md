@@ -78,3 +78,45 @@ not_found_handling = "single-page-application"
    - **Build command:** `bun run build`
    - **Deploy command:** `npx wrangler deploy`
 
+---
+
+## 🧭 6. Padrão de Ícones Semânticos & Navegação no Micro-App do Estabelecimento
+
+Padrão oficial de ícones (`lucide-react`) validado para o ecossistema e visualização exclusiva de salão/barbearia:
+
+| Seção / Finalidade | Ícone Primário | Ícone Alternativo / Condicional | Regra de Aplicação |
+| :--- | :--- | :--- | :--- |
+| **Agenda & Horários** | `Calendar` | `Clock`, `Zap` | Usado para a aba **Agenda**, botão de conversão **HORÁRIOS HOJE** e seleção de slots. |
+| **Cardápio de Serviços** | `Scissors` | `Sparkles` | Usado para a aba **Serviços** e catálogo completo de procedimentos. |
+| **Equipe / Profissional** | `Users` | `UserCheck` | **Dinâmico:** se houver 2 ou mais profissionais, exibe label *"Equipe"* com `Users`. Se for profissional autônomo individual, exibe label *"Perfil"* com `UserCheck`. |
+| **Espaço / Modalidade** | `Store` | `Car` (Home Care) / `MapPin` | **Dinâmico:** para espaço físico/salão fixo, exibe label *"Espaço"* com `Store`. Para atendimento em domicílio/home care, exibe label *"Atendimento"* com `Car`. |
+| **Retorno ao Radar** | `ArrowLeft` | — | Botão compacto e sutil de retorno ao Radar do Vagou no cabeçalho do micro-app. |
+| **Ações de Cabeçalho** | `Heart` (Favoritar), `Bell` (Notificações), `Menu` (Configurações) | — | Posicionados à direita com dimensões compactas (`w-8 h-8 rounded-lg`). |
+| **Alternância de Tema** | `Sun` (Modo Claro), `Moon` (Modo Escuro) | — | Alternador rápido no cabeçalho e na gaveta de configurações para alternar entre Dark Slate e Light Pearl. |
+
+---
+
+## 🌓 7. Padrão de Cores & Conversão para Tema Claro (Light Mode & Dark Mode)
+
+Para oferecer uma experiência visual refinada e adaptável sem perder a elegância da identidade visual, o aplicativo adota um sistema dinâmico de temas provido por `ThemeContext`:
+
+### A. Escala Cromática: Modo Escuro vs. Modo Claro
+
+| Elemento | Tema Escuro (Dark Slate) | Tema Claro (Light Pearl) | Justificativa de UX/UI |
+| :--- | :--- | :--- | :--- |
+| **Fundo Global (`main`)** | `bg-slate-950` / `#151A1E` | `bg-slate-50` (Perolado suave) | Evita o branco puro `#FFF` ofuscante, mantendo conforto ótico. |
+| **Superfícies & Cards** | `bg-slate-900/90` | `bg-white` com sombra fina `shadow-xs` | Cria elevação dimensional limpa sem necessidade de bordas pesadas. |
+| **Bordas & Divisores** | `border-slate-800` | `border-slate-200` | Delimitação sutil e equilibrada. |
+| **Texto Principal** | `text-white` / `text-slate-100` | `text-slate-900` | Contraste máximo que atende aos critérios WCAG AA. |
+| **Texto Secundário / Apoio** | `text-slate-400` | `text-slate-500` / `text-slate-600` | Hierarquia visual de leitura com excelente legibilidade. |
+| **Botão de Destaque ("HORÁRIOS HOJE")** | `bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 text-white shadow-emerald-500/20` | `bg-gradient-to-r from-emerald-600 to-[#1eb72e] text-white shadow-emerald-600/20` | Elimina o texto preto pesado sobre o verde, garantindo sofisticação e relevo em ambos os temas. |
+| **Abas Inativas** | `bg-slate-900/80 text-slate-300 border-slate-800` | `bg-white text-slate-700 border-slate-200 hover:bg-slate-50` | Contraste refinado, sem ofuscar a aba ativa. |
+| **Abas Ativas** | `bg-gradient-to-b from-emerald-500/20 to-slate-900 text-emerald-400 border-emerald-500/60` | `bg-emerald-50 text-emerald-700 border-emerald-500/50 shadow-xs` | Indicação imediata da seção em foco. |
+
+### B. Regras de Ouro de Execução Visual (Anti-Slop):
+1. **Sombras Finas e Sutis:** Uso exclusivo de sombras delicadas (`shadow-xs`, `shadow-sm`, `shadow-emerald-500/15`). Nunca usar sombras pretas opacas ou bordas grossas desnecessárias.
+2. **Sem Preto sobre Verde:** Textos sobre botões esmeralda ou verde Vagou devem utilizar **branco puro com leve micro-sombra (`text-white drop-shadow-xs`)** ou grafite ultra-escuro com tipografia pesada, evitando sensações de peso visual ou baixa nobreza.
+3. **Transições de Tela Suaves:** Todas as trocas de seção no micro-app do salão e na navegação utilizam `motion/react` com `AnimatePresence`, transições de opacidade (`fade`) e translação vertical sutil (`y: 4 -> 0`), garantindo fluidez premium.
+
+
+

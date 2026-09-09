@@ -37,8 +37,10 @@ import { PartnerBottomNav } from './components/PartnerBottomNav';
 import { SplashScreen } from './components/SplashScreen';
 import { scheduleAppointmentReminder } from './utils/notifications';
 import { formatSlotDateTime } from './utils/dateFormatter';
+import { useTheme } from './context/ThemeContext';
 
 export const App: React.FC = () => {
+  const { isDark } = useTheme();
   // App Mode: 'client' (User looking for appointment) or 'partner' (Salon Owner / Professional)
   const [appMode, setAppMode] = useState<AppMode>('client');
 
@@ -349,15 +351,15 @@ export const App: React.FC = () => {
   const [clientSelectedCategory, setClientSelectedCategory] = useState<string>('flash');
 
   return (
-    <div className="h-[100dvh] w-full bg-[#151A1E] sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-slate-950 overflow-hidden">
+    <div className={`h-[100dvh] w-full ${isDark ? 'bg-[#151A1E]' : 'bg-slate-200'} sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-slate-950 overflow-hidden`}>
       {/* Real Fullscreen Mobile Container */}
-      <main className="w-full max-w-md h-[100dvh] bg-slate-950 text-slate-100 flex flex-col relative shadow-2xl overflow-hidden font-sans">
+      <main className={`w-full max-w-md h-[100dvh] ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} flex flex-col relative shadow-2xl overflow-hidden font-sans`}>
         
         {/* CLIENT MODE SCREENS */}
         {appMode === 'client' && (
           <div className="flex flex-col h-full w-full overflow-hidden">
             {/* Scrollable Screen Content Container */}
-            <div className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden relative bg-slate-950">
+            <div className={`flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden relative ${isDark ? 'bg-slate-950' : 'bg-slate-50'}`}>
               {currentScreen === 'home' && (
                 <HomeScreen
                   offers={offers}
