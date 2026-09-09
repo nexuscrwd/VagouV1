@@ -3,7 +3,7 @@ import {
   ArrowLeft, Star, MapPin, Clock, 
   Heart, Zap, CheckCircle2, Scissors, 
   Calendar, Coffee, Wifi, Car, Wind,
-  Bell, Menu, Users, UserCheck, Store, ChevronRight,
+  Bell, Users, UserCheck, Store, ChevronRight,
   ChevronLeft, ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -247,7 +247,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           />
         </div>
 
-        {/* Lado Direito: Favoritar + Notificação + Configurações */}
+        {/* Lado Direito: Favoritar + Notificação */}
         <div className="flex items-center gap-2 shrink-0">
           {/* Favoritar Rápido */}
           <button
@@ -276,25 +276,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <Bell className="w-5 h-5" />
             <span className={`absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 ring-2 ${isDark ? 'ring-slate-950' : 'ring-white'}`} />
           </button>
-
-          {/* Configurações e Menu */}
-          <button
-            onClick={onOpenProfileDrawer}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
-              isDark
-                ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
-                : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
-            }`}
-            title="Configurações e Menu"
-            aria-label="Menu de Configurações"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
         </div>
       </header>
 
       {/* 2. SUBCABEÇALHO DE BOAS-VINDAS */}
-      <div className={`px-3.5 py-2 border-b flex items-center justify-between gap-3 transition-colors ${
+      <div className={`px-3.5 py-1 border-b flex items-center justify-between gap-3 transition-colors h-11 ${
         isDark ? 'bg-slate-900/60 border-slate-800/80' : 'bg-slate-100/80 border-slate-200'
       }`}>
         <div className="flex items-center gap-2.5 min-w-0">
@@ -321,14 +307,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         </div>
 
-        {/* Lado Oposto: Foto / Ícone do Usuário */}
+        {/* Lado Oposto: Foto do Usuário (Moldura quadrada que ocupa a altura do subcabeçalho com curvas mínimas) */}
         <button
           onClick={onOpenProfileDrawer}
-          className="relative group flex items-center gap-2 shrink-0 cursor-pointer"
-          title="Ver Perfil do Usuário"
-          aria-label="Perfil do Usuário"
+          className="relative group flex items-center justify-center shrink-0 h-full py-0.5 cursor-pointer"
+          title="Ver Perfil do Usuário e Opções"
+          aria-label="Perfil do Usuário e Opções"
         >
-          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-emerald-500/60 group-hover:ring-emerald-400 transition shadow-xs">
+          <div className="h-full aspect-square rounded-[3px] overflow-hidden ring-1.5 ring-emerald-500/80 group-hover:ring-emerald-400 transition shadow-xs flex items-center justify-center bg-slate-800">
             <img
               src={userAvatarUrl}
               alt={userName}

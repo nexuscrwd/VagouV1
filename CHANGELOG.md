@@ -15,6 +15,15 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Ajuste na Moldura da Foto do Usuário e Remoção do Ícone de 3 Pontinhos
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do ícone de 3 pontinhos/menu do cabeçalho do estabelecimento e ampliação da moldura da foto de perfil do usuário no subcabeçalho, tornando-a quadrada com cantos de curvatura mínima (`rounded-[3px]`) para compreender toda a altura do subcabeçalho. O clique na foto de perfil abre a gaveta de opções do usuário.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o botão de menu do cabeçalho superior e redesenhada a moldura da foto de perfil no subcabeçalho para formato quadrado de altura total (`h-full aspect-square rounded-[3px]`).
+- **Resumo Técnico:** Limpeza de imports não utilizados efetuada, checado via `lint_applet` e compilado via `compile_applet`.
+
+---
+
 ### [2026-09-09] — Correção de Enquadramento do Menu do Estabelecimento no Container do Aplicativo
 - **Tipo:** `[Fix / UI Layout]`
 - **Motivo:** O menu de navegação do estabelecimento expandiu fora do container do aplicativo em telas desktop devido ao uso de `position: fixed` relativo ao viewport global da janela.
