@@ -41,7 +41,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     ];
 
     return (
-      <nav className={`flex-shrink-0 w-full h-16 ${
+      <nav className={`flex-shrink-0 w-full h-[54px] ${
         isDark
           ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
           : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'
@@ -107,7 +107,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   };
 
   return (
-    <nav className={`flex-shrink-0 w-full h-16 ${
+    <nav className={`flex-shrink-0 w-full h-[54px] ${
       isDark
         ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
         : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'

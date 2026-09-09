@@ -15,11 +15,65 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Implementação das Cadeiras Ao Vivo e Próximos 4 Horários Livres
+- **Tipo:** `[Feat / UI/UX]`
+- **Motivo:** Implementação da exibição das cadeiras em atendimento em tempo real (com barras de progresso e tempo restante) e lista dos próximos 4 horários livres do dia na aba "Agenda".
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Adicionados os componentes visuais para monitoramento ao vivo das cadeiras (`activeChairsData`) com contagem regressiva e progresso, e a grade com os 4 próximos horários futuros para agendamento instantâneo (`upcomingOpenSlots`).
+- **Resumo Técnico:** Checado com `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Atualização da Fonte da Logotipia para Sans-Serif Moderna
+- **Tipo:** `[UI/UX / Typography]`
+- **Motivo:** Substituição da fonte serifada estilo jornal antigo por uma fonte sans-serif moderna, limpa e com peso marcante (`font-sans font-extrabold tracking-tight`), transmitindo a identidade visual contemporânea de um salão de beleza.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualizadas as classes CSS do `span` de `font-serif tracking-wider` para `font-sans font-extrabold tracking-tight`.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Substituição do Logo da Empresa por Logotipia em Texto Estilizada
+- **Tipo:** `[UI/UX / Redesign]`
+- **Motivo:** Substituição da imagem do logo no cabeçalho por uma logotipia textual elegante, simples e refinada com a largura exata de 103px (`w-[103px]`), adequada para estabelecimentos de beleza.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido a tag `<img>` do logo e inserida logotipia em texto estilizada (`font-serif uppercase tracking-wider`) com destaque em verde esmeralda na primeira palavra e dimensões fixadas em 103px.
+- **Resumo Técnico:** Checado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Realocação da Foto do Usuário para o Cabeçalho Principal
+- **Tipo:** `[UI/UX]`
+- **Motivo:** Mover o botão com a foto de perfil do usuário para o cabeçalho principal no canto direito, posicionando-o imediatamente após o ícone de notificações.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Movido o botão da foto de perfil (`userAvatarUrl`) para o contêiner do cabeçalho principal (`<header>`) ao lado direito do ícone de sino, e removido do subcabeçalho de boas-vindas.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Ajuste na Altura do Menu de Navegação Inferior
+- **Tipo:** `[UI/UX / Style]`
+- **Motivo:** Ajuste da altura do menu de navegação inferior (`nav`) para 54px (`h-[54px]`) conforme seleção de elemento via Modo Foco.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Atualizada a classe CSS de altura do contêiner `<nav>` de `h-16` para `h-[54px]`.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Exibição Exclusiva do Primeiro Nome no Subcabeçalho
+- **Tipo:** `[UI/UX]`
+- **Motivo:** Atualização da mensagem de boas-vindas no subcabeçalho do estabelecimento para exibir apenas o primeiro nome do usuário.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Extração do primeiro nome (`userName.trim().split(' ')[0]`) dentro do elemento `span` da saudação.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
 ### [2026-09-09] — Ajuste na Moldura da Foto do Usuário e Remoção do Ícone de 3 Pontinhos
 - **Tipo:** `[UI/UX / Refactor]`
-- **Motivo:** Remoção do ícone de 3 pontinhos/menu do cabeçalho do estabelecimento e ampliação da moldura da foto de perfil do usuário no subcabeçalho, tornando-a quadrada com cantos de curvatura mínima (`rounded-[3px]`) para compreender toda a altura do subcabeçalho. O clique na foto de perfil abre a gaveta de opções do usuário.
+- **Motivo:** Remoção do ícone de 3 pontinhos/menu do cabeçalho do estabelecimento e ampliação da moldura da foto de perfil do usuário no subcabeçalho com dimensões explícitas (`w-10 h-10 rounded-[3px]`), perfeitamente alinhada e ajustada à altura do subcabeçalho (`h-12`). Ajustado o espaçamento superior da seção imediatamente abaixo.
 - **Arquivos Impactados:**
-  - `src/components/SalonProfileView.tsx`: Removido o botão de menu do cabeçalho superior e redesenhada a moldura da foto de perfil no subcabeçalho para formato quadrado de altura total (`h-full aspect-square rounded-[3px]`).
+  - `src/components/SalonProfileView.tsx`: Definido tamanho fixo `40x40px` (`w-10 h-10 rounded-[3px]`) com `ring-1.5 ring-emerald-500` e removido o padding superior redundante abaixo do subcabeçalho (`pt-0`).
 - **Resumo Técnico:** Limpeza de imports não utilizados efetuada, checado via `lint_applet` e compilado via `compile_applet`.
 
 ---
