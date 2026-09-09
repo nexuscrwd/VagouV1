@@ -1,7 +1,7 @@
 name = "vagou"
 compatibility_date = "2024-09-23"
 
-# Cloudflare Workers with Static Assets
+# Cloudflare Workers with Static Assets (SPA)
 [assets]
 directory = "./dist"
-binding = "ASSETS"
+not_found_handling = "single-page-application"
