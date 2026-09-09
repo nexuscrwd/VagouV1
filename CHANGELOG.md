@@ -15,6 +15,17 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Correção de Enquadramento do Menu do Estabelecimento no Container do Aplicativo
+- **Tipo:** `[Fix / UI Layout]`
+- **Motivo:** O menu de navegação do estabelecimento expandiu fora do container do aplicativo em telas desktop devido ao uso de `position: fixed` relativo ao viewport global da janela.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Adicionado suporte ao contexto dinâmico do estabelecimento (`salonContext`). Quando ativo, o próprio `BottomNav` renderiza as 4 abas do estabelecimento dentro do container nativo flex do app (`w-full flex-shrink-0`), garantindo contenção 100% perfeita.
+  - `src/components/SalonProfileView.tsx`: Passou a registrar o contexto de navegação com o `BottomNav` nativo ao ser montado, removendo qualquer elemento fixo externo.
+  - `src/components/HomeScreen.tsx` & `src/App.tsx`: Conectado o estado do contexto do estabelecimento do `SalonProfileView` ao `BottomNav`.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
 ### [2026-09-09] — Correção na Codificação Data URI dos Logotipos SVG/PNG
 - **Tipo:** `[Bug Fix / Image Encoding]`
 - **Motivo:** Correção na renderização das imagens de logotipos dos estabelecimentos. A ausência de `encodeURIComponent` nos Data URIs de SVG causava falha na renderização de marcas com caracteres especiais (como `&` de "BELLA DONNA HAIR & SPA"), gerando um ícone de imagem quebrada na tela.

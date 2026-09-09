@@ -24,7 +24,7 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AgendaScreen } from './components/AgendaScreen';
 import { FavoritesScreen } from './components/FavoritesScreen';
 import { ProfileScreen } from './components/ProfileScreen';
-import { BottomNav } from './components/BottomNav';
+import { BottomNav, SalonNavContext } from './components/BottomNav';
 import { SearchModal } from './components/SearchModal';
 import { ProfileDrawer } from './components/ProfileDrawer';
 import { InterestOnboardingModal } from './components/InterestOnboardingModal';
@@ -46,6 +46,7 @@ export const App: React.FC = () => {
 
   // Client Navigation State
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('home');
+  const [salonNavContext, setSalonNavContext] = useState<SalonNavContext | null>(null);
   const [offers, setOffers] = useState<ServiceOffer[]>(MOCK_OFFERS);
   const [selectedOffer, setSelectedOffer] = useState<ServiceOffer>(MOCK_OFFERS[0]);
   const [bookings, setBookings] = useState<BookingAppointment[]>(INITIAL_BOOKINGS);
@@ -383,6 +384,7 @@ export const App: React.FC = () => {
                     setAppMode('partner');
                     setPartnerScreen('partner-agenda');
                   }}
+                  onRegisterSalonNav={setSalonNavContext}
                 />
               )}
 
@@ -500,6 +502,7 @@ export const App: React.FC = () => {
                 setClientSelectedCategory('flash');
               }}
               isFlashActive={currentScreen === 'home' && clientSelectedCategory === 'flash'}
+              salonContext={currentScreen === 'home' ? salonNavContext : null}
             />
 
             {/* Profile Drawer Component */}

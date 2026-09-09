@@ -7,6 +7,7 @@ import { RadarOfferCard } from './RadarOfferCard';
 import { RadarFullscreenFeed } from './RadarFullscreenFeed';
 import { SalonProfileView } from './SalonProfileView';
 import { VagouLogo } from './VagouLogo';
+import { SalonNavContext } from './BottomNav';
 
 interface HomeScreenProps {
   onNavigateToOffers: (query?: string, category?: string) => void;
@@ -26,6 +27,7 @@ interface HomeScreenProps {
   userAvatarUrl?: string;
   externalSelectedCategory?: string;
   onCategoryChange?: (category: string) => void;
+  onRegisterSalonNav?: (ctx: SalonNavContext | null) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -46,6 +48,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   userAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
   externalSelectedCategory,
   onCategoryChange,
+  onRegisterSalonNav,
 }) => {
   const [internalSelectedCategory, setInternalSelectedCategory] = useState<string>('barba');
   const selectedCategory = externalSelectedCategory !== undefined ? externalSelectedCategory : internalSelectedCategory;
@@ -174,6 +177,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         userName={userName}
         userAvatarUrl={userAvatarUrl}
         onOpenProfileDrawer={onOpenProfileDrawer}
+        onRegisterBottomNav={onRegisterSalonNav}
       />
     );
   }

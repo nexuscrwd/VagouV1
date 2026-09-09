@@ -12,6 +12,7 @@ import { SalonBookingModal, CatalogServiceItem } from './SalonBookingModal';
 import { formatSlotDateTime } from '../utils/dateFormatter';
 import { useTheme } from '../context/ThemeContext';
 import { getSalonLogo } from '../utils/salonLogos';
+import { SalonNavContext } from './BottomNav';
 
 interface SalonProfileViewProps {
   salonName: string;
@@ -24,6 +25,7 @@ interface SalonProfileViewProps {
   userName?: string;
   userAvatarUrl?: string;
   onOpenProfileDrawer?: () => void;
+  onRegisterBottomNav?: (ctx: SalonNavContext | null) => void;
 }
 
 export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
@@ -37,6 +39,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   userName = 'Lucas Silva',
   userAvatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
   onOpenProfileDrawer,
+  onRegisterBottomNav,
 }) => {
   const { isDark, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'espaco'>('vagas');
@@ -99,6 +102,25 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
   const spaceTabLabel = salonInfo.isHomeCare ? 'Atendimento' : 'Espaço';
   const SpaceIcon = salonInfo.isHomeCare ? Car : Store;
+
+  // Registrar context do menu de navegação do rodapé
+  useEffect(() => {
+    if (onRegisterBottomNav) {
+      onRegisterBottomNav({
+        activeTab,
+        onSelectTab: (tab) => setActiveTab(tab),
+        teamTabLabel,
+        spaceTabLabel,
+        TeamIcon,
+        SpaceIcon,
+      });
+    }
+    return () => {
+      if (onRegisterBottomNav) {
+        onRegisterBottomNav(null);
+      }
+    };
+  }, [activeTab, teamTabLabel, spaceTabLabel, TeamIcon, SpaceIcon, onRegisterBottomNav]);
 
   // Catálogo completo de serviços
   const catalogServices: CatalogServiceItem[] = [
@@ -434,42 +456,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </button>
         </div>
 
-        {/* 4. GRID DE OPÇÕES (Agenda, Serviços, Equipe/Perfil, Espaço/Atendimento) */}
-        <nav className="grid grid-cols-4 gap-2 pt-0.5">
-          {[
-            { id: 'vagas', label: 'Agenda', icon: Calendar },
-            { id: 'servicos', label: 'Serviços', icon: Scissors },
-            { id: 'sobre', label: teamTabLabel, icon: TeamIcon },
-            { id: 'espaco', label: spaceTabLabel, icon: SpaceIcon },
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            const TabIconComponent = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-2.5 px-1 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer font-['Poppins'] ${
-                  isActive
-                    ? isDark
-                      ? 'bg-gradient-to-b from-emerald-950/80 via-slate-900 to-emerald-950/50 border border-emerald-500/60 text-white shadow-[0_0_12px_-3px_rgba(32,201,51,0.3)] font-bold ring-1 ring-emerald-500/40'
-                      : 'bg-gradient-to-b from-emerald-50/90 to-white border border-[#20C933] text-emerald-950 shadow-[0_2px_10px_rgba(32,201,51,0.15)] font-bold ring-1 ring-[#20C933]/30'
-                    : isDark
-                      ? 'bg-gradient-to-b from-slate-900 to-slate-900/80 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 shadow-xs'
-                      : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 shadow-xs'
-                }`}
-              >
-                <TabIconComponent className={`w-5 h-5 mb-1 transition-colors ${
-                  isActive 
-                    ? isDark ? 'text-emerald-400' : 'text-[#087A2A]' 
-                    : isDark ? 'text-slate-400' : 'text-slate-400'
-                }`} />
-                <span className="text-[11px] sm:text-xs font-bold leading-tight select-none truncate w-full text-center">
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
       </div>
 
       {/* 5. CONTEÚDO DAS ABAS (Com Transição Suave via Motion) */}
