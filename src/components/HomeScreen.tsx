@@ -163,9 +163,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const isFullscreenFeed = feedLayoutMode === 'fullscreen' && !viewingSalonProfile;
 
   return (
-    <div className={`bg-slate-950 text-slate-100 ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
+    <div className={`${viewingSalonProfile ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-100'} ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
       {/* Fixed Sticky Global Header */}
-      <div className="flex-shrink-0 sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
+      <div className={`flex-shrink-0 sticky top-0 z-40 transition-colors ${
+        viewingSalonProfile
+          ? 'bg-white shadow-xs border-b border-slate-200'
+          : 'bg-[#151A1E] shadow-xl border-b border-slate-800'
+      }`}>
         <div className="px-4 h-[60px] w-full flex items-center justify-between gap-3">
           {viewingSalonProfile ? (
             /* Header com botão Voltar e Nome do Estabelecimento quando visualizando perfil */
@@ -173,7 +177,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <button
                 id="btn-voltar-radar-perfil"
                 onClick={() => setViewingSalonProfile(null)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] text-white transition active:scale-95 cursor-pointer flex-shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 hover:border-[#20C933] text-slate-900 transition active:scale-95 cursor-pointer flex-shrink-0"
                 aria-label="Voltar para o Radar / Início"
                 title="Voltar ao Radar"
               >
@@ -181,10 +185,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span className="text-xs font-black">Radar</span>
               </button>
               <div className="min-w-0">
-                <span className="text-xs font-bold text-slate-200 truncate block">
+                <span className="text-xs font-bold text-slate-900 truncate block">
                   {viewingSalonProfile}
                 </span>
-                <span className="text-[10px] text-emerald-400 font-medium">Perfil do Estabelecimento</span>
+                <span className="text-[10px] text-emerald-700 font-semibold">Perfil do Estabelecimento</span>
               </div>
             </div>
           ) : (
@@ -256,11 +260,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {viewingSalonProfile && (
               <button
                 onClick={() => setViewingSalonProfile(null)}
-                className="w-9 h-9 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:border-[#20C933] flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer"
+                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 flex items-center justify-center transition-all shadow-xs active:scale-95 cursor-pointer"
                 title="Página Inicial (Radar)"
                 aria-label="Ir para a página inicial"
               >
-                <Home className="w-4 h-4 text-slate-300 hover:text-[#20C933]" />
+                <Home className="w-4 h-4 text-[#20C933]" />
               </button>
             )}
 

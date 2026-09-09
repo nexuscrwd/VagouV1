@@ -175,23 +175,23 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-950 text-slate-100 min-h-full pb-6">
+    <div className="w-full bg-slate-50 text-slate-900 min-h-full pb-8 font-['Poppins']">
       {/* 1. Header Próprio do Estabelecimento / Capa Super Compacta */}
-      <div className="relative w-full h-24 sm:h-28 bg-slate-900 overflow-hidden">
+      <div className="relative w-full h-24 sm:h-28 bg-slate-200 overflow-hidden">
         <img
           src={salonInfo.coverImage}
           alt={salonInfo.name}
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-black/40" />
 
         {/* Top Control Buttons */}
         <div className="absolute top-2.5 inset-x-3 flex items-center justify-between z-20">
           <div className="flex items-center gap-1.5">
             <button
               onClick={onBack}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-white hover:bg-slate-800 transition text-[11px] font-bold shadow-lg active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 hover:bg-white text-slate-800 backdrop-blur-md border border-slate-200 transition text-[11px] font-bold shadow-md active:scale-95 cursor-pointer"
               title="Voltar ao Radar"
               aria-label="Voltar para a página anterior"
             >
@@ -203,10 +203,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => onToggleFavorite?.(salonInfo.name)}
-              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-700 backdrop-blur-md border border-slate-200 flex items-center justify-center transition shadow-md active:scale-95 cursor-pointer"
               aria-label="Favoritar salão"
             >
-              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-slate-700'}`} />
             </button>
             <button
               onClick={() => {
@@ -214,10 +214,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   navigator.share({ title: salonInfo.name, url: window.location.href }).catch(() => {});
                 }
               }}
-              className="w-7 h-7 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-slate-800 transition shadow-lg active:scale-95 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-700 backdrop-blur-md border border-slate-200 flex items-center justify-center transition shadow-md active:scale-95 cursor-pointer"
               aria-label="Compartilhar salão"
             >
-              <Share2 className="w-3.5 h-3.5 text-white" />
+              <Share2 className="w-3.5 h-3.5 text-slate-700" />
             </button>
           </div>
         </div>
@@ -227,7 +227,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       <div className="px-4 -mt-5 relative z-20">
         <div className="flex items-end gap-3">
           {/* Avatar com anel de destaque */}
-          <div className="relative w-16 h-16 rounded-xl ring-3 ring-slate-950 overflow-hidden bg-slate-900 shadow-xl flex-shrink-0">
+          <div className="relative w-16 h-16 rounded-xl ring-3 ring-white overflow-hidden bg-slate-100 shadow-lg flex-shrink-0">
             {salonInfo.avatar ? (
               <img
                 src={salonInfo.avatar}
@@ -236,16 +236,16 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-emerald-600 to-slate-900 flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-full h-full bg-gradient-to-br from-emerald-600 to-slate-800 flex items-center justify-center text-white font-bold text-lg">
                 {salonInfo.name.slice(0, 2).toUpperCase()}
               </div>
             )}
-            <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-[#20C933] border-2 border-slate-950" />
+            <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-[#20C933] border-2 border-white" />
           </div>
 
           <div className="flex-1 min-w-0 pb-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="text-base sm:text-lg font-black text-white font-['Poppins'] leading-tight truncate">
+              <h1 className="text-base sm:text-lg font-black text-slate-900 font-['Poppins'] leading-tight truncate">
                 {salonInfo.name}
               </h1>
               {salonInfo.verified && (
@@ -253,42 +253,36 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-300">
-              <span className="flex items-center gap-0.5 font-bold text-amber-400">
-                <Star className="w-3 h-3 fill-amber-400" />
+            <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-600">
+              <span className="flex items-center gap-0.5 font-bold text-amber-500">
+                <Star className="w-3 h-3 fill-amber-500" />
                 {salonInfo.rating.toFixed(1)}
               </span>
-              <span className="text-slate-500">•</span>
-              <span className="text-slate-400">({salonInfo.reviewsCount} avaliações)</span>
-              <span className="text-slate-500">•</span>
-              <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
-                <MapPin className="w-3 h-3 text-emerald-400" />
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-500">({salonInfo.reviewsCount} avaliações)</span>
+              <span className="text-slate-300">•</span>
+              <span className="text-emerald-700 font-semibold flex items-center gap-0.5">
+                <MapPin className="w-3 h-3 text-emerald-600" />
                 {salonInfo.distance}
               </span>
             </div>
           </div>
         </div>
 
-
-
         {/* Botão Principal de Agendamento */}
         <div className="mt-3">
           <button
             onClick={() => handleOpenBooking(undefined, true)}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-[#20C933] hover:bg-[#1bb52e] text-slate-950 rounded-2xl text-sm font-bold transition shadow-md shadow-emerald-500/25 font-['Poppins'] cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-[#20C933] hover:bg-[#1bb52e] text-slate-950 rounded-2xl text-sm font-bold transition shadow-md shadow-emerald-500/25 font-['Poppins'] cursor-pointer active:scale-[0.99]"
           >
             <Calendar className="w-4 h-4 text-slate-950" />
             <span>HORARIOS HOJE</span>
           </button>
         </div>
-
-
-
-
       </div>
 
       {/* 3. Navegação por Abas do Perfil */}
-      <div className="mt-3 px-3 sticky top-14 z-30 bg-slate-950/95 backdrop-blur-md pt-1 pb-1.5 border-b border-slate-800/80 grid grid-cols-4 gap-2">
+      <div className="mt-3 px-3 sticky top-14 z-30 bg-slate-50/95 backdrop-blur-md pt-1 pb-1.5 border-b border-slate-200 grid grid-cols-4 gap-2">
         {[
           { id: 'vagas', icon: '📅', title: 'Agenda' },
           { id: 'servicos', icon: '✂️', title: 'Serviços' },
@@ -302,8 +296,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               onClick={() => setActiveTab(tab.id as any)}
               className={`aspect-square w-full rounded-xl flex flex-col items-center justify-center p-1 text-center transition-all cursor-pointer font-['Poppins'] relative ${
                 isActive
-                  ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 ring-2 ring-[#20C933]'
-                  : 'bg-slate-900 text-slate-300 hover:bg-slate-850 hover:text-white border border-slate-800/80'
+                  ? 'bg-[#20C933] text-slate-950 shadow-md shadow-emerald-500/25 ring-2 ring-[#20C933] font-bold'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 shadow-xs'
               }`}
             >
               <span className="text-xl sm:text-2xl leading-none mb-1.5">{tab.icon}</span>
@@ -321,11 +315,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         {activeTab === 'vagas' && (
           <div className="space-y-3.5">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] flex items-center gap-1.5">
+              <h3 className="text-sm font-bold text-slate-900 font-['Poppins'] flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-[#20C933] fill-[#20C933]" />
                 <span>Horários Disponíveis Hoje no Radar</span>
               </h3>
-              <span className="text-[11px] text-emerald-400 font-semibold">Reserva Instantânea</span>
+              <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                Reserva Instantânea
+              </span>
             </div>
 
             {salonOffers.length > 0 ? (
@@ -333,27 +329,27 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 <div
                   key={offer.id}
                   onClick={() => onSelectOffer(offer)}
-                  className="bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 transition-all duration-300 shadow-md relative overflow-hidden group cursor-pointer"
+                  className="bg-white border border-slate-200 hover:border-[#20C933] rounded-2xl p-4 transition-all duration-300 shadow-sm hover:shadow-md relative overflow-hidden group cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-950 border border-emerald-500/40 text-[10px] font-black text-emerald-300 uppercase tracking-wider">
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[10px] font-black text-emerald-800 uppercase tracking-wider">
                           {formatSlotDateTime(offer.timeSlot)}
                         </span>
                         {offer.expiresInMinutes && (
-                          <span className="text-[11px] text-rose-400 font-bold">
+                          <span className="text-[11px] text-rose-600 font-bold">
                             Expira em {offer.expiresInMinutes} min
                           </span>
                         )}
                       </div>
 
-                      <h4 className="text-base font-bold text-white mt-1.5 group-hover:text-emerald-300 transition-colors">
+                      <h4 className="text-base font-bold text-slate-900 mt-1.5 group-hover:text-emerald-700 transition-colors">
                         {offer.serviceTitle}
                       </h4>
 
-                      <p className="text-xs text-slate-400 mt-0.5">
-                        Com <strong className="text-slate-200">{offer.professionalName}</strong> • {offer.duration}
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Com <strong className="text-slate-800">{offer.professionalName}</strong> • {offer.duration}
                       </p>
                     </div>
 
@@ -363,14 +359,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           R${offer.originalPrice.toFixed(0)}
                         </span>
                       )}
-                      <span className="text-base font-black text-emerald-400">
+                      <span className="text-base font-black text-emerald-600">
                         R${offer.price.toFixed(0)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                    <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                  <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#20C933]" />
                       Sem fila de espera
                     </span>
@@ -380,7 +376,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         e.stopPropagation();
                         onDirectBook(offer);
                       }}
-                      className="px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-md uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer"
+                      className="px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-xl transition shadow-sm uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer"
                     >
                       <Zap className="w-3.5 h-3.5 fill-slate-950" />
                       <span>Agendar Agora</span>
@@ -389,13 +385,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800">
+              <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
                 <Clock className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-sm font-bold text-white">Sem vagas imediatas abertas no momento</p>
-                <p className="text-xs text-slate-400 mt-1">Consulte a agenda do salão para novos agendamentos.</p>
+                <p className="text-sm font-bold text-slate-900">Sem vagas imediatas abertas no momento</p>
+                <p className="text-xs text-slate-500 mt-1">Consulte a agenda do salão para novos agendamentos.</p>
                 <button
                   onClick={() => handleOpenBooking()}
-                  className="mt-3.5 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs rounded-xl transition shadow-md flex items-center gap-1.5 mx-auto cursor-pointer"
+                  className="mt-3.5 px-4 py-2 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 font-black text-xs rounded-xl transition shadow-sm flex items-center gap-1.5 mx-auto cursor-pointer"
                 >
                   <Calendar className="w-3.5 h-3.5 text-slate-950" />
                   <span>Ver Agenda e Horários Livres</span>
@@ -409,36 +405,42 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         {activeTab === 'servicos' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] flex items-center gap-1.5">
+              <h3 className="text-sm font-bold text-slate-900 font-['Poppins'] flex items-center gap-1.5">
                 <Scissors className="w-4 h-4 text-[#20C933]" />
                 <span>Cardápio Completo de Atendimentos</span>
               </h3>
-              <span className="text-[11px] text-emerald-400 font-semibold">Agenda do Salão</span>
+              <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                Agenda do Salão
+              </span>
             </div>
 
             {catalogServices.map((srv) => (
               <div
                 key={srv.id}
                 onClick={() => handleOpenBooking(srv)}
-                className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 flex items-start justify-between gap-3 hover:border-emerald-500/50 transition cursor-pointer group"
+                className="bg-white border border-slate-200 rounded-2xl p-4 flex items-start justify-between gap-3 shadow-sm hover:border-[#20C933] hover:shadow-md transition cursor-pointer group"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[#20C933] bg-emerald-950/60 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded">
                       {srv.category}
                     </span>
-                    <span className="text-xs text-slate-400 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-slate-400" />
                       {srv.duration}
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-white mt-1 group-hover:text-emerald-300 transition-colors">{srv.title}</h4>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{srv.description}</p>
+                  <h4 className="text-sm font-bold text-slate-900 mt-1.5 group-hover:text-emerald-700 transition-colors">
+                    {srv.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    {srv.description}
+                  </p>
                 </div>
 
                 <div className="text-right flex-shrink-0 flex flex-col items-end">
-                  <span className="text-base font-black text-emerald-400">
+                  <span className="text-base font-black text-emerald-600">
                     R${srv.price.toFixed(0)}
                   </span>
                   <button
@@ -446,7 +448,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       e.stopPropagation();
                       handleOpenBooking(srv);
                     }}
-                    className="mt-2 px-3 py-1.5 bg-emerald-950/80 hover:bg-[#20C933] hover:text-slate-950 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold rounded-lg transition cursor-pointer flex items-center gap-1"
+                    className="mt-2.5 px-3 py-1.5 bg-slate-100 hover:bg-[#20C933] hover:text-slate-950 text-slate-700 border border-slate-200 text-[11px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1 group-hover:bg-[#20C933] group-hover:text-slate-950 group-hover:border-[#20C933] group-hover:shadow-sm"
                   >
                     <Calendar className="w-3 h-3" />
                     <span>Agendar</span>
@@ -461,30 +463,30 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         {activeTab === 'sobre' && (
           <div className="space-y-4">
             {/* Descrição */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] mb-2">Nossa Equipe & Especialistas</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">Profissionais altamente qualificados com anos de experiência em visagismo, cortes modernos e tratamentos capilares de alto padrão.</p>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <h3 className="text-sm font-bold text-slate-900 font-['Poppins'] mb-2">Nossa Equipe & Especialistas</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Profissionais altamente qualificados com anos de experiência em visagismo, cortes modernos e tratamentos capilares de alto padrão.
+              </p>
             </div>
 
-
-
             {/* Equipe / Profissionais em Grid */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-              <h3 className="text-sm font-bold text-white font-['Poppins'] mb-3">Profissionais da Equipe</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <h3 className="text-sm font-bold text-slate-900 font-['Poppins'] mb-3">Profissionais da Equipe</h3>
               <div className="grid grid-cols-2 gap-3">
                 {salonInfo.professionals.map((prof, idx) => (
-                  <div key={idx} className="flex flex-col items-center p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 text-center shadow-md">
+                  <div key={idx} className="flex flex-col items-center p-3 rounded-xl bg-slate-50 border border-slate-200 text-center shadow-xs">
                     <img
                       src={prof.avatar}
                       alt={prof.name}
                       className="w-14 h-14 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
                       referrerPolicy="no-referrer"
                     />
-                    <h4 className="text-xs font-bold text-white truncate w-full">{prof.name}</h4>
-                    <p className="text-[10px] text-slate-400 line-clamp-1 mb-2">{prof.role}</p>
+                    <h4 className="text-xs font-bold text-slate-900 truncate w-full">{prof.name}</h4>
+                    <p className="text-[10px] text-slate-500 line-clamp-1 mb-2">{prof.role}</p>
 
-                    <span className="mt-auto inline-flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800">
-                      <Star className="w-3 h-3 fill-amber-400" />
+                    <span className="mt-auto inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
+                      <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                       {prof.rating.toFixed(1)}
                     </span>
                   </div>
@@ -498,29 +500,29 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         {activeTab === 'espaco' && (
           <div className="space-y-4 font-['Poppins']">
             {/* Localização e Horário */}
-            <div className="flex flex-col gap-1 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-300 shadow-lg">
+            <div className="flex flex-col gap-1 bg-white border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-700 shadow-sm">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#20C933] flex-shrink-0" />
-                <span className="font-semibold text-white truncate">{salonInfo.address}, {salonInfo.city}</span>
+                <span className="font-semibold text-slate-900 truncate">{salonInfo.address}, {salonInfo.city}</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 pt-1 border-t border-slate-800/80 mt-1">
-                <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
+              <div className="flex items-center gap-2 text-slate-500 pt-1 border-t border-slate-100 mt-1">
+                <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
                 <span>{salonInfo.hours}</span>
               </div>
             </div>
 
             {/* Informações de Estrutura do Espaço */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-lg">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Home className="w-4 h-4 text-[#20C933]" />
                 <span>Estrutura do Espaço</span>
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 {salonInfo.description}
               </p>
               <div className="grid grid-cols-2 gap-2.5 pt-1">
                 {salonInfo.amenities.map((amenity, idx) => (
-                  <div key={idx} className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs text-slate-200">
+                  <div key={idx} className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
                     <amenity.icon className="w-4 h-4 text-[#20C933] flex-shrink-0" />
                     <span className="truncate">{amenity.label}</span>
                   </div>
@@ -529,27 +531,27 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </div>
 
             {/* Mapa (Google Maps Embed / Simulador de Localização) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
-              <div className="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#20C933]" />
-                  <span className="text-xs font-bold text-white">{salonInfo.address}</span>
+                  <span className="text-xs font-bold text-slate-900">{salonInfo.address}</span>
                 </div>
-                <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">
+                <span className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
                   {salonInfo.distance} de você
                 </span>
               </div>
-              <div className="relative w-full h-44 bg-slate-950 flex items-center justify-center overflow-hidden">
+              <div className="relative w-full h-44 bg-slate-100 flex items-center justify-center overflow-hidden">
                 {/* Visual simulado de mapa interativo com pin */}
                 <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#20C933_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/50"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-200/40 via-transparent to-slate-200/20"></div>
                 
                 {/* Pin Centralizado */}
                 <div className="z-10 flex flex-col items-center animate-bounce">
-                  <div className="w-10 h-10 rounded-full bg-[#20C933] text-slate-950 flex items-center justify-center shadow-xl shadow-emerald-500/50 border-2 border-white">
+                  <div className="w-10 h-10 rounded-full bg-[#20C933] text-slate-950 flex items-center justify-center shadow-lg border-2 border-white">
                     <MapPin className="w-5 h-5 fill-slate-950 text-[#20C933]" />
                   </div>
-                  <span className="mt-1 px-2.5 py-1 bg-slate-900/95 border border-slate-700 text-white text-[11px] font-bold rounded-full shadow-lg">
+                  <span className="mt-1 px-2.5 py-1 bg-white/95 border border-slate-200 text-slate-900 text-[11px] font-bold rounded-full shadow-md">
                     {salonInfo.name}
                   </span>
                 </div>
@@ -558,7 +560,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-white text-[11px] font-bold rounded-xl shadow-lg transition flex items-center gap-1.5 backdrop-blur-md cursor-pointer"
+                  className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-white/90 hover:bg-white border border-slate-200 text-slate-800 text-[11px] font-bold rounded-xl shadow-md transition flex items-center gap-1.5 backdrop-blur-md cursor-pointer"
                 >
                   <span>Abrir no Google Maps</span>
                 </a>
@@ -570,7 +572,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3.5 bg-slate-900 hover:bg-slate-850 border border-emerald-500/40 text-emerald-400 hover:text-emerald-300 rounded-2xl text-sm font-bold shadow-lg shadow-emerald-500/10 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              className="w-full py-3.5 bg-white hover:bg-emerald-50 border-2 border-[#20C933] text-emerald-700 hover:text-emerald-800 rounded-2xl text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 font-['Poppins']"
             >
               <MapPin className="w-4 h-4 text-[#20C933]" />
               <span>COMO CHEGAR</span>

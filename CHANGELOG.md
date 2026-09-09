@@ -15,6 +15,26 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Correção do Build no Cloudflare Pages / Workers
+- **Tipo:** `[Fix & DevOps]`
+- **Motivo:** O deploy no Cloudflare Pages falhava com `UnknownLockfileVersion: failed to parse lockfile: 'bun.lock'` devido ao arquivo `bun.lock` (versão 2) incompatível com a versão do Bun instalada no ambiente do Cloudflare (1.2.15).
+- **Arquivos Impactados:**
+  - `bun.lock`: Removido para evitar que o Cloudflare tente forçar `bun install --frozen-lockfile`.
+  - `package-lock.json`: Gerado com `npm install --package-lock-only` (versão 3 padrão do Node.js/npm) para garantir instalação determinística e segura via `npm`.
+- **Resumo Técnico:** Padronização do lockfile para npm no ecossistema Cloudflare Pages.
+
+---
+
+### [2026-09-09] — Aplicação de Tom Claro e Cards Brancos na Seção do Estabelecimento
+- **Tipo:** `[UI/UX Redesign & Theming]`
+- **Motivo:** Conversão do perfil do estabelecimento para o padrão de tom claro com cards de fundo branco e bordas cinzas, com contraste cromático rigoroso na tipografia e ícones, além de diferenciação de estados de botões (inativo terciário vs. ativo primário).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Fundo em tom claro (`bg-slate-50`), cards com `bg-white border-slate-200`, textos de alto contraste (`text-slate-900`, `text-slate-600`), contraste nos ícones e selos de categoria, botões ativos com verde primário (`#20C933`) e inativos com estilo terciário claro (`bg-slate-100 border-slate-200`).
+  - `src/components/HomeScreen.tsx`: Adaptação contextual do cabeçalho fixo superior para tom claro quando visualizando o perfil do estabelecimento.
+- **Resumo Técnico:** Reestilização completa da seção de estabelecimentos em Tailwind CSS com cumprimento da escala cromática e hierarquia de contraste.
+
+---
+
 ### [2026-09-08] — Conversão da Equipe para Formato Grid de Cards
 - **Tipo:** `[UI/UX Enhancement]`
 - **Motivo:** A listagem vertical de profissionais na aba **"Equipe"** foi convertida para um layout em grid de cards (`grid grid-cols-2`), exibindo foto ampliada, cargo, nome e avaliação em destaque.
