@@ -15,6 +15,15 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Reformulação do Slide (Full Width + Swipe Gesture + Altura Ampliada) e Subcabeçalho de Boas-Vindas
+- **Tipo:** `[Feat & UI/UX]`
+- **Motivo:** Implementação do slide em largura total (full width) com suporte a gesto touch de arrastar/deslizar (swipe left/right com `motion/react`), transição automática mantida e altura ampliada (+1/3) para destaque das imagens do catálogo; substituição do botão Radar por um contêiner exclusivo para o logotipo da empresa no cabeçalho principal, e criação do subcabeçalho de boas-vindas com nome do usuário e foto no lado oposto.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituído botão do Radar por `div` de logotipo do estabelecimento no cabeçalho superior; criado o subcabeçalho de boas-vindas (`"Seja bem-vindo, {userName}"` à esquerda e foto do perfil no lado oposto); reformulado o carrossel de portfólio para full width (`w-full`), altura ampliada para `210px`/`240px`, drag/swipe manual por toque e indicador de slides aprimorado.
+- **Resumo Técnico:** Limpeza pós-obra realizada, verificado com `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
 ### [2026-09-09] — Implementação de Tema Claro & Escuro (Theme Switcher) e Documentação na Base de Conhecimento
 - **Tipo:** `[Feat, Theming & Documentation]`
 - **Motivo:** Implementação do suporte nativo a Tema Claro (Light Pearl) e Tema Escuro (Dark Slate) em toda a aplicação, com botão dinâmico de alternância no cabeçalho do micro-app do salão e na gaveta de perfil, refatoração de contraste para eliminar texto preto pesado sobre o verde, e registro formal dos padrões cromáticos e iconográficos na `KNOWLEDGE_BASE.md`.

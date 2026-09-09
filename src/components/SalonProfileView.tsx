@@ -214,54 +214,48 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-12 font-['Poppins'] transition-colors duration-200`}>
       {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Header Nativo) */}
       <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b px-3.5 py-2.5 shadow-md flex items-center justify-between gap-2.5 transition-colors`}>
-        {/* Lado Esquerdo: Botão Radar + Logo e Boas-Vindas */}
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          {/* Botão sutil para voltar ao Radar/Portal */}
-          <button
-            onClick={onBack}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border transition active:scale-95 text-xs font-semibold cursor-pointer shrink-0 ${
-              isDark
-                ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white'
-                : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
-            }`}
-            title="Voltar ao Radar do Vagou"
-            aria-label="Voltar para o Radar"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="text-[11px] font-bold">Radar</span>
-          </button>
-
-          <span className={`w-px h-5 shrink-0 ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`} />
-
-          {/* Logo da Empresa e Saudação */}
-          <div className="flex items-center gap-2 min-w-0">
-            <div className={`relative w-8 h-8 rounded-lg overflow-hidden ring-1 ring-emerald-500/40 shrink-0 ${isDark ? 'bg-slate-900' : 'bg-slate-100'}`}>
-              <img
-                src={salonInfo.avatar}
-                alt={salonInfo.name}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div className="min-w-0">
-              <span className={`text-[10px] leading-none block truncate font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                Olá, {userName.split(' ')[0]} 👋
-              </span>
-              <div className="flex items-center gap-1 mt-0.5">
-                <h1 className={`text-xs font-bold leading-none truncate max-w-[120px] sm:max-w-[170px] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {salonInfo.name}
-                </h1>
-                {salonInfo.verified && (
-                  <ShieldCheck className="w-3 h-3 text-emerald-500 shrink-0" title="Verificado" />
-                )}
-              </div>
+        {/* Lado Esquerdo: Div do Logotipo e Nome do Estabelecimento (Substituiu o botão Radar) */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <div className={`relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shrink-0 shadow-xs ${isDark ? 'bg-slate-900' : 'bg-slate-100'}`}>
+            <img
+              src={salonInfo.avatar}
+              alt={salonInfo.name}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+          <div className="min-w-0">
+            <span className={`text-[10px] uppercase font-bold tracking-wider leading-none block truncate ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+              Estabelecimento
+            </span>
+            <div className="flex items-center gap-1 mt-0.5">
+              <h1 className={`text-sm font-black leading-none truncate max-w-[140px] sm:max-w-[200px] font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {salonInfo.name}
+              </h1>
+              {salonInfo.verified && (
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" title="Verificado" />
+              )}
             </div>
           </div>
         </div>
 
-        {/* Lado Direito: Tema + Favoritar + Notificação + Foto do Usuário + Configurações */}
+        {/* Lado Direito: Tema + Favoritar + Notificação + Configurações */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {/* Botão Mágico de Alternar Tema (Claro / Escuro) */}
+          {/* Botão de Voltar para o Portal / Radar (Acesso rápido) */}
+          <button
+            onClick={onBack}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
+              isDark
+                ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
+                : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
+            }`}
+            title="Sair do Estabelecimento"
+            aria-label="Sair"
+          >
+            <ArrowLeft className="w-4 h-4 text-emerald-500" />
+          </button>
+
+          {/* Alternar Tema (Claro / Escuro) */}
           <button
             onClick={toggleTheme}
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
@@ -275,7 +269,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             {isDark ? <Sun className="w-4 h-4 transition-transform hover:rotate-45" /> : <Moon className="w-4 h-4 transition-transform hover:-rotate-12" />}
           </button>
 
-          {/* Botão de Favoritar Rápido */}
+          {/* Favoritar Rápido */}
           <button
             onClick={() => onToggleFavorite?.(salonInfo.name)}
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
@@ -289,7 +283,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
           </button>
 
-          {/* Ícone de Notificação com Badge */}
+          {/* Notificações */}
           <button
             className={`relative w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
@@ -303,22 +297,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ${isDark ? 'ring-slate-950' : 'ring-white'}`} />
           </button>
 
-          {/* Foto de Perfil do Usuário */}
-          <button
-            onClick={onOpenProfileDrawer}
-            className="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-emerald-500/50 hover:ring-emerald-500 transition active:scale-95 cursor-pointer shrink-0"
-            title="Meu Perfil"
-            aria-label="Meu Perfil"
-          >
-            <img
-              src={userAvatarUrl}
-              alt={userName}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-          </button>
-
-          {/* Ícone de Configurações (Três tracinhos horizontais) */}
+          {/* Configurações e Menu */}
           <button
             onClick={onOpenProfileDrawer}
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
@@ -334,22 +313,70 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </header>
 
-      <div className="px-3.5 pt-3 space-y-3">
-        {/* 2. CARROSSEL DE SERVIÇOS / PORTFÓLIO (Não muito alto, ~135px) */}
-        <div className={`relative w-full h-[135px] rounded-xl overflow-hidden border shadow-sm ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+      {/* 2. SUBCABEÇALHO DE BOAS-VINDAS */}
+      <div className={`px-3.5 py-2.5 border-b flex items-center justify-between gap-3 transition-colors ${
+        isDark ? 'bg-slate-900/60 border-slate-800/80' : 'bg-slate-100/80 border-slate-200'
+      }`}>
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <div className="min-w-0">
+            <span className={`text-[10px] font-semibold block leading-tight ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              Boas-vindas ao App
+            </span>
+            <h2 className={`text-xs sm:text-sm font-bold truncate leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Seja bem-vindo, <span className="text-emerald-500">{userName}</span>
+            </h2>
+          </div>
+        </div>
+
+        {/* Lado Oposto: Foto / Ícone do Usuário */}
+        <button
+          onClick={onOpenProfileDrawer}
+          className="relative group flex items-center gap-2 shrink-0 cursor-pointer"
+          title="Ver Perfil do Usuário"
+          aria-label="Perfil do Usuário"
+        >
+          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-emerald-500/60 group-hover:ring-emerald-400 transition shadow-xs">
+            <img
+              src={userAvatarUrl}
+              alt={userName}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </button>
+      </div>
+
+      <div className="space-y-3 pt-3">
+        {/* 3. CARROSSEL DE SERVIÇOS / PORTFÓLIO (Full Width + Swipe Gesture + Maior Aumentado em +1/3 para 210px) */}
+        <div className={`relative w-full h-[210px] sm:h-[240px] overflow-hidden shadow-md select-none touch-pan-y ${
+          isDark ? 'bg-slate-900 border-y border-slate-800' : 'bg-slate-200 border-y border-slate-300'
+        }`}>
           <AnimatePresence mode="wait">
             {portfolioSlides.map((slide, idx) => {
               if (idx !== activeSlideIndex) return null;
               return (
                 <motion.div
                   key={slide.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40 || info.velocity.x < -300) {
+                      // Swipe para a esquerda -> Próximo slide
+                      setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
+                    } else if (info.offset.x > 40 || info.velocity.x > 300) {
+                      // Swipe para a direita -> Slide anterior
+                      setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
+                    }
+                  }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="absolute inset-0 w-full h-full"
+                  className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
                 >
-                  {/* Imagem de Fundo do Serviço */}
+                  {/* Imagem de Fundo do Serviço Ampliada */}
                   <img
                     src={slide.image}
                     alt={slide.title}
@@ -357,31 +384,32 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     referrerPolicy="no-referrer"
                   />
 
-                  {/* Degradê Linear Lateral Escuro Suave para Contraste Impecável */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/20" />
+                  {/* Degradê Linear Lateral e Inferior para legibilidade perfeita */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
-                  {/* Conteúdo à Esquerda: Categoria + Título Resumido + Chamada Publicitária + Botão Agendar */}
-                  <div className="absolute inset-0 p-3.5 flex flex-col justify-between z-10 max-w-[75%] sm:max-w-[70%]">
+                  {/* Conteúdo à Esquerda: Categoria + Título + Chamada Publicitária + Botão Agendar */}
+                  <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between z-10 max-w-[80%] sm:max-w-[70%]">
                     <div>
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-0.5">
+                      <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider mb-1.5 backdrop-blur-xs">
                         {slide.tag}
                       </span>
-                      <h3 className="text-sm font-bold text-white tracking-tight leading-snug line-clamp-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight line-clamp-2 drop-shadow-xs font-['Poppins']">
                         {slide.title}
                       </h3>
-                      <p className="text-[11px] text-slate-300 font-normal leading-tight line-clamp-1 mt-0.5">
+                      <p className="text-xs text-slate-300 font-normal leading-relaxed line-clamp-2 mt-1 drop-shadow-xs">
                         {slide.tagline}
                       </p>
                     </div>
 
-                    {/* Botão Sutil "Agendar" com Glassmorphism Refinado */}
+                    {/* Botão Sutil "Agendar" */}
                     <div>
                       <button
                         onClick={() => handleOpenBooking(slide.service)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/15 hover:bg-white/25 active:scale-95 backdrop-blur-md border border-white/20 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-bold transition-all shadow-md cursor-pointer"
                       >
-                        <span>Agendar</span>
-                        <ArrowRight className="w-3 h-3 text-emerald-300" />
+                        <span>Agendar Serviço</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -391,14 +419,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </AnimatePresence>
 
           {/* Controles do Slide: Indicadores de Bolinhas no Canto Inferior Direito */}
-          <div className="absolute bottom-2.5 right-3 z-20 flex items-center gap-1.5 bg-slate-950/60 backdrop-blur-xs px-2 py-1 rounded-full border border-slate-800/80">
+          <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-800/80 shadow-md">
             {portfolioSlides.map((_, dotIdx) => (
               <button
                 key={dotIdx}
                 onClick={() => setActiveSlideIndex(dotIdx)}
                 className={`transition-all rounded-full cursor-pointer ${
                   dotIdx === activeSlideIndex
-                    ? 'w-3.5 h-1.5 bg-emerald-400'
+                    ? 'w-4 h-1.5 bg-emerald-400'
                     : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
                 }`}
                 aria-label={`Slide ${dotIdx + 1}`}
@@ -409,21 +437,23 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           {/* Setas Sutis de Navegação */}
           <button
             onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-            className="absolute left-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-slate-950/40 hover:bg-slate-950/80 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
             aria-label="Slide anterior"
           >
-            <ChevronLeft className="w-3.5 h-3.5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-slate-950/40 hover:bg-slate-950/80 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
             aria-label="Próximo slide"
           >
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* 3. BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
+        {/* Conteúdo Abaixo do Slide com Margens Internas */}
+        <div className="px-3.5 space-y-3">
+          {/* 3. BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
         <div>
           <button
             onClick={() => handleOpenBooking(undefined, true)}
@@ -784,6 +814,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}
