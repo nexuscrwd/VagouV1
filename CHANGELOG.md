@@ -17,13 +17,13 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ### [2026-09-09] — Correção Definitiva para Deploy em Cloudflare Workers
 - **Tipo:** `[Fix & DevOps]`
-- **Motivo:** O deploy do Cloudflare Worker falhava no estágio de `Installing` devido a conflitos de lockfile (`bun.lock` vs `package-lock.json` em `npm ci`), além de incompatibilidade na diretiva `binding = "ASSETS"` em workers apenas de assets estáticos no `wrangler.toml`.
+- **Motivo:** O estágio de instalação e build passaram 100%, mas a publicação pelo Cloudflare Worker falhou com `Invalid _redirects configuration: Line 1: Infinite loop detected in this rule. [code: 100324]` devido ao arquivo `_redirects` herdado do Cloudflare Pages que conflita com o roteamento nativo de SPA do Cloudflare Workers Static Assets. Além disso, havia divergência no nome do Worker (`vagou` vs `vagouv1`).
 - **Arquivos Impactados:**
-  - `wrangler.toml`: Ajustado para `[assets]` com `not_found_handling = "single-page-application"` (removendo `binding = "ASSETS"` que gerava erro fatal no `npx wrangler deploy`).
-  - `.gitignore`: Adicionado `bun.lock*` e `package-lock.json` para evitar que lockfiles específicos de ambientes externos forcem instalações congeladas (`--frozen-lockfile` ou `npm ci`) no Cloudflare.
-  - `package.json`: Removida dependência duplicada de `"vite"` em dependencies.
-  - `bun.lock` & `package-lock.json`: Removidos do repositório para permitir resolução dinâmica e limpa de dependências pelo Cloudflare Worker runner.
-- **Resumo Técnico:** Compatibilização total com o runner do Cloudflare Workers e verificação de deploy dry-run bem-sucedida.
+  - `public/_redirects`: Removido. Em Cloudflare Workers com `[assets]`, o roteamento SPA é resolvido nativamente pela diretiva `not_found_handling = "single-page-application"` no `wrangler.toml`, sem necessidade de arquivo `_redirects` (que gera loop no validador da Cloudflare).
+  - `wrangler.toml`: Nome atualizado de `vagou` para `vagouv1` para correspondência idêntica com o projeto no Cloudflare.
+  - `.gitignore`: Adicionado `bun.lock*` e `package-lock.json` para evitar que lockfiles específicos travem instalações congeladas.
+  - `package.json`: Removida duplicidade da dependência `vite`.
+- **Resumo Técnico:** Instalação (5s) e Build (5s) validados pelo Bun no Cloudflare; verificação de deploy dry-run no Wrangler executada com sucesso total (15 assets indexados sem erros).
 
 ---
 
