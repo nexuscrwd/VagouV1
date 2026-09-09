@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  ArrowLeft, Star, MapPin, Clock, ShieldCheck, 
+  ArrowLeft, Star, MapPin, Clock, 
   Heart, Zap, CheckCircle2, Scissors, 
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Menu, Users, UserCheck, Store, ChevronRight,
-  ChevronLeft, ArrowRight, Sun, Moon
+  ChevronLeft, ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
 import { SalonBookingModal, CatalogServiceItem } from './SalonBookingModal';
 import { formatSlotDateTime } from '../utils/dateFormatter';
 import { useTheme } from '../context/ThemeContext';
+import { getSalonLogo } from '../utils/salonLogos';
 
 interface SalonProfileViewProps {
   salonName: string;
@@ -51,7 +52,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   // Informações consolidadas do salão
   const salonInfo = {
     name: salonName,
-    avatar: primaryOffer?.professionalAvatar || primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+    avatar: getSalonLogo(salonName, primaryOffer?.salonLogo),
     coverImage: primaryOffer?.galleryImages?.[0] || primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1200&q=80',
     rating: primaryOffer?.rating || 4.9,
     reviewsCount: primaryOffer?.reviewsCount || 84,
@@ -212,67 +213,24 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
   return (
     <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-12 font-['Poppins'] transition-colors duration-200`}>
-      {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Header Nativo) */}
-      <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b px-3.5 py-2.5 shadow-md flex items-center justify-between gap-2.5 transition-colors`}>
-        {/* Lado Esquerdo: Div do Logotipo e Nome do Estabelecimento (Substituiu o botão Radar) */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <div className={`relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shrink-0 shadow-xs ${isDark ? 'bg-slate-900' : 'bg-slate-100'}`}>
-            <img
-              src={salonInfo.avatar}
-              alt={salonInfo.name}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-          <div className="min-w-0">
-            <span className={`text-[10px] uppercase font-bold tracking-wider leading-none block truncate ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-              Estabelecimento
-            </span>
-            <div className="flex items-center gap-1 mt-0.5">
-              <h1 className={`text-sm font-black leading-none truncate max-w-[140px] sm:max-w-[200px] font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                {salonInfo.name}
-              </h1>
-              {salonInfo.verified && (
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" title="Verificado" />
-              )}
-            </div>
-          </div>
+      {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Logo Full Height & Botões Selecionados) */}
+      <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b pr-4 shadow-md flex items-center justify-between gap-3 transition-colors h-14 sm:h-16 overflow-hidden`}>
+        {/* Lado Esquerdo: Logotipo da Empresa em Full Height sem moldura ou margens */}
+        <div className="h-full flex items-center shrink-0">
+          <img
+            src={salonInfo.avatar}
+            alt={salonInfo.name}
+            className="h-full w-auto max-w-[140px] sm:max-w-[180px] object-cover"
+            referrerPolicy="no-referrer"
+          />
         </div>
 
-        {/* Lado Direito: Tema + Favoritar + Notificação + Configurações */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {/* Botão de Voltar para o Portal / Radar (Acesso rápido) */}
-          <button
-            onClick={onBack}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
-              isDark
-                ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
-                : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
-            }`}
-            title="Sair do Estabelecimento"
-            aria-label="Sair"
-          >
-            <ArrowLeft className="w-4 h-4 text-emerald-500" />
-          </button>
-
-          {/* Alternar Tema (Claro / Escuro) */}
-          <button
-            onClick={toggleTheme}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
-              isDark
-                ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-amber-400 hover:text-amber-300'
-                : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-900 shadow-xs'
-            }`}
-            title={isDark ? "Mudar para Tema Claro" : "Mudar para Tema Escuro"}
-            aria-label="Alternar Tema"
-          >
-            {isDark ? <Sun className="w-4 h-4 transition-transform hover:rotate-45" /> : <Moon className="w-4 h-4 transition-transform hover:-rotate-12" />}
-          </button>
-
+        {/* Lado Direito: Favoritar + Notificação + Configurações */}
+        <div className="flex items-center gap-2 shrink-0">
           {/* Favoritar Rápido */}
           <button
             onClick={() => onToggleFavorite?.(salonInfo.name)}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
                 ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800'
                 : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 shadow-xs'
@@ -280,12 +238,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             title="Favoritar este estabelecimento"
             aria-label="Favoritar estabelecimento"
           >
-            <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
+            <Heart className={`w-4.5 h-4.5 ${isFavorite ? 'fill-rose-500 text-rose-500' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
           </button>
 
           {/* Notificações */}
           <button
-            className={`relative w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
+            className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
                 ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
                 : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
@@ -293,14 +251,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             title="Notificações do Salão"
             aria-label="Notificações"
           >
-            <Bell className="w-4 h-4" />
-            <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ${isDark ? 'ring-slate-950' : 'ring-white'}`} />
+            <Bell className="w-5 h-5" />
+            <span className={`absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 ring-2 ${isDark ? 'ring-slate-950' : 'ring-white'}`} />
           </button>
 
           {/* Configurações e Menu */}
           <button
             onClick={onOpenProfileDrawer}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
                 ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
                 : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
@@ -308,21 +266,33 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             title="Configurações e Menu"
             aria-label="Menu de Configurações"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-5 h-5" />
           </button>
         </div>
       </header>
 
       {/* 2. SUBCABEÇALHO DE BOAS-VINDAS */}
-      <div className={`px-3.5 py-2.5 border-b flex items-center justify-between gap-3 transition-colors ${
+      <div className={`px-3.5 py-2 border-b flex items-center justify-between gap-3 transition-colors ${
         isDark ? 'bg-slate-900/60 border-slate-800/80' : 'bg-slate-100/80 border-slate-200'
       }`}>
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Botão Sair do Estabelecimento (movido para a esquerda das boas-vindas) */}
+          <button
+            onClick={onBack}
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0 ${
+              isDark
+                ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
+                : 'bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
+            }`}
+            title="Sair do Estabelecimento"
+            aria-label="Sair"
+          >
+            <ArrowLeft className="w-4 h-4 text-emerald-500" />
+          </button>
+
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+
           <div className="min-w-0">
-            <span className={`text-[10px] font-semibold block leading-tight ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Boas-vindas ao App
-            </span>
             <h2 className={`text-xs sm:text-sm font-bold truncate leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
               Seja bem-vindo, <span className="text-emerald-500">{userName}</span>
             </h2>

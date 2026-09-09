@@ -69,6 +69,7 @@ export interface PartnerAppointmentItem {
 export interface ServiceOffer {
   id: string;
   salonName: string;
+  salonLogo?: string;
   professionalName: string;
   professionalAvatar?: string;
   serviceTitle: string;

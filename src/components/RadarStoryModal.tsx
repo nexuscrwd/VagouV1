@@ -4,6 +4,7 @@ import { X, Volume2, VolumeX, Clock, Zap } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
 import { formatSlotDateTime } from '../utils/dateFormatter';
+import { getSalonLogo } from '../utils/salonLogos';
 
 interface RadarStoryModalProps {
   isOpen: boolean;
@@ -134,17 +135,13 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
           {/* Top Bar Header */}
           <div className="absolute top-8 inset-x-0 z-40 px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full ring-2 ring-emerald-500 overflow-hidden bg-slate-800 flex items-center justify-center text-white font-bold shadow-lg">
-                {activeOffer.professionalAvatar || activeOffer.imageUrl ? (
-                  <img
-                    src={activeOffer.professionalAvatar || activeOffer.imageUrl}
-                    alt={activeOffer.professionalName}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <span>{activeOffer.salonName.charAt(0)}</span>
-                )}
+              <div className="h-9 px-2 rounded-lg ring-1 ring-emerald-500/80 bg-slate-900/90 backdrop-blur-md overflow-hidden flex items-center justify-center text-white font-bold shadow-lg">
+                <img
+                  src={getSalonLogo(activeOffer.salonName, activeOffer.salonLogo)}
+                  alt={activeOffer.salonName}
+                  className="h-full w-auto max-w-[110px] object-contain"
+                  referrerPolicy="no-referrer"
+                />
               </div>
 
               <div>

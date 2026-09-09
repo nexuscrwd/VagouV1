@@ -5,6 +5,7 @@ import {
   PartnerProfessional,
   PartnerAppointmentItem,
 } from './types';
+import { getSalonLogo } from './utils/salonLogos';
 
 export const DEFAULT_WEEK_SCHEDULE: DayScheduleConfig[] = [
   {
@@ -238,7 +239,7 @@ export const INITIAL_PARTNER_APPOINTMENTS: PartnerAppointmentItem[] = [
   },
 ];
 
-export const MOCK_OFFERS: ServiceOffer[] = [
+const RAW_MOCK_OFFERS: ServiceOffer[] = [
   // --- SALÃO X PRIME (Lucas Silva) ---
   {
     id: 'off-1',
@@ -1187,6 +1188,11 @@ export const MOCK_OFFERS: ServiceOffer[] = [
     description: 'Remoção de impurezas e poluição acumulada na pele do homem moderno.',
   },
 ];
+
+export const MOCK_OFFERS: ServiceOffer[] = RAW_MOCK_OFFERS.map((offer) => ({
+  ...offer,
+  salonLogo: getSalonLogo(offer.salonName, offer.salonLogo),
+}));
 
 export const INITIAL_BOOKINGS: BookingAppointment[] = [
   {

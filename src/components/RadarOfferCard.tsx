@@ -3,6 +3,7 @@ import { Heart, Volume2, VolumeX, Play, ChevronLeft, ChevronRight, Zap } from 'l
 import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
 import { formatSlotDateTime } from '../utils/dateFormatter';
+import { getSalonLogo } from '../utils/salonLogos';
 
 interface RadarOfferCardProps {
   offer: ServiceOffer;
@@ -235,7 +236,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
           {/* Left: Salon & Service Info + Inline Micro-Favorite */}
           <div className="flex-1 min-w-0 pr-1">
             <div className="flex items-center gap-2">
-              {/* Mini Avatar / Click to open profile */}
+              {/* Logo do Salão em Formato Retangular/Badge em PNG transparente */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -246,21 +247,15 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                     onFilterBySalon(offer.salonName);
                   }
                 }}
-                className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-emerald-400 flex-shrink-0 bg-slate-800 hover:ring-2 hover:ring-white transition cursor-pointer shadow-md"
+                className="h-7 px-1.5 rounded-lg overflow-hidden bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-emerald-500 transition cursor-pointer shadow-md flex items-center justify-center shrink-0"
                 title={`Ver perfil de ${offer.salonName}`}
               >
-                {offer.professionalAvatar || offer.imageUrl ? (
-                  <img
-                    src={offer.professionalAvatar || offer.imageUrl}
-                    alt={offer.salonName}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-emerald-700 text-white text-[10px] font-bold flex items-center justify-center">
-                    {offer.salonName.slice(0, 1)}
-                  </div>
-                )}
+                <img
+                  src={getSalonLogo(offer.salonName, offer.salonLogo)}
+                  alt={offer.salonName}
+                  className="h-full w-auto max-w-[95px] object-contain"
+                  referrerPolicy="no-referrer"
+                />
               </button>
 
               <div className="flex items-center gap-1.5 min-w-0">

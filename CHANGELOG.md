@@ -15,6 +15,56 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Correção na Codificação Data URI dos Logotipos SVG/PNG
+- **Tipo:** `[Bug Fix / Image Encoding]`
+- **Motivo:** Correção na renderização das imagens de logotipos dos estabelecimentos. A ausência de `encodeURIComponent` nos Data URIs de SVG causava falha na renderização de marcas com caracteres especiais (como `&` de "BELLA DONNA HAIR & SPA"), gerando um ícone de imagem quebrada na tela.
+- **Arquivos Impactados:**
+  - `src/utils/salonLogos.ts`: Implementada a função helper `makeSvgDataUri` utilizando `encodeURIComponent` para codificar de forma 100% segura todos os SVG Data URIs retangulares com fundo transparente.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Substituição das Fotos de Perfil dos Estabelecimentos por Logotipos PNG Transparentes Retangulares
+- **Tipo:** `[Feat / UI/UX]`
+- **Motivo:** Substituídas as fotos de pessoas dos estabelecimentos por logotipos em PNG/SVG transparentes e retangulares, com tipografia e marcas vetorizadas para todos os estabelecimentos mock do aplicativo.
+- **Arquivos Impactados:**
+  - `src/utils/salonLogos.ts`: Criado utilitário dedicado com marcas nominais transparentes e gerador dinâmico de logotipos SVG/PNG retangulares para todos os salões.
+  - `src/types.ts`: Adicionada propriedade opcional `salonLogo` à interface `ServiceOffer`.
+  - `src/data.ts`: Mapeado array `MOCK_OFFERS` para injetar automaticamente logotipos transparentes em todos os estabelecimentos.
+  - `src/components/SalonProfileView.tsx`: Atualizada a visualização da imagem principal do cabeçalho para carregar a marca transparente retangular com `object-contain`.
+  - `src/components/RadarOfferCard.tsx`: Atualizado badge superior do card de oferta para contêiner retangular com logotipo em PNG transparente.
+  - `src/components/RadarStoryModal.tsx`: Atualizado cabeçalho dos stories para contêiner com logotipo da marca.
+- **Resumo Técnico:** Limpeza pós-obra realizada, código verificado com `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Refatoração do Cabeçalho e Subcabeçalho (Logo Full Height, Botão Sair e Limpeza de Tema/Redundâncias)
+- **Tipo:** `[UI/UX Adjustment & Focus Mode]`
+- **Motivo:** Removido o botão de alternância de tema do cabeçalho (mantido exclusivamente na gaveta de perfil); movido o botão "Sair do Estabelecimento" para o subcabeçalho à esquerda da mensagem de boas-vindas; removido a tag redundante "Boas-vindas ao app"; ajustado a imagem/logo do perfil do estabelecimento para preencher a altura vertical máxima do cabeçalho (`full height`) sem moldura, bordas ou margens top/bottom/left.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Refatorado `<header>` para imagem full height responsiva (`h-full w-auto object-cover`) sem moldura/margens; removidos botões de tema e sair do cabeçalho; atualizado subcabeçalho com botão "Sair" posicionado à esquerda de `"Seja bem-vindo, {userName}"` sem span redundante.
+- **Resumo Técnico:** Limpeza pós-obra realizada, verificado com `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Remoção de Textos Redundantes do Cabeçalho Principal
+- **Tipo:** `[UI/UX Cleanup]`
+- **Motivo:** Remoção do rótulo "ESTABELECIMENTO", do nome da empresa e do selo verificado do cabeçalho fixo superior conforme solicitação via seleção de elementos no aplicativo, mantendo o cabeçalho focado exclusivamente na div do logotipo e botões de ação rápidos.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removidos elementos `<span>` e `<h1>` do lado esquerdo do `<header>`, preservando a `div` com imagem do logotipo do estabelecimento; limpo import não utilizado de `ShieldCheck`.
+- **Resumo Técnico:** Limpeza pós-obra concluída, verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
+### [2026-09-09] — Ampliação do Cabeçalho Principal (+25% / 1/4 do Tamanho)
+- **Tipo:** `[UI/UX Adjustment]`
+- **Motivo:** Ajuste de proporção do cabeçalho do estabelecimento, aumentando sua altura, estofamento (padding) e proporção de ícones/botões de ação em +25% para melhor ergonomia e visibilidade em telas de celulares.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Aumentado padding do `<header>` de `py-2.5 px-3.5` para `py-3.5 px-4`, avatar da marca de `w-9 h-9` para `w-11 h-11`, botões de ação de `w-8 h-8` para `w-10 h-10` e fontes do título/rótulo proporcionalmente.
+- **Resumo Técnico:** Verificado via `lint_applet` e compilado com sucesso (`compile_applet`).
+
+---
+
 ### [2026-09-09] — Reformulação do Slide (Full Width + Swipe Gesture + Altura Ampliada) e Subcabeçalho de Boas-Vindas
 - **Tipo:** `[Feat & UI/UX]`
 - **Motivo:** Implementação do slide em largura total (full width) com suporte a gesto touch de arrastar/deslizar (swipe left/right com `motion/react`), transição automática mantida e altura ampliada (+1/3) para destaque das imagens do catálogo; substituição do botão Radar por um contêiner exclusivo para o logotipo da empresa no cabeçalho principal, e criação do subcabeçalho de boas-vindas com nome do usuário e foto no lado oposto.
