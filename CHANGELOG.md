@@ -15,6 +15,44 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Refinamento do Mosaico Pinterest: Espaçamento Mínimo, Cantos Sutis e Curadoria Coesa de Fotos
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Redução do espaçamento entre as imagens do mosaico para o mínimo possível (`gap-1.5` / `mb-1.5`), ajuste dos cantos para bordas mais discretas e refinadas (`rounded-[6px]`) e substituição de fotos que destoavam por imagens coesas de alta resolução no universo de barbearia/salão premium (cortes na lâmina/tesoura, alinhamento, visagismo e cuidados capilares).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Curadoria atualizada do catálogo com imagens harmônicas de tons escuros e iluminação quente de estúdio; mosaico ajustado com espaçamento ultra-compacto (`gap-1.5`, `mb-1.5`, margem `px-2`), cantos discretos de 6px e badges proporcionais.
+- **Resumo Técnico:** Clean code aplicado, linter 100% verde e build de produção compilado com sucesso.
+
+---
+
+### [2026-09-09] — Grid de Serviços Estilo Pinterest (Masonry com Imagens Maiores e Proporções Variadas)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Substituição da grade de 3 colunas pequenas por um layout estilo Pinterest (Masonry Grid em 2 colunas com imagens muito maiores e proporções dinâmicas: verticais 3:4 e 4:5, quadradas 1:1 e horizontais 4:3), permitindo visualização rica, fotográfica e fluida dos serviços e procedimentos.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`: Adicionada propriedade opcional `aspectRatio?: string` à interface `CatalogServiceItem`.
+  - `src/components/SalonProfileView.tsx`: Atualizado `catalogServices` com imagens ampliadas e proporções dinâmicas (verticais, horizontais e quadradas); implementado o container `columns-2 gap-3 [column-fill:_balance]` com cards `break-inside-avoid`, badges flutuantes de categoria/ícone, gradientes de alto contraste para leitura de título, preço e duração, além de interação de clique e hover.
+- **Resumo Técnico:** Limpeza pós-obra realizada, zero imports ou variáveis zumbis, testado via `lint_applet` e build validado com `compile_applet`.
+
+---
+
+### [2026-09-09] — Escopo Exato: Slider na Página Inicial & Grid Instagram Exclusivo na Seção Serviços
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Restauração do slider/carrossel dinâmico de destaques na página inicial do estabelecimento (aba "Agenda/Vagas") e inserção exclusiva da grade de serviços em formato Instagram (3 colunas, proporção 1:1 e bordas finas) na aba "Serviços", removendo o slider desta seção conforme solicitação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Slider reposicionado no topo da aba inicial (`activeTab === 'vagas'`), acompanhado dos botões e cards de atendimento ao vivo. Na aba "Serviços" (`activeTab === 'servicos'`), o slider foi omitido e o grid estilo Instagram de 3 colunas com borda fina (`gap-[1.5px]`) foi configurado como apresentação principal dos atendimentos.
+- **Resumo Técnico:** Clean code aplicado, zero código morto ou imports zumbis, testado via `lint_applet` e validado com `compile_applet`.
+
+---
+
+### [2026-09-09] — Grid de Serviços em Formato Instagram com Bordas Finas
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do carrossel/slide de serviços e substituição por uma grade de fotos estilo Instagram (3 colunas, proporção quadrada 1:1, separadas apenas por uma borda fina), permitindo visualização rápida dos serviços e agendamento instantâneo por clique.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituído o carrossel/slides pelo grid estilo feed do Instagram (`grid grid-cols-3 gap-[1.5px]`), adicionadas fotos aos serviços do catálogo e removidos os estados e intervalos de autoplay do slide anterior.
+  - `src/components/SalonBookingModal.tsx`: Atualizada a tipagem de `CatalogServiceItem` com a propriedade opcional `image`.
+- **Resumo Técnico:** Clean code aplicado, imports zumbis removidos, verificado com `lint_applet` e compilado com `compile_applet`.
+
+---
+
 ### [2026-09-09] — Implementação das Cadeiras Ao Vivo e Próximos 4 Horários Livres
 - **Tipo:** `[Feat / UI/UX]`
 - **Motivo:** Implementação da exibição das cadeiras em atendimento em tempo real (com barras de progresso e tempo restante) e lista dos próximos 4 horários livres do dia na aba "Agenda".

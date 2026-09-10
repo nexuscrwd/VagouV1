@@ -3,8 +3,8 @@ import {
   ArrowLeft, Star, MapPin, Clock, 
   Heart, Zap, CheckCircle2, Scissors, 
   Calendar, Coffee, Wifi, Car, Wind,
-  Bell, Users, UserCheck, Store, ChevronRight,
-  ChevronLeft, ArrowRight, Activity
+  Bell, Users, UserCheck, Store,
+  Activity, ChevronLeft, ChevronRight, ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
@@ -41,7 +41,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   onOpenProfileDrawer,
   onRegisterBottomNav,
 }) => {
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
   const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'espaco'>('vagas');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
@@ -202,7 +202,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
   ];
 
-  // Catálogo completo de serviços
+  // Catálogo completo de serviços com imagens coesas e proporções variadas no estilo Pinterest Masonry
   const catalogServices: CatalogServiceItem[] = [
     {
       id: 'srv-1',
@@ -211,6 +211,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       price: 55,
       description: 'Corte com acabamento preciso na lâmina, lavagem especial e finalização com pomada matte.',
       category: 'Cabelo',
+      image: primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[3/4]', // Vertical Alto
     },
     {
       id: 'srv-2',
@@ -219,34 +221,72 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       price: 45,
       description: 'Design de barba com toalha quente aromática, óleos essenciais e balm pós-barba.',
       category: 'Barba',
+      image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-square', // Quadrado
     },
     {
       id: 'srv-3',
-      title: 'Combo Corte + Barba Completo',
+      title: 'Combo Corte + Barba VIP',
       duration: '60 min',
       price: 90,
       description: 'Experiência completa de corte de cabelo e tratamento completo de barba.',
       category: 'Combos',
+      image: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[4/3]', // Horizontal Panorâmico
     },
     {
       id: 'srv-4',
-      title: 'Hidratação & Selagem de Fios',
+      title: 'Corte na Tesoura & Textura',
       duration: '45 min',
-      price: 75,
-      description: 'Tratamento intensivo de nutrição capilar e alinhamento dos fios.',
-      category: 'Tratamentos',
+      price: 65,
+      description: 'Técnica de corte à mão livre na tesoura com alinhamento e finalização personalizada.',
+      category: 'Cabelo',
+      image: 'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[4/5]', // Vertical Elegante
     },
     {
       id: 'srv-5',
-      title: 'Sobrancelha Masculina / Feminina',
-      duration: '15 min',
-      price: 25,
-      description: 'Limpeza e alinhamento na pinça ou navalha mantendo o aspecto natural.',
+      title: 'Acabamento na Navalha & Visagismo',
+      duration: '20 min',
+      price: 30,
+      description: 'Desenho de linhas com navalha descartável, visagismo facial e pós-barba calmante.',
       category: 'Rosto',
-    }
+      image: 'https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-square', // Quadrado
+    },
+    {
+      id: 'srv-6',
+      title: 'Mechas & Iluminação de Fios',
+      duration: '90 min',
+      price: 130,
+      description: 'Técnica personalizada de iluminação dos fios e tonalização exclusiva.',
+      category: 'Cabelo',
+      image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[3/4]', // Vertical Alto
+    },
+    {
+      id: 'srv-7',
+      title: 'Lavagem & Hidratação Especial',
+      duration: '35 min',
+      price: 50,
+      description: 'Higienização com massagem no couro cabeludo e máscara reconstrutora intensiva.',
+      category: 'Tratamentos',
+      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[4/3]', // Horizontal Panorâmico
+    },
+    {
+      id: 'srv-8',
+      title: 'Cuidado Facial & Toalha Quente',
+      duration: '40 min',
+      price: 60,
+      description: 'Higienização facial com esfoliação suave e vapor de toalha aquecida com ervas.',
+      category: 'Estética',
+      image: 'https://images.unsplash.com/photo-1507081323647-4d250478b919?auto=format&fit=crop&w=800&q=80',
+      aspectRatio: 'aspect-[4/5]', // Vertical Elegante
+    },
   ];
 
-  // Slides de portfólio
+  // Slides de portfólio para o Slider da Página Inicial
   const portfolioSlides = [
     {
       id: 'slide-1',
@@ -274,7 +314,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
   ];
 
-  // Autoplay suave
+  // Autoplay suave para o slider da página inicial
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
@@ -406,129 +446,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </div>
 
-      <div className="space-y-3 pt-0">
-        {/* 3. CARROSSEL DE SERVIÇOS / PORTFÓLIO (Full Width + Swipe Gesture + Maior Aumentado em +1/3 para 210px) */}
-        <div className={`relative w-full h-[210px] sm:h-[240px] overflow-hidden shadow-md select-none touch-pan-y ${
-          isDark ? 'bg-slate-900 border-y border-slate-800' : 'bg-slate-200 border-y border-slate-300'
-        }`}>
-          <AnimatePresence mode="wait">
-            {portfolioSlides.map((slide, idx) => {
-              if (idx !== activeSlideIndex) return null;
-              return (
-                <motion.div
-                  key={slide.id}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x < -40 || info.velocity.x < -300) {
-                      // Swipe para a esquerda -> Próximo slide
-                      setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
-                    } else if (info.offset.x > 40 || info.velocity.x > 300) {
-                      // Swipe para a direita -> Slide anterior
-                      setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
-                    }
-                  }}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-                >
-                  {/* Imagem de Fundo do Serviço Ampliada */}
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-
-                  {/* Degradê Linear Lateral e Inferior para legibilidade perfeita */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-
-                  {/* Conteúdo à Esquerda: Categoria + Título + Chamada Publicitária + Botão Agendar */}
-                  <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between z-10 max-w-[80%] sm:max-w-[70%]">
-                    <div>
-                      <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider mb-1.5 backdrop-blur-xs">
-                        {slide.tag}
-                      </span>
-                      <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight line-clamp-2 drop-shadow-xs font-['Poppins']">
-                        {slide.title}
-                      </h3>
-                      <p className="text-xs text-slate-300 font-normal leading-relaxed line-clamp-2 mt-1 drop-shadow-xs">
-                        {slide.tagline}
-                      </p>
-                    </div>
-
-                    {/* Botão Sutil "Agendar" */}
-                    <div>
-                      <button
-                        onClick={() => handleOpenBooking(slide.service)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-bold transition-all shadow-md cursor-pointer"
-                      >
-                        <span>Agendar Serviço</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-          {/* Controles do Slide: Indicadores de Bolinhas no Canto Inferior Direito */}
-          <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-800/80 shadow-md">
-            {portfolioSlides.map((_, dotIdx) => (
-              <button
-                key={dotIdx}
-                onClick={() => setActiveSlideIndex(dotIdx)}
-                className={`transition-all rounded-full cursor-pointer ${
-                  dotIdx === activeSlideIndex
-                    ? 'w-4 h-1.5 bg-emerald-400'
-                    : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-                }`}
-                aria-label={`Slide ${dotIdx + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Setas Sutis de Navegação */}
-          <button
-            onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
-            aria-label="Slide anterior"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
-            aria-label="Próximo slide"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Conteúdo Abaixo do Slide com Margens Internas */}
-        <div className="px-3.5 space-y-3">
-          {/* 3. BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
-        <div>
-          <button
-            onClick={() => handleOpenBooking(undefined, true)}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
-          >
-            <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
-            <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
-          </button>
-        </div>
-
-      </div>
-
       {/* 5. CONTEÚDO DAS ABAS (Com Transição Suave via Motion) */}
-      <div className="px-3.5 mt-3.5">
+      <div className="pt-0">
         <AnimatePresence mode="wait">
-          {/* ABA: AGENDA / CADEIRAS EM ATENDIMENTO + PRÓXIMOS 4 HORÁRIOS LIVRES */}
+          {/* ABA: AGENDA / VAGAS COM O SLIDER NO TOPO + HORÁRIOS HOJE + CADEIRAS AO VIVO + PRÓXIMOS 4 HORÁRIOS */}
           {activeTab === 'vagas' && (
             <motion.div
               key="aba-vagas"
@@ -536,8 +457,123 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-4"
+              className="space-y-3"
             >
+              {/* 3. SLIDER / CARROSSEL DA PÁGINA INICIAL */}
+              <div className={`relative w-full h-[210px] sm:h-[240px] overflow-hidden shadow-md select-none touch-pan-y ${
+                isDark ? 'bg-slate-900 border-y border-slate-800' : 'bg-slate-200 border-y border-slate-300'
+              }`}>
+                <AnimatePresence mode="wait">
+                  {portfolioSlides.map((slide, idx) => {
+                    if (idx !== activeSlideIndex) return null;
+                    return (
+                      <motion.div
+                        key={slide.id}
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={(_, info) => {
+                          if (info.offset.x < -40 || info.velocity.x < -300) {
+                            // Swipe para a esquerda -> Próximo slide
+                            setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
+                          } else if (info.offset.x > 40 || info.velocity.x > 300) {
+                            // Swipe para a direita -> Slide anterior
+                            setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
+                          }
+                        }}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+                      >
+                        {/* Imagem de Fundo do Serviço Ampliada */}
+                        <img
+                          src={slide.image}
+                          alt={slide.title}
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+
+                        {/* Degradê Linear Lateral e Inferior para legibilidade perfeita */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+
+                        {/* Conteúdo à Esquerda: Categoria + Título + Chamada Publicitária + Botão Agendar */}
+                        <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between z-10 max-w-[80%] sm:max-w-[70%]">
+                          <div>
+                            <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider mb-1.5 backdrop-blur-xs">
+                              {slide.tag}
+                            </span>
+                            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight line-clamp-2 drop-shadow-xs font-['Poppins']">
+                              {slide.title}
+                            </h3>
+                            <p className="text-xs text-slate-300 font-normal leading-relaxed line-clamp-2 mt-1 drop-shadow-xs">
+                              {slide.tagline}
+                            </p>
+                          </div>
+
+                          {/* Botão Sutil "Agendar" */}
+                          <div>
+                            <button
+                              onClick={() => handleOpenBooking(slide.service)}
+                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-bold transition-all shadow-md cursor-pointer"
+                            >
+                              <span>Agendar Serviço</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+
+                {/* Controles do Slide: Indicadores de Bolinhas no Canto Inferior Direito */}
+                <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-800/80 shadow-md">
+                  {portfolioSlides.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      onClick={() => setActiveSlideIndex(dotIdx)}
+                      className={`transition-all rounded-full cursor-pointer ${
+                        dotIdx === activeSlideIndex
+                          ? 'w-4 h-1.5 bg-emerald-400'
+                          : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
+                      }`}
+                      aria-label={`Slide ${dotIdx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Setas Sutis de Navegação */}
+                <button
+                  onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
+                  aria-label="Slide anterior"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
+                  aria-label="Próximo slide"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Conteúdo Abaixo do Slide com Margens Internas */}
+              <div className="px-3.5 space-y-3">
+                {/* BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
+                <div>
+                  <button
+                    onClick={() => handleOpenBooking(undefined, true)}
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
+                  >
+                    <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+                    <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
+                  </button>
+                </div>
               {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -770,10 +806,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   ))}
                 </div>
               )}
+              </div>
             </motion.div>
           )}
 
-          {/* ABA: TODOS OS SERVIÇOS */}
+          {/* ABA: SEÇÃO SERVIÇOS -> GRID ESTILO PINTEREST MASONRY COM IMAGENS GRANDES E VARIADAS (Horizontal, Quadrado e Vertical) */}
           {activeTab === 'servicos' && (
             <motion.div
               key="aba-servicos"
@@ -781,78 +818,92 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-2.5"
+              className="space-y-3.5 pt-1"
             >
-              <div className="flex items-center justify-between">
+              {/* Header da Seção de Serviços */}
+              <div className="px-3.5 flex items-center justify-between">
                 <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   <Scissors className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>Cardápio de Atendimentos</span>
+                  <span>Serviços & Procedimentos</span>
                 </h2>
                 <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {catalogServices.length} serviços disponíveis
+                  {catalogServices.length} disponíveis
                 </span>
               </div>
 
-              {catalogServices.map((srv) => (
-                <div
-                  key={srv.id}
-                  onClick={() => handleOpenBooking(srv)}
-                  className={`border rounded-xl p-3.5 flex items-start justify-between gap-3 shadow-sm transition cursor-pointer group ${
-                    isDark
-                      ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/50'
-                      : 'bg-white border-slate-200/90 shadow-xs hover:border-[#20C933]/50'
-                  }`}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-bold border px-2 py-0.5 rounded ${
+              {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Mínimo, Cantos Sutis e Imagens Grandes) */}
+              <div className="px-2">
+                <div className="columns-2 gap-1.5 [column-fill:_balance]">
+                  {catalogServices.map((srv) => (
+                    <div
+                      key={srv.id}
+                      onClick={() => handleOpenBooking(srv)}
+                      className={`break-inside-avoid mb-1.5 relative rounded-[6px] overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
                         isDark
-                          ? 'bg-slate-800 border-slate-700 text-slate-300'
-                          : 'bg-slate-100 border-slate-200 text-slate-700'
-                      }`}>
-                        {srv.category}
-                      </span>
-                      <span className={`text-[11px] flex items-center gap-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                        <Clock className="w-3 h-3 text-slate-400" />
-                        {srv.duration}
-                      </span>
-                    </div>
-
-                    <h4 className={`text-xs sm:text-sm font-bold mt-1 transition-colors ${
-                      isDark
-                        ? 'text-white group-hover:text-emerald-300'
-                        : 'text-slate-900 group-hover:text-[#087A2A]'
-                    }`}>
-                      {srv.title}
-                    </h4>
-                    <p className={`text-[11px] mt-0.5 leading-relaxed line-clamp-2 ${
-                      isDark ? 'text-slate-400' : 'text-slate-600'
-                    }`}>
-                      {srv.description}
-                    </p>
-                  </div>
-
-                  <div className="text-right shrink-0 flex flex-col items-end">
-                    <span className={`text-sm font-extrabold ${isDark ? 'text-emerald-400' : 'text-[#087A2A]'}`}>
-                      R${srv.price.toFixed(0)}
-                    </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenBooking(srv);
-                      }}
-                      className={`mt-2 px-3 py-1.5 border text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
-                        isDark
-                          ? 'bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white border-slate-700 hover:border-emerald-500'
-                          : 'bg-slate-100 hover:bg-[#20C933] text-slate-800 hover:text-white border-slate-200 hover:border-[#20C933] shadow-xs'
+                          ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
+                          : 'bg-white border-slate-200 hover:border-emerald-500/60'
                       }`}
+                      title={`${srv.title} - R$ ${srv.price}`}
                     >
-                      <Calendar className="w-3 h-3" />
-                      <span>Agendar</span>
-                    </button>
-                  </div>
+                      {/* Contêiner de Imagem com Proporção Pinterest Dinâmica (Vertical 3:4/4:5, Quadrada 1:1 ou Horizontal 4:3) */}
+                      <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
+                        <img
+                          src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
+                          alt={srv.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                        />
+
+                        {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
+                        <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
+
+                        {/* Badge de Categoria no Topo Esquerdo */}
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className="px-1.5 py-0.5 rounded-[4px] bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
+                            {srv.category}
+                          </span>
+                        </div>
+
+                        {/* Botão de Ação / Ícone no Topo Direito */}
+                        <div className="absolute top-2 right-2 z-10">
+                          <div className="w-5.5 h-5.5 rounded-[4px] bg-emerald-500 group-hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-110">
+                            <Scissors className="w-3 h-3" />
+                          </div>
+                        </div>
+
+                        {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-2.5 flex flex-col justify-end">
+                          <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
+                            {srv.title}
+                          </h3>
+                          
+                          <div className="flex items-center justify-between mt-1 pt-1 border-t border-white/10">
+                            <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
+                              R${srv.price}
+                            </span>
+                            <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
+                              <Clock className="w-2.5 h-2.5 text-slate-400" />
+                              {srv.duration}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* Botão de Agendamento Rápido na Aba de Serviços */}
+              <div className="px-2 pt-1">
+                <button
+                  onClick={() => handleOpenBooking(undefined, true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
+                >
+                  <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+                  <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -967,7 +1018,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-        </div>
       </div>
 
       {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}

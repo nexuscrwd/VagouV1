@@ -12,6 +12,8 @@ export interface CatalogServiceItem {
   price: number;
   description: string;
   category: string;
+  image?: string;
+  aspectRatio?: string;
 }
 
 export interface SalonProfessionalItem {
