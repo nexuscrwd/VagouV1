@@ -15,6 +15,33 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-09] — Remoção da Seção 'Ofertas Relâmpago em Destaque' (Focus Mode)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do contêiner de "Ofertas Relâmpago em Destaque" da aba principal do perfil do salão, simplificando a tela e priorizando a visualização das cadeiras e dos próximos horários livres.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o bloco da seção de ofertas relâmpago.
+- **Resumo Técnico:** Clean code aplicado, linter validado e compilação de produção realizada com sucesso.
+
+---
+
+### [2026-09-09] — Remoção de Selo Redundante 'Livre' nos Cards de Horários (Focus Mode)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do selo redundante "Livre" selecionado via Focus Mode dentro dos cards de "Próximos Horários Livres", garantindo um design ainda mais limpo, minimalista e com foco total no horário.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o badge `<span>Livre</span>` e expandido o bloco do horário em destaque para preenchimento harmônico.
+- **Resumo Técnico:** Clean code aplicado, linter validado e build compilado com sucesso.
+
+---
+
+### [2026-09-09] — Grid de Cadeiras em Atendimento (Sem Nomes de Clientes) & Grid de Horários Livres
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Conversão da seção de Cadeiras em Atendimento em um grid de cards responsivo, com remoção total de nomes de clientes por privacidade/segurança e simplificação dos nomes dos profissionais (somente primeiro nome). Na seção "Próximos Horários Livres", conversão em grid de cards focado estritamente em horários, sem tipos de serviços redundantes.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: `activeChairsData` e `upcomingOpenSlots` atualizados com primeiros nomes simples ("Carlos", "Mateus", "Juliana"); remoção de qualquer menção a nomes de clientes; renderização de Cadeiras em Atendimento em `grid grid-cols-2 sm:grid-cols-3 gap-2`; renderização de Horários Livres em `grid grid-cols-2 sm:grid-cols-4 gap-2` com horário em destaque, status, duração e botão de reserva rápida.
+- **Resumo Técnico:** Limpeza pós-obra realizada, zero imports ou variáveis órfãs, TypeScript estritamente tipado, linter validado e compilação de produção bem-sucedida.
+
+---
+
 ### [2026-09-09] — Refinamento do Mosaico Pinterest: Espaçamento Mínimo, Cantos Sutis e Curadoria Coesa de Fotos
 - **Tipo:** `[UI/UX / Refactor]`
 - **Motivo:** Redução do espaçamento entre as imagens do mosaico para o mínimo possível (`gap-1.5` / `mb-1.5`), ajuste dos cantos para bordas mais discretas e refinadas (`rounded-[6px]`) e substituição de fotos que destoavam por imagens coesas de alta resolução no universo de barbearia/salão premium (cortes na lâmina/tesoura, alinhamento, visagismo e cuidados capilares).

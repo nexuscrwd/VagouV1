@@ -127,10 +127,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     {
       id: 'chair-1',
       number: 'Cadeira 01',
-      professional: 'Carlos Henrique',
+      professional: 'Carlos',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-      clientName: userName ? `${userName.trim().split(' ')[0]} (Você)` : 'Lucas S.',
-      serviceTitle: 'Corte Degradê Navalhado',
+      serviceTitle: 'Corte Degradê',
       remainingMinutes: 14,
       totalMinutes: 40,
       endTime: '14:15',
@@ -139,10 +138,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     {
       id: 'chair-2',
       number: 'Cadeira 02',
-      professional: 'Mateus Ramos',
+      professional: 'Mateus',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      clientName: 'Gabriel M.',
-      serviceTitle: 'Barba Terapia Premium',
+      serviceTitle: 'Barba Terapia',
       remainingMinutes: 8,
       totalMinutes: 35,
       endTime: '14:10',
@@ -151,10 +149,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     {
       id: 'chair-3',
       number: 'Cadeira 03',
-      professional: 'Juliana Costa',
+      professional: 'Juliana',
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
-      clientName: 'Fernanda R.',
-      serviceTitle: 'Mechas & Escova Modelada',
+      serviceTitle: 'Escova & Mechas',
       remainingMinutes: 28,
       totalMinutes: 60,
       endTime: '14:30',
@@ -168,7 +165,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       id: 'slot-1',
       timeSlot: '14:00',
       serviceTitle: 'Corte Degradê / Fade Moderno',
-      professionalName: 'Carlos Henrique',
+      professionalName: 'Carlos',
       price: 55,
       duration: '40 min',
       category: 'Cabelo',
@@ -177,7 +174,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       id: 'slot-2',
       timeSlot: '14:45',
       serviceTitle: 'Barba Terapia Premium',
-      professionalName: 'Mateus Ramos',
+      professionalName: 'Mateus',
       price: 45,
       duration: '35 min',
       category: 'Barba',
@@ -186,7 +183,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       id: 'slot-3',
       timeSlot: '15:30',
       serviceTitle: 'Combo Corte + Barba Completo',
-      professionalName: 'Carlos Henrique',
+      professionalName: 'Carlos',
       price: 90,
       duration: '60 min',
       category: 'Combos',
@@ -195,7 +192,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       id: 'slot-4',
       timeSlot: '16:15',
       serviceTitle: 'Hidratação & Selagem de Fios',
-      professionalName: 'Juliana Costa',
+      professionalName: 'Juliana',
       price: 75,
       duration: '45 min',
       category: 'Tratamentos',
@@ -574,8 +571,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
                   </button>
                 </div>
-              {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO */}
-              <div className="space-y-2.5">
+              {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO (GRID DE CARDS SEM NOMES DE CLIENTES) */}
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
@@ -587,15 +584,15 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   </span>
                 </div>
 
-                {/* Lista de Cadeiras Ocupadas */}
-                <div className="grid grid-cols-1 gap-2.5">
+                {/* Grid de Cadeiras Ocupadas */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {activeChairsData.map((chair) => {
                     const progressPercent = Math.min(100, Math.max(0, Math.round(((chair.totalMinutes - chair.remainingMinutes) / chair.totalMinutes) * 100)));
 
                     return (
                       <div
                         key={chair.id}
-                        className={`border rounded-xl p-3 relative overflow-hidden transition-all shadow-xs ${
+                        className={`border rounded-xl p-2.5 relative overflow-hidden transition-all shadow-xs flex flex-col justify-between ${
                           chair.isCurrentUser
                             ? isDark
                               ? 'bg-slate-900/95 border-emerald-500/70 ring-1 ring-emerald-500/30'
@@ -605,47 +602,49 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                               : 'bg-white border-slate-200/90'
                         }`}
                       >
-                        {/* Header da Cadeira */}
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <img
-                              src={chair.avatar}
-                              alt={chair.professional}
-                              className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-700 shrink-0"
-                            />
-                            <div className="min-w-0">
-                              <span className={`text-[10px] font-black uppercase tracking-wider block ${
-                                isDark ? 'text-emerald-400' : 'text-emerald-600'
-                              }`}>
-                                {chair.number} • {chair.professional}
-                              </span>
-                              <h4 className={`text-xs font-bold truncate leading-tight ${
-                                isDark ? 'text-white' : 'text-slate-900'
-                              }`}>
-                                {chair.serviceTitle}
-                              </h4>
-                            </div>
-                          </div>
+                        {/* Topo do Card: Cadeira + Status */}
+                        <div className="flex items-center justify-between gap-1 mb-1.5">
+                          <span className={`text-[10px] font-black uppercase tracking-wider ${
+                            isDark ? 'text-emerald-400' : 'text-emerald-600'
+                          }`}>
+                            {chair.number}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[9px] font-bold border border-emerald-500/30">
+                            <Clock className="w-2.5 h-2.5" />
+                            {chair.remainingMinutes}m
+                          </span>
+                        </div>
 
-                          <div className="text-right shrink-0">
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold">
-                              <Clock className="w-3 h-3" />
-                              Faltam {chair.remainingMinutes} min
-                            </span>
+                        {/* Meio: Profissional Simples + Serviço */}
+                        <div className="flex items-center gap-2 min-w-0 my-1">
+                          <img
+                            src={chair.avatar}
+                            alt={chair.professional}
+                            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-700 shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <h4 className={`text-[11px] font-bold truncate leading-tight ${
+                              isDark ? 'text-white' : 'text-slate-900'
+                            }`}>
+                              {chair.professional}
+                            </h4>
+                            <p className={`text-[9px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                              {chair.serviceTitle}
+                            </p>
                           </div>
                         </div>
 
-                        {/* Barra de Progresso do Serviço */}
-                        <div className="mt-2.5 space-y-1">
-                          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        {/* Barra de Progresso e Previsão */}
+                        <div className="mt-2 space-y-1">
+                          <div className="w-full h-1 rounded-full bg-slate-800 overflow-hidden">
                             <div
                               className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
                               style={{ width: `${progressPercent}%` }}
                             />
                           </div>
-                          <div className="flex items-center justify-between text-[10px] text-slate-400">
-                            <span>Cliente: <strong className={isDark ? 'text-slate-200' : 'text-slate-700'}>{chair.clientName}</strong></span>
-                            <span>Término: <strong className={isDark ? 'text-slate-200' : 'text-slate-700'}>{chair.endTime}</strong></span>
+                          <div className="flex items-center justify-between text-[9px] text-slate-400">
+                            <span>Progresso</span>
+                            <span>Até <strong>{chair.endTime}</strong></span>
                           </div>
                         </div>
                       </div>
@@ -654,12 +653,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 </div>
               </div>
 
-              {/* 2. SEÇÃO: PRÓXIMOS 4 HORÁRIOS FUTUROS EM ABERTO */}
-              <div className="space-y-2.5 pt-1">
+              {/* 2. SEÇÃO: PRÓXIMOS HORÁRIOS LIVRES (GRID DE CARDS COM FOCO APENAS EM HORÁRIOS) */}
+              <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between">
                   <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <Calendar className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Próximos 4 Horários Livres</span>
+                    <span>Próximos Horários Livres</span>
                   </h2>
                   <span className={`text-[10px] font-semibold border px-2 py-0.5 rounded-md ${
                     isDark
@@ -670,7 +669,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2">
+                {/* Grid de Horários */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {upcomingOpenSlots.map((slot) => (
                     <div
                       key={slot.id}
@@ -678,134 +678,46 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         const matchedSrv = catalogServices.find((s) => s.title === slot.serviceTitle) || catalogServices[0];
                         handleOpenBooking(matchedSrv, true);
                       }}
-                      className={`border rounded-xl p-3 flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer group shadow-xs ${
+                      className={`border rounded-xl p-2.5 flex flex-col justify-between gap-2 transition-all duration-200 cursor-pointer group shadow-xs active:scale-[0.98] ${
                         isDark
                           ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/60'
                           : 'bg-white border-slate-200/90 hover:border-emerald-500/60'
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        {/* Horário Destaque */}
-                        <div className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center shrink-0">
-                          <span className="text-xs font-black block tracking-tight leading-none">{slot.timeSlot}</span>
-                          <span className="text-[9px] font-bold text-emerald-500 uppercase block mt-0.5">Livre</span>
-                        </div>
-
-                        <div className="min-w-0">
-                          <h4 className={`text-xs font-bold truncate transition-colors ${
-                            isDark ? 'text-white group-hover:text-emerald-300' : 'text-slate-900 group-hover:text-emerald-700'
-                          }`}>
-                            {slot.serviceTitle}
-                          </h4>
-                          <p className={`text-[11px] truncate ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                            {slot.professionalName} • {slot.duration}
-                          </p>
+                      {/* Topo do Card: Horário Destaque */}
+                      <div className="flex items-center justify-between">
+                        <div className="w-full px-2 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center">
+                          <span className="text-sm font-black block tracking-tight leading-none">{slot.timeSlot}</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className={`text-xs font-extrabold ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>
-                          R${slot.price}
+                      {/* Profissional e Duração */}
+                      <div className="min-w-0">
+                        <span className={`text-[11px] font-bold block truncate ${
+                          isDark ? 'text-white group-hover:text-emerald-300' : 'text-slate-900 group-hover:text-emerald-700'
+                        }`}>
+                          {slot.professionalName}
                         </span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const matchedSrv = catalogServices.find((s) => s.title === slot.serviceTitle) || catalogServices[0];
-                            handleOpenBooking(matchedSrv, true);
-                          }}
-                          className="px-2.5 py-1 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-[11px] font-bold rounded-lg transition active:scale-95 uppercase tracking-wider"
-                        >
-                          Reservar
-                        </button>
+                        <span className={`text-[10px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          {slot.duration} • R${slot.price}
+                        </span>
                       </div>
+
+                      {/* Botão de Reserva Rápida */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const matchedSrv = catalogServices.find((s) => s.title === slot.serviceTitle) || catalogServices[0];
+                          handleOpenBooking(matchedSrv, true);
+                        }}
+                        className="w-full py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-[10px] font-bold rounded-lg transition active:scale-95 uppercase tracking-wider text-center"
+                      >
+                        Reservar
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* 3. SEÇÃO: VAGAS IMEDIATAS NO RADAR (SE HOUVER) */}
-              {salonOffers.length > 0 && (
-                <div className="space-y-2.5 pt-2">
-                  <div className="flex items-center justify-between">
-                    <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      <Zap className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />
-                      <span>Ofertas Relâmpago em Destaque</span>
-                    </h2>
-                  </div>
-
-                  {salonOffers.map((offer) => (
-                    <div
-                      key={offer.id}
-                      onClick={() => onSelectOffer(offer)}
-                      className={`border rounded-xl p-3.5 transition-all duration-200 shadow-sm relative overflow-hidden group cursor-pointer ${
-                        isDark
-                          ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/60'
-                          : 'bg-white border-slate-200/90 hover:border-[#20C933]/60 shadow-xs'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`px-2 py-0.5 rounded-md border text-[10px] font-black uppercase tracking-wider ${
-                              isDark
-                                ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
-                                : 'bg-emerald-50 border-emerald-400/40 text-[#087A2A]'
-                            }`}>
-                              {formatSlotDateTime(offer.timeSlot)}
-                            </span>
-                            {offer.expiresInMinutes && (
-                              <span className="text-[11px] text-rose-500 font-bold">
-                                Expira em {offer.expiresInMinutes} min
-                              </span>
-                            )}
-                          </div>
-
-                          <h4 className={`text-sm font-bold mt-1.5 transition-colors ${
-                            isDark
-                              ? 'text-white group-hover:text-emerald-300'
-                              : 'text-slate-900 group-hover:text-[#087A2A]'
-                          }`}>
-                            {offer.serviceTitle}
-                          </h4>
-
-                          <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                            Com <strong className={isDark ? 'text-slate-200' : 'text-slate-900'}>{offer.professionalName}</strong> • {offer.duration}
-                          </p>
-                        </div>
-
-                        <div className="text-right flex-shrink-0 flex flex-col items-end">
-                          {offer.originalPrice && offer.originalPrice > offer.price && (
-                            <span className="text-[10px] text-slate-400 line-through block mt-0.5">
-                              R${offer.originalPrice.toFixed(0)}
-                            </span>
-                          )}
-                          <span className={`text-base font-black ${isDark ? 'text-emerald-400' : 'text-[#087A2A]'}`}>
-                            R${offer.price.toFixed(0)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className={`mt-3 pt-2.5 border-t flex items-center justify-between ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                        <span className={`text-[11px] flex items-center gap-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                          Sem fila de espera
-                        </span>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDirectBook(offer);
-                          }}
-                          className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-95 text-white text-xs font-bold rounded-lg transition shadow-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Zap className="w-3.5 h-3.5 fill-white text-white" />
-                          <span>Agendar Agora</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
               </div>
             </motion.div>
           )}
