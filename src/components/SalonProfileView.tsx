@@ -92,20 +92,114 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     }
   }, [autoOpenBooking, initialBookingOffer]);
 
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
   const todayIso = useMemo(() => {
     const d = new Date();
     if (d.getDay() === 0) d.setDate(d.getDate() + 1);
     return d.toISOString().split('T')[0];
   }, []);
 
+  const [selectedCalendarDateIso, setSelectedCalendarDateIso] = useState<string>(todayIso);
+  const [calendarViewMonth, setCalendarViewMonth] = useState<Date>(() => {
+    const d = new Date();
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  // Geração do calendário mensal inline
+  const inlineMonthData = useMemo(() => {
+    const year = calendarViewMonth.getFullYear();
+    const month = calendarViewMonth.getMonth();
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const monthNameFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+    const monthLabel = monthNameFormatter.format(calendarViewMonth);
+
+    const daysGrid: Array<{
+      dayNumber: number | null;
+      isoString: string | null;
+      isToday: boolean;
+      isSelected: boolean;
+      isDisabled: boolean;
+      isClosed: boolean;
+    }> = [];
+
+    // Slots vazios antes do 1º dia do mês
+    for (let i = 0; i < firstDayIndex; i++) {
+      daysGrid.push({ dayNumber: null, isoString: null, isToday: false, isSelected: false, isDisabled: true, isClosed: false });
+    }
+
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+      const dateObj = new Date(year, month, d);
+      dateObj.setHours(0, 0, 0, 0);
+
+      const iso = dateObj.toISOString().split('T')[0];
+      const isPast = dateObj < today;
+      const isSunday = dateObj.getDay() === 0;
+
+      const isDisabled = isPast || isSunday;
+      const isToday = dateObj.getTime() === today.getTime();
+      const isSelected = selectedCalendarDateIso === iso;
+
+      daysGrid.push({
+        dayNumber: d,
+        isoString: iso,
+        isToday,
+        isSelected,
+        isDisabled,
+        isClosed: isSunday,
+      });
+    }
+
+    return {
+      monthLabel: monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1),
+      daysGrid,
+      year,
+      month,
+    };
+  }, [calendarViewMonth, today, selectedCalendarDateIso]);
+
+  const handlePrevInlineMonth = () => {
+    const prev = new Date(calendarViewMonth);
+    prev.setMonth(prev.getMonth() - 1);
+    if (prev.getFullYear() < today.getFullYear() || (prev.getFullYear() === today.getFullYear() && prev.getMonth() < today.getMonth())) {
+      return;
+    }
+    setCalendarViewMonth(prev);
+  };
+
+  const handleNextInlineMonth = () => {
+    const next = new Date(calendarViewMonth);
+    next.setMonth(next.getMonth() + 1);
+    setCalendarViewMonth(next);
+  };
+
+  // Horários disponíveis da data selecionada no calendário
   const agendaSlots = useMemo(() => {
-    return getAvailableSlotsForDate(todayIso, 'any');
-  }, [todayIso]);
+    return getAvailableSlotsForDate(selectedCalendarDateIso, 'any');
+  }, [selectedCalendarDateIso]);
 
   const filteredAgendaSlots = useMemo(() => {
     if (timePeriodFilter === 'todos') return agendaSlots;
     return agendaSlots.filter((s) => s.period === timePeriodFilter);
   }, [agendaSlots, timePeriodFilter]);
+
+  // Formatação resumida da data selecionada para o cabeçalho
+  const selectedDateFormattedLabel = useMemo(() => {
+    if (selectedCalendarDateIso === todayIso) {
+      return 'Hoje';
+    }
+    const [, selM, selD] = selectedCalendarDateIso.split('-');
+    return `${selD}/${selM}`;
+  }, [selectedCalendarDateIso, todayIso]);
 
   // Filtrar ofertas desse salão
   const salonOffers = offers.filter((o) => o.salonName === salonName);
@@ -367,10 +461,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return () => clearInterval(timer);
   }, [portfolioSlides.length]);
 
-  const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false, timeSlot?: string) => {
+  const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false, timeSlot?: string, dateIso?: string) => {
     setBookingService(srv || catalogServices[0]);
     setSkipDateStep(directToTimeGrid);
     setSelectedTimeSlotForBooking(timeSlot || null);
+    if (dateIso) {
+      setSelectedCalendarDateIso(dateIso);
+    }
     setIsBookingModalOpen(true);
   };
 
@@ -407,6 +504,245 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       });
     }
   };
+
+  // Renderização da Ferramenta Agenda Completa com Calendário Mensal e Grade de Horários
+  const renderAgendaTool = () => (
+    <div className="px-3.5 space-y-3">
+      {/* BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedCalendarDateIso(todayIso);
+            handleOpenBooking(undefined, true, undefined, todayIso);
+          }}
+          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
+        >
+          <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
+          <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
+        </button>
+      </div>
+
+      {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+            <span>Cadeiras em Atendimento</span>
+          </h2>
+        </div>
+
+        {/* Grid de Cadeiras Ocupadas */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {activeChairsData.map((chair) => {
+            const progressPercent = Math.min(100, Math.max(0, Math.round(((chair.totalMinutes - chair.remainingMinutes) / chair.totalMinutes) * 100)));
+
+            return (
+              <div
+                key={chair.id}
+                className={`border rounded-xl p-2.5 relative overflow-hidden transition-all shadow-xs flex flex-col justify-between ${
+                  chair.isCurrentUser
+                    ? isDark
+                      ? 'bg-slate-900/95 border-emerald-500/70 ring-1 ring-emerald-500/30'
+                      : 'bg-emerald-50/50 border-emerald-500/60 ring-1 ring-emerald-500/20'
+                    : isDark
+                      ? 'bg-slate-900/80 border-slate-800'
+                      : 'bg-white border-slate-200/90'
+                }`}
+              >
+                {/* Topo do Card: Cadeira */}
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className={`text-[10px] font-black uppercase tracking-wider ${
+                    isDark ? 'text-emerald-400' : 'text-emerald-600'
+                  }`}>
+                    {chair.number}
+                  </span>
+                </div>
+
+                {/* Meio: Profissional Simples */}
+                <div className="min-w-0 my-0.5">
+                  <h4 className={`text-xs font-bold truncate leading-tight ${
+                    isDark ? 'text-white' : 'text-slate-900'
+                  }`}>
+                    {chair.professional}
+                  </h4>
+                </div>
+
+                {/* Barra de Progresso e Previsão */}
+                <div className="mt-2 space-y-1">
+                  <div className="w-full h-1 rounded-full bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[9px] text-slate-400">
+                    <span>{chair.remainingMinutes}m rest.</span>
+                    <span>Até <strong>{chair.endTime}</strong></span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 2. SEÇÃO: CALENDÁRIO MENSAL VISÍVEL NA TELA */}
+      <div className={`pt-2 border-t space-y-2.5 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+        {/* Header do Mês com Controles */}
+        <div className={`flex items-center justify-between p-2 px-3 rounded-xl border transition-colors ${
+          isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+        }`}>
+          <button
+            type="button"
+            onClick={handlePrevInlineMonth}
+            className={`p-1.5 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+              isDark
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
+            }`}
+            aria-label="Mês anterior"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
+            <h3 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}>
+              {inlineMonthData.monthLabel}
+            </h3>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleNextInlineMonth}
+            className={`p-1.5 rounded-lg transition cursor-pointer ${
+              isDark
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
+            }`}
+            aria-label="Próximo mês"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Grid dos Dias da Semana */}
+        <div className="grid grid-cols-7 gap-1 text-center">
+          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
+            <div key={day} className={`text-[10px] font-bold py-0.5 uppercase ${
+              isDark ? 'text-slate-500' : 'text-slate-400'
+            }`}>
+              {day}
+            </div>
+          ))}
+
+          {/* Dias do Mês em Grade */}
+          {inlineMonthData.daysGrid.map((item, index) => {
+            if (item.dayNumber === null) {
+              return <div key={`empty-${index}`} className="h-8 sm:h-9" />;
+            }
+
+            return (
+              <button
+                key={item.isoString || index}
+                type="button"
+                disabled={item.isDisabled}
+                onClick={() => {
+                  if (item.isoString) {
+                    setSelectedCalendarDateIso(item.isoString);
+                  }
+                }}
+                className={`h-8 sm:h-9 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                  item.isSelected
+                    ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-md shadow-emerald-500/30 scale-105 z-10'
+                    : item.isDisabled
+                    ? isDark
+                      ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
+                      : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40'
+                    : isDark
+                    ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
+                    : 'bg-white hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
+                }`}
+              >
+                <span>{item.dayNumber}</span>
+                {item.isToday && !item.isSelected && (
+                  <span className="w-1 h-1 rounded-full bg-[#20C933] absolute bottom-1" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. SEÇÃO: TABELA DE HORÁRIOS PARA A DATA SELECIONADA */}
+      <div className={`pt-2 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+        <div className="flex items-center justify-between gap-1">
+          <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
+            isDark ? 'text-white' : 'text-slate-900'
+          }`}>
+            <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
+            <span>Horários • {selectedDateFormattedLabel}</span>
+          </h4>
+          
+          {/* Filtro de Turnos */}
+          <div className={`flex items-center gap-0.5 p-0.5 rounded-lg border flex-shrink-0 ${
+            isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+          }`}>
+            {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
+              <button
+                key={period}
+                type="button"
+                onClick={() => setTimePeriodFilter(period)}
+                className={`px-1.5 py-0.5 rounded text-[9px] font-bold capitalize transition cursor-pointer ${
+                  timePeriodFilter === period
+                    ? 'bg-[#20C933] text-white font-bold drop-shadow-xs'
+                    : isDark
+                    ? 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {period}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
+        <div className="grid grid-cols-4 gap-1.5">
+          {filteredAgendaSlots.map((slot) => {
+            const isAvailable = slot.available;
+
+            return (
+              <button
+                key={slot.time}
+                type="button"
+                disabled={!isAvailable}
+                onClick={() => {
+                  const matchedSrv = catalogServices[0];
+                  handleOpenBooking(matchedSrv, true, slot.time, selectedCalendarDateIso);
+                }}
+                className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
+                  !isAvailable
+                    ? isDark
+                      ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
+                      : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
+                    : isDark
+                    ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                    : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
+                }`}
+              >
+                <Clock className={`w-3 h-3 ${isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />
+                <span>{slot.time}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-0 font-['Poppins'] transition-colors duration-200`}>
@@ -617,150 +953,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 </button>
               </div>
 
-              {/* Conteúdo Abaixo do Slide com Margens Internas */}
-              <div className="px-3.5 space-y-3">
-                {/* BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
-                <div>
-                  <button
-                    onClick={() => handleOpenBooking(undefined, true)}
-                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
-                  >
-                    <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
-                    <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
-                  </button>
-                </div>
-              {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO (GRID DE CARDS SEM NOMES DE CLIENTES) */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-                    <span>Cadeiras em Atendimento</span>
-                  </h2>
-                </div>
-
-                {/* Grid de Cadeiras Ocupadas */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {activeChairsData.map((chair) => {
-                    const progressPercent = Math.min(100, Math.max(0, Math.round(((chair.totalMinutes - chair.remainingMinutes) / chair.totalMinutes) * 100)));
-
-                    return (
-                      <div
-                        key={chair.id}
-                        className={`border rounded-xl p-2.5 relative overflow-hidden transition-all shadow-xs flex flex-col justify-between ${
-                          chair.isCurrentUser
-                            ? isDark
-                              ? 'bg-slate-900/95 border-emerald-500/70 ring-1 ring-emerald-500/30'
-                              : 'bg-emerald-50/50 border-emerald-500/60 ring-1 ring-emerald-500/20'
-                            : isDark
-                              ? 'bg-slate-900/80 border-slate-800'
-                              : 'bg-white border-slate-200/90'
-                        }`}
-                      >
-                        {/* Topo do Card: Cadeira */}
-                        <div className="flex items-center justify-between gap-1 mb-1">
-                          <span className={`text-[10px] font-black uppercase tracking-wider ${
-                            isDark ? 'text-emerald-400' : 'text-emerald-600'
-                          }`}>
-                            {chair.number}
-                          </span>
-                        </div>
-
-                        {/* Meio: Profissional Simples */}
-                        <div className="min-w-0 my-0.5">
-                          <h4 className={`text-xs font-bold truncate leading-tight ${
-                            isDark ? 'text-white' : 'text-slate-900'
-                          }`}>
-                            {chair.professional}
-                          </h4>
-                        </div>
-
-                        {/* Barra de Progresso e Previsão */}
-                        <div className="mt-2 space-y-1">
-                          <div className="w-full h-1 rounded-full bg-slate-800 overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
-                              style={{ width: `${progressPercent}%` }}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between text-[9px] text-slate-400">
-                            <span>{chair.remainingMinutes}m rest.</span>
-                            <span>Até <strong>{chair.endTime}</strong></span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 2. SEÇÃO: TABELA DE HORÁRIOS (SINCRONIZADA COM O MODAL) */}
-              <div className={`pt-2 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-                <div className="flex items-center justify-between gap-1">
-                  <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
-                    <span>Horários</span>
-                  </h4>
-                  
-                  {/* Filtro de Turnos */}
-                  <div className={`flex items-center gap-0.5 p-0.5 rounded-lg border flex-shrink-0 ${
-                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
-                  }`}>
-                    {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
-                      <button
-                        key={period}
-                        type="button"
-                        onClick={() => setTimePeriodFilter(period)}
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold capitalize transition ${
-                          timePeriodFilter === period
-                            ? 'bg-[#20C933] text-white font-bold drop-shadow-xs'
-                            : isDark
-                            ? 'text-slate-400 hover:text-white'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        {period}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
-                <div className="grid grid-cols-4 gap-1.5">
-                  {filteredAgendaSlots.map((slot) => {
-                    const isAvailable = slot.available;
-
-                    return (
-                      <button
-                        key={slot.time}
-                        disabled={!isAvailable}
-                        onClick={() => {
-                          const matchedSrv = catalogServices[0];
-                          handleOpenBooking(matchedSrv, true, slot.time);
-                        }}
-                        className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
-                          !isAvailable
-                            ? isDark
-                              ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
-                              : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
-                            : isDark
-                            ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
-                        }`}
-                      >
-                        <Clock className={`w-3 h-3 ${isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />
-                        <span>{slot.time}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              </div>
+              {/* Ferramenta Agenda Completa do Estabelecimento com Calendário Mensal e Horários */}
+              {renderAgendaTool()}
             </motion.div>
           )}
 
-          {/* ABA: SEÇÃO SERVIÇOS -> GRID ESTILO PINTEREST MASONRY COM IMAGENS GRANDES E VARIADAS (Horizontal, Quadrado e Vertical) */}
+          {/* ABA: SEÇÃO SERVIÇOS -> FERRAMENTA AGENDA COMPLETA COM CALENDÁRIO + GRID ESTILO PINTEREST MASONRY */}
           {activeTab === 'servicos' && (
             <motion.div
               key="aba-servicos"
@@ -770,69 +968,75 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="space-y-3.5 pt-1"
             >
-              {/* Header da Seção de Serviços */}
-              <div className="pl-[10.5px] pr-3.5 py-[5px] my-[5px] mx-0 flex items-center justify-between">
-                <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  <span>Serviços & Procedimentos</span>
-                </h2>
-                <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {catalogServices.length} disponíveis
-                </span>
-              </div>
+              {/* FERRAMENTA AGENDA DO ESTABELECIMENTO COM CALENDÁRIO MENSAL VISÍVEL */}
+              {renderAgendaTool()}
 
-              {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Mínimo, Cantos Sutis e Imagens Grandes) */}
-              <div className="px-2">
-                <div className="columns-2 gap-1.5 [column-fill:_balance]">
-                  {catalogServices.map((srv) => (
-                    <div
-                      key={srv.id}
-                      onClick={() => handleOpenBooking(srv)}
-                      className={`break-inside-avoid mb-1.5 relative rounded-[6px] overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
-                        isDark
-                          ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
-                          : 'bg-white border-slate-200 hover:border-emerald-500/60'
-                      }`}
-                      title={`${srv.title} - R$ ${srv.price}`}
-                    >
-                      {/* Contêiner de Imagem com Proporção Pinterest Dinâmica (Vertical 3:4/4:5, Quadrada 1:1 ou Horizontal 4:3) */}
-                      <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
-                        <img
-                          src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
-                          alt={srv.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                        />
+              {/* 3. SEÇÃO: SERVIÇOS & PROCEDIMENTOS */}
+              <div className="pt-2 border-t border-slate-800/80">
+                {/* Header da Seção de Serviços */}
+                <div className="pl-[10.5px] pr-3.5 py-[5px] my-[5px] mx-0 flex items-center justify-between">
+                  <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <span>Serviços & Procedimentos</span>
+                  </h2>
+                  <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {catalogServices.length} disponíveis
+                  </span>
+                </div>
 
-                        {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
-                        <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
+                {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Mínimo, Cantos Sutis e Imagens Grandes) */}
+                <div className="px-2">
+                  <div className="columns-2 gap-1.5 [column-fill:_balance]">
+                    {catalogServices.map((srv) => (
+                      <div
+                        key={srv.id}
+                        onClick={() => handleOpenBooking(srv)}
+                        className={`break-inside-avoid mb-1.5 relative rounded-[6px] overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
+                          isDark
+                            ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
+                            : 'bg-white border-slate-200 hover:border-emerald-500/60'
+                        }`}
+                        title={`${srv.title} - R$ ${srv.price}`}
+                      >
+                        {/* Contêiner de Imagem com Proporção Pinterest Dinâmica (Vertical 3:4/4:5, Quadrada 1:1 ou Horizontal 4:3) */}
+                        <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
+                          <img
+                            src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
+                            alt={srv.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            referrerPolicy="no-referrer"
+                            loading="lazy"
+                          />
 
-                        {/* Badge de Categoria no Topo Esquerdo */}
-                        <div className="absolute top-2 left-2 z-10">
-                          <span className="px-1.5 py-0.5 rounded-[4px] bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
-                            {srv.category}
-                          </span>
-                        </div>
+                          {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
+                          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
 
-                        {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-2.5 flex flex-col justify-end">
-                          <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
-                            {srv.title}
-                          </h3>
-                          
-                          <div className="flex items-center justify-between mt-1 pt-1 border-t border-white/10">
-                            <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
-                              R${srv.price}
+                          {/* Badge de Categoria no Topo Esquerdo */}
+                          <div className="absolute top-2 left-2 z-10">
+                            <span className="px-1.5 py-0.5 rounded-[4px] bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
+                              {srv.category}
                             </span>
-                            <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
-                              <Clock className="w-2.5 h-2.5 text-slate-400" />
-                              {srv.duration}
-                            </span>
+                          </div>
+
+                          {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-2.5 flex flex-col justify-end">
+                            <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
+                              {srv.title}
+                            </h3>
+                            
+                            <div className="flex items-center justify-between mt-1 pt-1 border-t border-white/10">
+                              <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
+                                R${srv.price}
+                              </span>
+                              <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
+                                <Clock className="w-2.5 h-2.5 text-slate-400" />
+                                {srv.duration}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -958,6 +1162,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         baseOffer={primaryOffer}
         skipDateStep={skipDateStep}
         initialTimeSlot={selectedTimeSlotForBooking}
+        initialDateIso={selectedCalendarDateIso}
         onConfirmAppointment={handleConfirmSchedule}
       />
 

@@ -456,6 +456,7 @@ export const App: React.FC = () => {
                   onNewBookingClick={() => setCurrentScreen('home')}
                   onCancelBooking={handleCancelBooking}
                   onBack={() => setCurrentScreen('home')}
+                  onConfirmBooking={handleConfirmBooking}
                 />
               )}
 

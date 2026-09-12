@@ -15,6 +15,35 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Integração do Calendário Mensal Visível e Interativo na Ferramenta Agenda
+- **Tipo:** `[Feature & UI Integration]`
+- **Motivo:** Conforme solicitado pelo usuário ("A 'AGENDA' dentro da seção serviços do estabelecimento" e "calendário visível"), foi integrado o componente de Calendário Mensal completo e interativo (`renderAgendaTool`) diretamente visível no perfil do estabelecimento (tanto na aba "Vagas" quanto na aba "Serviços"). O calendário permite navegar entre meses, selecionar datas específicas, sincronizar a lista de horários disponíveis em tempo real e abrir o modal de agendamento com a data selecionada pré-definida.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Adicionado estado de mês/data do calendário inline (`selectedCalendarDateIso`, `calendarViewMonth`), grid de dias com detecção de dias fechados (domingos) e passado `initialDateIso` para o modal de agendamento.
+  - `src/components/SalonBookingModal.tsx`: Adicionado suporte ao prop `initialDateIso` para pré-selecionar a data escolhida no calendário da página.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis não utilizadas ou imports mortos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Replicação da Ferramenta Agenda na Aba "Serviços" do Estabelecimento
+- **Tipo:** `[Feature & UI Replication]`
+- **Motivo:** Conforme solicitado pelo usuário, a ferramenta completa de Agenda (Botão de ação "HORÁRIOS HOJE", Seção de Cadeiras em Atendimento ao Vivo com status e tempo restante, e Seção de Tabela de Horários com filtros de turnos e slots clicáveis) foi replicada no topo da aba "Serviços" do perfil do estabelecimento (`SalonProfileView.tsx`), antecedendo o catálogo de Serviços & Procedimentos em estilo Pinterest Masonry.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Inserido o bloco completo da ferramenta Agenda dentro de `activeTab === 'servicos'`.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis não utilizadas. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Replicação da Ferramenta Agenda na Seção "Agenda" do App
+- **Tipo:** `[Feature & UI Synchronization]`
+- **Motivo:** Conforme solicitado pelo usuário, a ferramenta completa de Agenda (Botão de ação "HORÁRIOS HOJE", Seção de Cadeiras em Atendimento ao Vivo com barras de progresso dinâmicas e Seção de Tabela de Horários com filtros de turnos e slots clicáveis com abertura do fluxo de agendamento) foi replicada dentro da tela global "Agenda" (`AgendaScreen.tsx`), harmonizando com a lista de reservas ativas do cliente e suporte completo a Dark/Light Theme.
+- **Arquivos Impactados:**
+  - `src/components/AgendaScreen.tsx`: Implementada a ferramenta completa de agenda ao vivo sincronizada com `SalonBookingModal`, `useTheme` e controle de reservas.
+  - `src/App.tsx`: Conectado `onConfirmBooking` à tela de Agenda.
+- **Resumo Técnico:** Clean code rigoroso, sem variáveis zumbis ou imports órfãos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-12] — Ajuste de Padding Superior nos Botões da Navegação Inferior
 - **Tipo:** `[UI & Precision Styling]`
 - **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foi aplicado `padding-top: 7px` (`pt-[7px]`) no botão `button#nav-salon-servicos` e nos botões da barra de navegação inferior (`BottomNav`), assegurando alinhamento visual milimétrico e ergonomia tátil perfeita.
