@@ -15,6 +15,34 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Integração Completa da Descrição do Anúncio e Confirmação de Agendamento no Perfil do Estabelecimento
+- **Tipo:** `[Refactor & UX Unification]`
+- **Motivo:** Conforme solicitado pelo usuário, ao clicar no card de um anúncio, o fluxo de detalhes da oferta e a tela de confirmação do agendamento passam a ser parte integrante da seção/perfil do próprio estabelecimento (`SalonProfileView`), mantendo a identidade do salão, carrossel de fotos, cadeiras ao vivo, equipe e serviços em contexto unificado, com o mesmo estilo visual dos cards do feed e sem telas desconectadas.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`:
+    - Adicionado suporte ao estado `offerForSalonDetail` e manipulador `handleSelectOffer` para direcionar cliques do card de anúncio (seja no feed em tela cheia, grid estilo Pinterest ou lista de cards) para a seção exclusiva do salão (`setViewingSalonProfile`), repassando o anúncio selecionado como `initialDetailOffer`.
+    - Atualizado repasse de `onNavigateToAgenda` para a navegação fluida da agenda após confirmação.
+  - `src/components/SalonProfileView.tsx`:
+    - Adicionados os modais integrados de Detalhe da Oferta (`selectedOfferForDetail`) e Comprovante de Agendamento (`confirmedBookingData`) com design dark theme sofisticado, tipografia refinada e botões em contraste com `text-white drop-shadow-xs`.
+    - Implementados manipuladores `handleConfirmDetailOffer` e `handleConfirmSchedule` que concluem o agendamento diretamente no salão e exibem o voucher com protocolo `#VGA-XXXXX`.
+  - `src/App.tsx`:
+    - Adicionado suporte a `skipScreenChange` no `handleConfirmBooking` para que o voucher de confirmação possa ser renderizado no próprio contexto do estabelecimento sem forçar transição para tela genérica.
+  - `src/components/OfferDetailScreen.tsx` & `src/components/ConfirmationScreen.tsx`:
+    - Suporte a tema escuro/claro dinâmico com `useTheme`, garantindo consistência visual em qualquer ponto de entrada residual.
+- **Resumo Técnico:** Clean code rigoroso aplicado sem código morto ou variáveis órfãs. Validação completa com `lint_applet` (`tsc --noEmit` aprovado com 0 erros) e `compile_applet` (`npm run build`) validado com sucesso.
+
+---
+
+### [2026-09-12] — Redirecionamento de Agendamentos para o Perfil Exclusivo do Estabelecimento
+- **Tipo:** `[Feat & Flow Optimization]`
+- **Motivo:** O usuário solicitou que o portal principal funcione como a feira de anúncios, buscas e vagas de negócios, mas que ao interagir para agendar um serviço ou horário, o cliente seja direcionado diretamente para o aplicativo/página exclusiva do estabelecimento (`SalonProfileView`), centralizando a conversão e o agendamento no perfil do salão.
+- **Arquivos Impactados:**
+  - `src/components/HomeScreen.tsx`: Alterada a função `handleDirectBook` para redirecionar o usuário para a página exclusiva do estabelecimento (`setViewingSalonProfile(offer.salonName)`), guardando a oferta selecionada (`setBookingOfferForSalon(offer)`) e repassando-a para o `SalonProfileView`.
+  - `src/components/SalonProfileView.tsx`: Adicionadas as propriedades opcionais `initialBookingOffer` e `autoOpenBooking` em `SalonProfileViewProps`, abrindo de forma imediata e fluida o modal de agendamento interno do salão com o serviço e horário pré-selecionados.
+- **Resumo Técnico:** Limpeza pós-obra executada sem código morto, linter `tsc --noEmit` validado com 0 erros e compilação de produção (`compile_applet`) aprovada com êxito.
+
+---
+
 ### [2026-09-12] — Sincronização da Tabela de Horários na Página do Estabelecimento e Eliminação Total de Texto Escuro sobre Fundo Verde/Frio
 - **Tipo:** `[Feat & UI/UX Audit]`
 - **Motivo:** 

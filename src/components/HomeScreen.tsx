@@ -28,6 +28,7 @@ interface HomeScreenProps {
   externalSelectedCategory?: string;
   onCategoryChange?: (category: string) => void;
   onRegisterSalonNav?: (ctx: SalonNavContext | null) => void;
+  onNavigateToAgenda?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -49,6 +50,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   externalSelectedCategory,
   onCategoryChange,
   onRegisterSalonNav,
+  onNavigateToAgenda,
 }) => {
   const [internalSelectedCategory, setInternalSelectedCategory] = useState<string>('barba');
   const selectedCategory = externalSelectedCategory !== undefined ? externalSelectedCategory : internalSelectedCategory;
@@ -60,6 +62,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
   const [selectedSalonFilter, setSelectedSalonFilter] = useState<string | null>(null);
   const [viewingSalonProfile, setViewingSalonProfile] = useState<string | null>(null);
+  const [bookingOfferForSalon, setBookingOfferForSalon] = useState<ServiceOffer | null>(null);
+  const [offerForSalonDetail, setOfferForSalonDetail] = useState<ServiceOffer | null>(null);
   const [sortBy, setSortBy] = useState<'urgency' | 'distance' | 'price'>('urgency');
   const [feedLayoutMode, setFeedLayoutMode] = useState<'fullscreen' | 'cards' | 'pinterest'>('fullscreen');
 
@@ -155,12 +159,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setIsStoryModalOpen(true);
   };
 
+  // Redireciona o usuário para a página exclusiva do estabelecimento ao interagir/agendar
   const handleDirectBook = (offer: ServiceOffer) => {
-    if (onConfirmBooking) {
-      onConfirmBooking(offer);
-    } else {
-      onNavigateToOfferDetail(offer);
-    }
+    setBookingOfferForSalon(offer);
+    setOfferForSalonDetail(null);
+    setViewingSalonProfile(offer.salonName);
+  };
+
+  // Abre a descrição do anúncio diretamente na seção do estabelecimento
+  const handleSelectOffer = (offer: ServiceOffer) => {
+    setOfferForSalonDetail(offer);
+    setBookingOfferForSalon(null);
+    setViewingSalonProfile(offer.salonName);
   };
 
   // Se estiver visualizando o aplicativo exclusivo do estabelecimento
@@ -169,15 +179,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <SalonProfileView
         salonName={viewingSalonProfile}
         offers={offers}
-        onBack={() => setViewingSalonProfile(null)}
-        onSelectOffer={(off) => onNavigateToOfferDetail(off)}
-        onDirectBook={handleDirectBook}
+        onBack={() => {
+          setViewingSalonProfile(null);
+          setBookingOfferForSalon(null);
+          setOfferForSalonDetail(null);
+        }}
+        onSelectOffer={(off) => handleSelectOffer(off)}
+        onDirectBook={(scheduledOffer) => {
+          if (onConfirmBooking) {
+            onConfirmBooking(scheduledOffer);
+          }
+        }}
         isFavorite={favorites.includes(viewingSalonProfile)}
         onToggleFavorite={() => onToggleFavorite?.(viewingSalonProfile)}
         userName={userName}
         userAvatarUrl={userAvatarUrl}
         onOpenProfileDrawer={onOpenProfileDrawer}
         onRegisterBottomNav={onRegisterSalonNav}
+        initialBookingOffer={bookingOfferForSalon}
+        autoOpenBooking={Boolean(bookingOfferForSalon)}
+        initialDetailOffer={offerForSalonDetail}
+        onNavigateToAgenda={onNavigateToAgenda}
       />
     );
   }
@@ -378,7 +400,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 offers={filteredAndSortedOffers}
                 favorites={favorites}
                 onToggleFavorite={(id) => onToggleFavorite?.(id)}
-                onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+                onSelectOffer={(off) => handleSelectOffer(off)}
                 onDirectBook={handleDirectBook}
                 onOpenSalonProfile={(salon) => setViewingSalonProfile(salon)}
               />
@@ -401,7 +423,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     return (
                       <div
                         key={offer.id}
-                        onClick={() => onNavigateToOfferDetail(offer)}
+                        onClick={() => handleSelectOffer(offer)}
                         className="group relative flex flex-col rounded-2xl overflow-hidden bg-slate-900 border border-slate-800/80 shadow-md hover:border-slate-700 transition cursor-pointer"
                       >
                         {/* Imagem do Pin com Aspecto Orgânico */}
@@ -512,7 +534,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     offer={offer}
                     isFavorite={favorites.includes(offer.id)}
                     onToggleFavorite={(id) => onToggleFavorite?.(id)}
-                    onSelectOffer={(off) => onNavigateToOfferDetail(off)}
+                    onSelectOffer={(off) => handleSelectOffer(off)}
                     onDirectBook={handleDirectBook}
                     onOpenStory={() => handleOpenStory(index)}
                     onFilterBySalon={(salon) => setSelectedSalonFilter(salon)}

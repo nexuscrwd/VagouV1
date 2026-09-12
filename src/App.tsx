@@ -178,7 +178,7 @@ export const App: React.FC = () => {
   };
 
   // Handle Client Booking creation
-  const handleConfirmBooking = (offer: ServiceOffer) => {
+  const handleConfirmBooking = (offer: ServiceOffer, skipScreenChange = false) => {
     const newProtocol = `#VGA-${Math.floor(10000 + Math.random() * 90000)}`;
     const newBooking: BookingAppointment = {
       protocolCode: newProtocol,
@@ -224,7 +224,9 @@ export const App: React.FC = () => {
       offer.timeSlot
     );
 
-    setCurrentScreen('confirmacao');
+    if (!skipScreenChange) {
+      setCurrentScreen('confirmacao');
+    }
   };
 
   // Handle Client Booking Cancellation
@@ -376,7 +378,7 @@ export const App: React.FC = () => {
                   isStandalone={isStandalone}
                   favorites={favorites}
                   onToggleFavorite={handleToggleFavorite}
-                  onConfirmBooking={handleConfirmBooking}
+                  onConfirmBooking={(offer) => handleConfirmBooking(offer, true)}
                   onOpenProfileDrawer={() => setIsProfileDrawerOpen(true)}
                   currentSegment={userSegment}
                   onSelectSegment={handleSelectSegment}
@@ -385,6 +387,7 @@ export const App: React.FC = () => {
                     setPartnerScreen('partner-agenda');
                   }}
                   onRegisterSalonNav={setSalonNavContext}
+                  onNavigateToAgenda={() => setCurrentScreen('agenda')}
                 />
               )}
 
