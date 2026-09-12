@@ -731,7 +731,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
                     : isDark
                     ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                    : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
+                    : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700 shadow-2xs'
                 }`}
               >
                 <Clock className={`w-3 h-3 ${isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />
@@ -958,7 +958,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </motion.div>
           )}
 
-          {/* ABA: SEÇÃO SERVIÇOS -> FERRAMENTA AGENDA COMPLETA COM CALENDÁRIO + GRID ESTILO PINTEREST MASONRY */}
+          {/* ABA: SEÇÃO SERVIÇOS -> GRID ESTILO PINTEREST MASONRY COM ESPAÇAMENTO CONFORTÁVEL */}
           {activeTab === 'servicos' && (
             <motion.div
               key="aba-servicos"
@@ -966,15 +966,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3.5 pt-1"
+              className="space-y-3 pt-2"
             >
-              {/* FERRAMENTA AGENDA DO ESTABELECIMENTO COM CALENDÁRIO MENSAL VISÍVEL */}
-              {renderAgendaTool()}
-
-              {/* 3. SEÇÃO: SERVIÇOS & PROCEDIMENTOS */}
-              <div className="pt-2 border-t border-slate-800/80">
+              {/* SEÇÃO: SERVIÇOS & PROCEDIMENTOS */}
+              <div className="space-y-2.5">
                 {/* Header da Seção de Serviços */}
-                <div className="pl-[10.5px] pr-3.5 py-[5px] my-[5px] mx-0 flex items-center justify-between">
+                <div className="px-4 py-1 flex items-center justify-between">
                   <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <span>Serviços & Procedimentos</span>
                   </h2>
@@ -983,21 +980,21 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   </span>
                 </div>
 
-                {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Mínimo, Cantos Sutis e Imagens Grandes) */}
-                <div className="px-2">
-                  <div className="columns-2 gap-1.5 [column-fill:_balance]">
+                {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Amplo das Bordas e Entre Cards) */}
+                <div className="px-4 pb-8">
+                  <div className="columns-2 gap-3.5 [column-fill:_balance]">
                     {catalogServices.map((srv) => (
                       <div
                         key={srv.id}
                         onClick={() => handleOpenBooking(srv)}
-                        className={`break-inside-avoid mb-1.5 relative rounded-[6px] overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
+                        className={`break-inside-avoid mb-3.5 relative rounded-xl overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
                           isDark
                             ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
                             : 'bg-white border-slate-200 hover:border-emerald-500/60'
                         }`}
                         title={`${srv.title} - R$ ${srv.price}`}
                       >
-                        {/* Contêiner de Imagem com Proporção Pinterest Dinâmica (Vertical 3:4/4:5, Quadrada 1:1 ou Horizontal 4:3) */}
+                        {/* Contêiner de Imagem com Proporção Pinterest Dinâmica */}
                         <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
                           <img
                             src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
@@ -1011,19 +1008,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
 
                           {/* Badge de Categoria no Topo Esquerdo */}
-                          <div className="absolute top-2 left-2 z-10">
-                            <span className="px-1.5 py-0.5 rounded-[4px] bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
+                          <div className="absolute top-2.5 left-2.5 z-10">
+                            <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
                               {srv.category}
                             </span>
                           </div>
 
                           {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
-                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-2.5 flex flex-col justify-end">
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 flex flex-col justify-end">
                             <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
                               {srv.title}
                             </h3>
                             
-                            <div className="flex items-center justify-between mt-1 pt-1 border-t border-white/10">
+                            <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/15">
                               <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
                                 R${srv.price}
                               </span>
@@ -1050,7 +1047,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3"
+              className="space-y-3 px-3.5 pt-2 pb-8"
             >
               {/* Apresentação */}
               <div className={`border rounded-xl p-3.5 shadow-sm ${
@@ -1092,7 +1089,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3"
+              className="space-y-3 px-3.5 pt-2 pb-8"
             >
               {/* Localização e Horário */}
               <div className={`flex flex-col gap-1.5 border rounded-xl p-3.5 text-xs shadow-sm ${

@@ -680,7 +680,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                               : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
                             : isDark
                             ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
+                            : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700 shadow-2xs'
                         }`}
                       >
                         <Clock className={`w-3 h-3 ${isSelected ? 'text-white' : isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />

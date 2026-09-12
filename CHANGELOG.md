@@ -15,6 +15,48 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Correção de Espaçamento e Margens dos Cards da Seção Serviços
+- **Tipo:** `[UI Spacing & Layout Fix]`
+- **Motivo:** Conforme solicitado com ênfase pelo usuário ("Alique espaçamento entre os cards dessa seçã... Os elementos estão GRUDAAADOS DAS BORDAS!!"), foi aplicado um espaçamento generoso e equilibrado em toda a seção:
+  - Margem/Padding lateral generoso (`px-4`, 16px) para afastar completamente os cards das bordas da tela.
+  - Espaçamento aumentado entre as colunas do Pinterest (`gap-3.5`, 14px) e margem inferior entre cada card (`mb-3.5`, 14px).
+  - Cantos arredondados refinados (`rounded-xl`), padding interno equilibrado no card e alinhamento do cabeçalho da seção.
+  - Aplicado também padding lateral nas abas complementares ("sobre" e "espaco") para consistência global.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualizado layout de colunas, espaçamentos laterais e gaps entre os cards de serviços.
+- **Resumo Técnico:** Clean code rigoroso, sem dependências desnecessárias. Validação completa com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Ajuste de Espaçamento e Margens na Galeria de Serviços (Focus Mode)
+- **Tipo:** `[UI Styling & Focus Mode]`
+- **Motivo:** Aplicação direta das regras de CSS selecionadas via Focus Mode para o cabeçalho e grade de serviços: `padding-left: 10.5px`, `margin: 5px` no cabeçalho e `padding-left: 5px`, `padding-right: 5px`, `padding-top: 5px`, `padding-bottom: 4px` no contêiner da grade estilo Pinterest.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajustadas as classes do contêiner da grade e do header da seção de serviços.
+- **Resumo Técnico:** Clean code rigoroso, compilação e tipagem validadas.
+
+---
+
+### [2026-09-12] — Remoção da Ferramenta Agenda da Seção Serviços
+- **Tipo:** `[UI Refinement]`
+- **Motivo:** Conforme solicitado pelo usuário ("Remover desta seção serviços"), a ferramenta de Agenda (cadeiras em atendimento, calendário mensal e grade de horários) foi removida da aba "Serviços" do perfil do estabelecimento (`SalonProfileView.tsx`). A aba "Serviços" passa a exibir exclusivamente a galeria do catálogo de procedimentos no formato Pinterest Masonry. A ferramenta de Agenda completa permanece disponível na aba principal ("Vagas") e na tela dedicada de Agenda.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o bloco `{renderAgendaTool()}` dentro de `activeTab === 'servicos'`.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis não utilizadas ou imports mortos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Ajuste de Estilo: Fundo Branco Puro nos Botões de Horários da Grade
+- **Tipo:** `[UI Styling]`
+- **Motivo:** Conforme solicitado pelo usuário ("o fundo desses botões devem ser brancos"), os botões de slots de horários da tabela de agendamento no modo claro (Light Mode) foram atualizados para utilizar fundo branco puro (`bg-white`) com borda suave (`border-slate-200`) e micro-sombra, garantindo contraste nítido e visual limpo.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualizado estilo dos botões de horários em `renderAgendaTool`.
+  - `src/components/AgendaScreen.tsx`: Atualizado estilo dos botões de horários na tela de agenda.
+  - `src/components/SalonBookingModal.tsx`: Atualizado estilo dos botões de horários no modal de agendamento.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis não utilizadas ou imports mortos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-12] — Integração do Calendário Mensal Visível e Interativo na Ferramenta Agenda
 - **Tipo:** `[Feature & UI Integration]`
 - **Motivo:** Conforme solicitado pelo usuário ("A 'AGENDA' dentro da seção serviços do estabelecimento" e "calendário visível"), foi integrado o componente de Calendário Mensal completo e interativo (`renderAgendaTool`) diretamente visível no perfil do estabelecimento (tanto na aba "Vagas" quanto na aba "Serviços"). O calendário permite navegar entre meses, selecionar datas específicas, sincronizar a lista de horários disponíveis em tempo real e abrir o modal de agendamento com a data selecionada pré-definida.
