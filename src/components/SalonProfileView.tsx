@@ -711,7 +711,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
 
         {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-4 gap-1.5 py-[5px]">
           {filteredAgendaSlots.map((slot) => {
             const isAvailable = slot.available;
 

@@ -15,6 +15,16 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Ajuste de Espaçamento Vertical na Grade de Horários (Focus Mode)
+- **Tipo:** `[UI Styling & Focus Mode]`
+- **Motivo:** Aplicação direta do CSS selecionado via Focus Mode para a grade de slots de horários da ferramenta de agenda: `padding-top: 5px; padding-bottom: 5px;` (`py-[5px]`).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Aplicado `py-[5px]` no contêiner da grade de horários.
+  - `src/components/AgendaScreen.tsx`: Aplicado `py-[5px]` no contêiner da grade de horários.
+- **Resumo Técnico:** Clean code aplicado, compilação e tipagem validadas.
+
+---
+
 ### [2026-09-12] — Correção de Espaçamento e Margens dos Cards da Seção Serviços
 - **Tipo:** `[UI Spacing & Layout Fix]`
 - **Motivo:** Conforme solicitado com ênfase pelo usuário ("Alique espaçamento entre os cards dessa seçã... Os elementos estão GRUDAAADOS DAS BORDAS!!"), foi aplicado um espaçamento generoso e equilibrado em toda a seção:
