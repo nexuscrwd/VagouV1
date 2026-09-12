@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  ArrowLeft, Star, MapPin, Clock, 
-  Heart, Zap, CheckCircle2, Scissors, 
+  ArrowLeft, MapPin, Clock, 
+  Heart, Zap, CheckCircle2, 
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Users, UserCheck, Store,
   Activity, ChevronLeft, ChevronRight, ArrowRight,
@@ -30,7 +30,6 @@ export interface SalonProfileViewProps {
   onRegisterBottomNav?: (ctx: SalonNavContext | null) => void;
   initialBookingOffer?: ServiceOffer | null;
   autoOpenBooking?: boolean;
-  initialDetailOffer?: ServiceOffer | null;
   onNavigateToAgenda?: () => void;
 }
 
@@ -48,7 +47,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   onRegisterBottomNav,
   initialBookingOffer,
   autoOpenBooking = false,
-  initialDetailOffer,
   onNavigateToAgenda,
 }) => {
   const { isDark } = useTheme();
@@ -57,9 +55,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
-
-  // Estado para visualização do anúncio / vaga selecionada dentro da seção do salão
-  const [selectedOfferForDetail, setSelectedOfferForDetail] = useState<ServiceOffer | null>(initialDetailOffer || null);
 
   // Estado para agendamento confirmado exibido dentro da seção do salão
   const [confirmedBookingData, setConfirmedBookingData] = useState<{
@@ -71,12 +66,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     totalPrice: number;
     address: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (initialDetailOffer) {
-      setSelectedOfferForDetail(initialDetailOffer);
-    }
-  }, [initialDetailOffer]);
 
   // Sincronização da tabela de horários com o modal
   const [timePeriodFilter, setTimePeriodFilter] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos');
@@ -419,23 +408,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     }
   };
 
-  const handleConfirmDetailOffer = (offer: ServiceOffer) => {
-    onDirectBook(offer);
-    const cleanTime = offer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', '');
-    setConfirmedBookingData({
-      protocolCode: `#VGA-${Math.floor(10000 + Math.random() * 90000)}`,
-      serviceTitle: offer.serviceTitle,
-      professionalName: offer.professionalName || 'Equipe do Salão',
-      salonName: offer.salonName,
-      dateTime: `${offer.dayLabel || 'Hoje'} às ${cleanTime}`,
-      totalPrice: offer.price,
-      address: `${offer.neighborhood} - São Paulo, SP`,
-    });
-    setSelectedOfferForDetail(null);
-  };
-
   return (
-    <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-12 font-['Poppins'] transition-colors duration-200`}>
+    <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-0 font-['Poppins'] transition-colors duration-200`}>
       {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Logo Full Height & Botões Selecionados) */}
       <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b pr-4 shadow-md flex items-center justify-between gap-3 transition-colors h-14 sm:h-16 overflow-hidden`}>
         {/* Lado Esquerdo: Logotipia em Texto da Empresa (Moderna, estilosa e limpa, 103px de largura) */}
@@ -797,9 +771,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               className="space-y-3.5 pt-1"
             >
               {/* Header da Seção de Serviços */}
-              <div className="px-3.5 flex items-center justify-between">
-                <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  <Scissors className="w-3.5 h-3.5 text-emerald-500" />
+              <div className="pl-[10.5px] pr-3.5 py-[5px] my-[5px] mx-0 flex items-center justify-between">
+                <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   <span>Serviços & Procedimentos</span>
                 </h2>
                 <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
@@ -841,13 +814,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           </span>
                         </div>
 
-                        {/* Botão de Ação / Ícone no Topo Direito */}
-                        <div className="absolute top-2 right-2 z-10">
-                          <div className="w-5.5 h-5.5 rounded-[4px] bg-emerald-500 group-hover:bg-emerald-400 text-white flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-110">
-                            <Scissors className="w-3 h-3 text-white" />
-                          </div>
-                        </div>
-
                         {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-2.5 flex flex-col justify-end">
                           <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
@@ -868,17 +834,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Botão de Agendamento Rápido na Aba de Serviços */}
-              <div className="px-2 pt-1">
-                <button
-                  onClick={() => handleOpenBooking(undefined, true)}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
-                >
-                  <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
-                  <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
-                </button>
               </div>
             </motion.div>
           )}
@@ -918,12 +873,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       referrerPolicy="no-referrer"
                     />
                     <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
-                    <p className={`text-[10px] line-clamp-1 mb-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
-
-                    <span className="mt-auto inline-flex items-center gap-1 text-[10px] font-bold text-slate-950 bg-amber-400 px-2 py-0.5 rounded-md">
-                      <Star className="w-3 h-3 fill-slate-950 text-slate-950" />
-                      {prof.rating.toFixed(1)}
-                    </span>
+                    <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
                   </div>
                 ))}
               </div>
@@ -1010,153 +960,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         initialTimeSlot={selectedTimeSlotForBooking}
         onConfirmAppointment={handleConfirmSchedule}
       />
-
-      {/* 1. MODAL DE DESCRIÇÃO DO ANÚNCIO (DENTRO DA SEÇÃO DO ESTABELECIMENTO) */}
-      {selectedOfferForDetail && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
-          <div 
-            className={`w-full max-w-lg border rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden transition-colors ${
-              isDark ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
-            }`}
-          >
-            {/* Imagem do Anúncio com Botões de Ação */}
-            <div className="relative h-60 sm:h-64 bg-slate-900 shrink-0">
-              <img
-                src={selectedOfferForDetail.imageUrl}
-                alt={selectedOfferForDetail.serviceTitle}
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
-
-              <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-                <button
-                  type="button"
-                  onClick={() => setSelectedOfferForDetail(null)}
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-md transition cursor-pointer active:scale-95 ${
-                    isDark ? 'bg-slate-950/80 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white/90 text-slate-800 hover:bg-white'
-                  }`}
-                  aria-label="Voltar para o estabelecimento"
-                >
-                  <ArrowLeft className="w-5 h-5 text-emerald-500" />
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onToggleFavorite?.(salonName)}
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-md transition cursor-pointer active:scale-95 ${
-                      isDark ? 'bg-slate-950/80 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white/90 text-slate-800 hover:bg-white'
-                    }`}
-                    aria-label="Favoritar"
-                  >
-                    <Heart className={`w-4 h-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-slate-300'}`} />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (navigator.share) {
-                        navigator.share({
-                          title: `${selectedOfferForDetail.serviceTitle} em ${selectedOfferForDetail.salonName}`,
-                          text: `Vaga no ${selectedOfferForDetail.salonName} por R$ ${selectedOfferForDetail.price}`,
-                          url: window.location.href,
-                        }).catch(() => {});
-                      }
-                    }}
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-md transition cursor-pointer active:scale-95 ${
-                      isDark ? 'bg-slate-950/80 text-white hover:bg-slate-900 border border-slate-800' : 'bg-white/90 text-slate-800 hover:bg-white'
-                    }`}
-                    aria-label="Compartilhar"
-                  >
-                    <Share2 className="w-4 h-4 text-slate-300" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Conteúdo da Descrição */}
-            <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
-              <div>
-                <h2 className={`text-lg sm:text-xl font-bold leading-snug font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {selectedOfferForDetail.serviceTitle} com {selectedOfferForDetail.professionalName}
-                </h2>
-                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  <span className="text-xs font-bold text-emerald-500">{selectedOfferForDetail.salonName}</span>
-                  <span className="text-slate-600">•</span>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span className={`text-xs font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{selectedOfferForDetail.rating}</span>
-                    <span className="text-[11px] text-slate-400">({selectedOfferForDetail.ratingCount} avaliações)</span>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400 mt-1">Distância: {selectedOfferForDetail.distance} • {selectedOfferForDetail.neighborhood}</p>
-              </div>
-
-              {/* Seção Horário do Agendamento */}
-              <div className={`p-3 rounded-2xl border ${isDark ? 'bg-slate-900/70 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
-                <h3 className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 mb-2 font-['Poppins']">
-                  HORÁRIO DO AGENDAMENTO
-                </h3>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className={`rounded-xl p-2 text-center border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-white border-emerald-100'}`}>
-                    <span className="text-[9px] font-bold text-slate-400 uppercase block">DIA</span>
-                    <span className={`text-xs font-bold mt-0.5 block ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedOfferForDetail.dayLabel || 'Hoje'}</span>
-                  </div>
-
-                  <div className={`rounded-xl p-2 text-center border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-white border-emerald-100'}`}>
-                    <span className="text-[9px] font-bold text-slate-400 uppercase block">HORÁRIO</span>
-                    <span className="text-xs font-bold text-[#20C933] mt-0.5 block">
-                      {selectedOfferForDetail.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', '')}
-                    </span>
-                  </div>
-
-                  <div className={`rounded-xl p-2 text-center border ${isDark ? 'bg-slate-950 border-slate-800' : 'bg-white border-emerald-100'}`}>
-                    <span className="text-[9px] font-bold text-slate-400 uppercase block">DURAÇÃO</span>
-                    <span className={`text-xs font-bold mt-0.5 block ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedOfferForDetail.duration || '50 min'}</span>
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-2">
-                  Horário programado. Por favor, chegue com 5 min de antecedência.
-                </p>
-              </div>
-
-              {/* Valor do Serviço & Proteção */}
-              <div className="flex items-center justify-between pt-1">
-                <div>
-                  <span className="text-[11px] text-slate-400 block">Valor do serviço</span>
-                  <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    R$ {selectedOfferForDetail.price.toFixed(2).replace('.', ',')}
-                  </span>
-                </div>
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-100 border-slate-200 text-slate-700'
-                }`}>
-                  <ShieldCheck className="w-4 h-4 text-[#20C933]" />
-                  <span>Agendamento protegido</span>
-                </div>
-              </div>
-
-              {/* Ação de Agendamento */}
-              <div className="pt-2 space-y-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleConfirmDetailOffer(selectedOfferForDetail)}
-                  className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white drop-shadow-xs font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-900/30 uppercase tracking-wider font-['Poppins'] cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Zap className="w-4 h-4 fill-white" />
-                  <span>AGENDAR AGORA</span>
-                </button>
-
-                <div className={`rounded-xl p-2.5 border text-[11px] ${isDark ? 'bg-slate-900/40 border-slate-800/80 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
-                  <strong className={isDark ? 'text-slate-300' : 'text-slate-700'}>Regras de Cancelamento: </strong>
-                  Cancelamento grátis até 1h antes do início do serviço.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 2. MODAL DE AGENDAMENTO CONFIRMADO (DENTRO DA SEÇÃO DO ESTABELECIMENTO) */}
       {confirmedBookingData && (

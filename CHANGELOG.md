@@ -15,6 +15,73 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Ajuste de Padding Superior nos Botões da Navegação Inferior
+- **Tipo:** `[UI & Precision Styling]`
+- **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foi aplicado `padding-top: 7px` (`pt-[7px]`) no botão `button#nav-salon-servicos` e nos botões da barra de navegação inferior (`BottomNav`), assegurando alinhamento visual milimétrico e ergonomia tátil perfeita.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Adicionada classe `pt-[7px]` aos botões da barra inferior.
+- **Resumo Técnico:** Clean code aplicado. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Ajuste de Espaçamentos no Nav Inferior e Contêiner de Tela
+- **Tipo:** `[UI & Precision Styling]`
+- **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foram aplicados os estilos e espaçamentos exatos no elemento de navegação `nav` (`pl-[9px]`, `py-0`, margens zeradas) e no contêiner de tela (`pb-0`), eliminando qualquer espaçamento vertical excessivo no rodapé.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Atualizadas classes do elemento `<nav>`.
+  - `src/components/SalonProfileView.tsx`: Ajustado `pb-0` no contêiner principal.
+  - `src/components/HomeScreen.tsx`: Ajustado `pb-0` no contêiner principal.
+- **Resumo Técnico:** Clean code aplicado. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Remoção do Ícone SVG e Ajuste de Espaçamentos no Cabeçalho de Serviços
+- **Tipo:** `[UI & Precision Styling]`
+- **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foi removido o ícone SVG do título "Serviços & Procedimentos" e aplicados os espaçamentos exatos de padding (`pl-[10.5px]`, `py-[5px]`) e margens (`my-[5px]`, `mx-0`).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o SVG de tesoura do título `h2`, ajustadas classes Tailwind de padding e margin no contêiner do cabeçalho de serviços, e limpo o import `Scissors`.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis ou imports não utilizados. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Remoção do Ícone de Tesoura nos Cards da Seção Serviços
+- **Tipo:** `[UI & Mobile Synthesis]`
+- **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foi removido o ícone de tesoura no canto superior direito dos cards de serviço da aba Serviços (`SalonProfileView`), deixando a visualização das imagens do Pinterest ainda mais limpa e focada no conteúdo fotográfico.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o badge com ícone de tesoura do canto superior direito do card de serviço.
+- **Resumo Técnico:** Clean code aplicado. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Remoção da Avaliação dos Cards de Profissionais na Seção Equipe
+- **Tipo:** `[UI & Mobile Synthesis]`
+- **Motivo:** Conforme solicitado pelo usuário, foram removidos os badges de avaliação numérica e estrelas dos cards individuais dos profissionais na aba de equipe (`SalonProfileView`), proporcionando visual mais limpo, elegante e direto ao ponto.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o badge de nota/estrela do card do profissional e import não utilizado.
+- **Resumo Técnico:** Clean code aplicado, sem imports residuais. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Remoção do Botão "Horários Hoje" da Seção Serviços
+- **Tipo:** `[UI & Clean Code]`
+- **Motivo:** Conforme solicitado pelo usuário via seleção de elemento na interface, foi removido o botão "HORÁRIOS HOJE" posicionado na parte inferior da aba de Serviços (`SalonProfileView`), mantendo a seção focada estritamente na exibição visual dos cards de serviços no grid estilo Pinterest.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o contêiner e botão redundante ao final da lista de serviços.
+- **Resumo Técnico:** Limpeza de código sem elementos residuais ou imports órfãos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-12] — Remoção do Botão "Agendar" no Feed e Navegação Direta ao Aplicativo do Estabelecimento
+- **Tipo:** `[Refactor & UX Simplification]`
+- **Motivo:** Conforme solicitado pelo usuário, foi removido o botão "Agendar" do card de anúncio (`RadarOfferCard`), tornando todo o card clicável para levar o usuário diretamente para a página/aplicativo exclusivo do estabelecimento (`SalonProfileView`), sem abrir nenhum modal intermediário sobre o feed.
+- **Arquivos Impactados:**
+  - `src/components/RadarOfferCard.tsx`: Removido o botão "Agendar", ajustando o layout de ações inferiores com botões objetivos (áudio, visualizador de mídia e compartilhamento) e garantindo que o clique em qualquer parte do anúncio abra diretamente a página do estabelecimento.
+  - `src/components/HomeScreen.tsx`: Simplificados os manipuladores de clique (`handleSelectOffer` e `handleDirectBook`) para abrir diretamente `setViewingSalonProfile` sem intermediários.
+  - `src/components/SalonProfileView.tsx`: Removidos estados e modais sobrepostos de detalhe de anúncio, mantendo a experiência do aplicativo do estabelecimento limpa, direta e visual.
+- **Resumo Técnico:** Clean code rigoroso aplicado sem código morto ou variáveis zumbis. Validação com `lint_applet` e `compile_applet` (`npm run build`) validado com sucesso.
+
+---
+
 ### [2026-09-12] — Integração Completa da Descrição do Anúncio e Confirmação de Agendamento no Perfil do Estabelecimento
 - **Tipo:** `[Refactor & UX Unification]`
 - **Motivo:** Conforme solicitado pelo usuário, ao clicar no card de um anúncio, o fluxo de detalhes da oferta e a tela de confirmação do agendamento passam a ser parte integrante da seção/perfil do próprio estabelecimento (`SalonProfileView`), mantendo a identidade do salão, carrossel de fotos, cadeiras ao vivo, equipe e serviços em contexto unificado, com o mesmo estilo visual dos cards do feed e sem telas desconectadas.

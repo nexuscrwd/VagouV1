@@ -63,7 +63,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedSalonFilter, setSelectedSalonFilter] = useState<string | null>(null);
   const [viewingSalonProfile, setViewingSalonProfile] = useState<string | null>(null);
   const [bookingOfferForSalon, setBookingOfferForSalon] = useState<ServiceOffer | null>(null);
-  const [offerForSalonDetail, setOfferForSalonDetail] = useState<ServiceOffer | null>(null);
   const [sortBy, setSortBy] = useState<'urgency' | 'distance' | 'price'>('urgency');
   const [feedLayoutMode, setFeedLayoutMode] = useState<'fullscreen' | 'cards' | 'pinterest'>('fullscreen');
 
@@ -159,16 +158,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setIsStoryModalOpen(true);
   };
 
-  // Redireciona o usuário para a página exclusiva do estabelecimento ao interagir/agendar
+  // Redireciona o usuário diretamente para o app/página exclusiva do estabelecimento
   const handleDirectBook = (offer: ServiceOffer) => {
     setBookingOfferForSalon(offer);
-    setOfferForSalonDetail(null);
     setViewingSalonProfile(offer.salonName);
   };
 
-  // Abre a descrição do anúncio diretamente na seção do estabelecimento
+  // Ao clicar no anúncio/card, abre diretamente a página e seção do estabelecimento
   const handleSelectOffer = (offer: ServiceOffer) => {
-    setOfferForSalonDetail(offer);
     setBookingOfferForSalon(null);
     setViewingSalonProfile(offer.salonName);
   };
@@ -182,7 +179,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onBack={() => {
           setViewingSalonProfile(null);
           setBookingOfferForSalon(null);
-          setOfferForSalonDetail(null);
         }}
         onSelectOffer={(off) => handleSelectOffer(off)}
         onDirectBook={(scheduledOffer) => {
@@ -198,7 +194,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onRegisterBottomNav={onRegisterSalonNav}
         initialBookingOffer={bookingOfferForSalon}
         autoOpenBooking={Boolean(bookingOfferForSalon)}
-        initialDetailOffer={offerForSalonDetail}
         onNavigateToAgenda={onNavigateToAgenda}
       />
     );
@@ -207,7 +202,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const isFullscreenFeed = feedLayoutMode === 'fullscreen';
 
   return (
-    <div className={`bg-slate-950 text-slate-100 ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-6'}`}>
+    <div className={`bg-slate-950 text-slate-100 ${isFullscreenFeed ? 'h-full flex flex-col overflow-hidden' : 'min-h-full pb-0'}`}>
       {/* Fixed Sticky Global Header */}
       <div className="flex-shrink-0 sticky top-0 z-40 bg-[#151A1E] shadow-xl border-b border-slate-800">
         <div className="px-4 h-[60px] w-full flex items-center justify-between gap-3">

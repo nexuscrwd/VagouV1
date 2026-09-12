@@ -45,7 +45,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         isDark
           ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
           : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'
-      } backdrop-blur-md border-t px-3 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] transition-colors`}>
+      } backdrop-blur-md border-t pl-[9px] pr-3 py-0 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
         {establishmentTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = salonContext.activeTab === tab.id;
@@ -55,7 +55,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               key={tab.id}
               id={`nav-salon-${tab.id}`}
               onClick={() => salonContext.onSelectTab(tab.id as any)}
-              className="flex flex-col items-center justify-center gap-0.5 py-1 px-3 transition active:scale-95 cursor-pointer group"
+              className="flex flex-col items-center justify-center gap-0.5 pt-[7px] pb-1 px-3 transition active:scale-95 cursor-pointer group"
             >
               <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
                 isActive
@@ -111,7 +111,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       isDark
         ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
         : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'
-    } backdrop-blur-md border-t px-3 flex items-center justify-around z-30 pb-[env(safe-area-inset-bottom)] transition-colors`}>
+    } backdrop-blur-md border-t pl-[9px] pr-3 py-0 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isFlash = tab.isFlash;
@@ -129,7 +129,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             key={tab.id}
             id={isFlash ? "nav-flash-btn" : `nav-${tab.id}`}
             onClick={() => handleTabClick(tab.id, tab.isAction, tab.isFlash)}
-            className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 transition active:scale-95 cursor-pointer group"
+            className="flex flex-col items-center justify-center gap-0.5 pt-[7px] pb-1 px-2 transition active:scale-95 cursor-pointer group"
           >
             <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
               isActive
