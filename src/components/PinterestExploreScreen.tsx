@@ -146,10 +146,10 @@ export const PinterestExploreScreen: React.FC<PinterestExploreScreenProps> = ({
                 e.stopPropagation();
                 onConfirmBooking(offer);
               }}
-              className="p-1 rounded-md bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 transition active:scale-90"
+              className="p-1 rounded-md bg-[#20C933] hover:bg-[#1bb32d] text-white transition active:scale-90"
               title="Agendar vaga"
             >
-              <Zap className="w-3 h-3 fill-slate-950" />
+              <Zap className="w-3 h-3 fill-white text-white" />
             </button>
           </div>
         </div>
@@ -192,7 +192,7 @@ export const PinterestExploreScreen: React.FC<PinterestExploreScreenProps> = ({
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer ${
                   isActive
-                    ? 'bg-[#20C933] text-slate-950 font-black shadow-sm'
+                    ? 'bg-[#20C933] text-white drop-shadow-xs font-black shadow-sm'
                     : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800/80'
                 }`}
               >

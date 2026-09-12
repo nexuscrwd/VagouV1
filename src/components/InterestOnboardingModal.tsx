@@ -123,11 +123,11 @@ export const InterestOnboardingModal: React.FC<InterestOnboardingModalProps> = (
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center transition ${
                     isSelected
-                      ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                      ? 'bg-[#20C933] text-white shadow-sm'
                       : 'border-2 border-slate-700 bg-slate-800'
                   }`}
                 >
-                  {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                  {isSelected && <Check className="w-3.5 h-3.5 stroke-[3] text-white" />}
                 </div>
               </div>
             );
@@ -138,9 +138,9 @@ export const InterestOnboardingModal: React.FC<InterestOnboardingModalProps> = (
         <div className="pt-3 space-y-2">
           <button
             onClick={handleSave}
-            className="w-full py-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-slate-950 font-black text-xs rounded-xl transition shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-1.5"
+            className="w-full py-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white font-black text-xs drop-shadow-xs rounded-xl transition shadow-lg shadow-emerald-600/30 uppercase tracking-wider flex items-center justify-center gap-1.5"
           >
-            <Sparkles className="w-4 h-4 fill-slate-950" />
+            <Sparkles className="w-4 h-4 fill-white text-white" />
             <span>Ver Vagas Personalizadas</span>
           </button>
 

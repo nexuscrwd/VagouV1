@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowLeft, Star, MapPin, Clock, 
   Heart, Zap, CheckCircle2, Scissors, 
@@ -13,6 +13,7 @@ import { formatSlotDateTime } from '../utils/dateFormatter';
 import { useTheme } from '../context/ThemeContext';
 import { getSalonLogo } from '../utils/salonLogos';
 import { SalonNavContext } from './BottomNav';
+import { getAvailableSlotsForDate } from '../utils/bookingSlots';
 
 interface SalonProfileViewProps {
   salonName: string;
@@ -47,6 +48,25 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+
+  // Sincronização da tabela de horários com o modal
+  const [timePeriodFilter, setTimePeriodFilter] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos');
+  const [selectedTimeSlotForBooking, setSelectedTimeSlotForBooking] = useState<string | null>(null);
+
+  const todayIso = useMemo(() => {
+    const d = new Date();
+    if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  }, []);
+
+  const agendaSlots = useMemo(() => {
+    return getAvailableSlotsForDate(todayIso, 'any');
+  }, [todayIso]);
+
+  const filteredAgendaSlots = useMemo(() => {
+    if (timePeriodFilter === 'todos') return agendaSlots;
+    return agendaSlots.filter((s) => s.period === timePeriodFilter);
+  }, [agendaSlots, timePeriodFilter]);
 
   // Filtrar ofertas desse salão
   const salonOffers = offers.filter((o) => o.salonName === salonName);
@@ -144,17 +164,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       remainingMinutes: 8,
       totalMinutes: 35,
       endTime: '14:10',
-      isCurrentUser: false,
-    },
-    {
-      id: 'chair-3',
-      number: 'Cadeira 03',
-      professional: 'Juliana',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
-      serviceTitle: 'Escova & Mechas',
-      remainingMinutes: 28,
-      totalMinutes: 60,
-      endTime: '14:30',
       isCurrentUser: false,
     },
   ];
@@ -319,9 +328,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return () => clearInterval(timer);
   }, [portfolioSlides.length]);
 
-  const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false) => {
+  const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false, timeSlot?: string) => {
     setBookingService(srv || catalogServices[0]);
     setSkipDateStep(directToTimeGrid);
+    setSelectedTimeSlotForBooking(timeSlot || null);
     setIsBookingModalOpen(true);
   };
 
@@ -514,7 +524,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           <div>
                             <button
                               onClick={() => handleOpenBooking(slide.service)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 text-xs font-bold transition-all shadow-md cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white drop-shadow-xs text-xs font-bold transition-all shadow-md cursor-pointer"
                             >
                               <span>Agendar Serviço</span>
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -578,10 +588,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
                     <span>Cadeiras em Atendimento</span>
                   </h2>
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    Ao Vivo
-                  </span>
                 </div>
 
                 {/* Grid de Cadeiras Ocupadas */}
@@ -602,36 +608,22 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                               : 'bg-white border-slate-200/90'
                         }`}
                       >
-                        {/* Topo do Card: Cadeira + Status */}
-                        <div className="flex items-center justify-between gap-1 mb-1.5">
+                        {/* Topo do Card: Cadeira */}
+                        <div className="flex items-center justify-between gap-1 mb-1">
                           <span className={`text-[10px] font-black uppercase tracking-wider ${
                             isDark ? 'text-emerald-400' : 'text-emerald-600'
                           }`}>
                             {chair.number}
                           </span>
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[9px] font-bold border border-emerald-500/30">
-                            <Clock className="w-2.5 h-2.5" />
-                            {chair.remainingMinutes}m
-                          </span>
                         </div>
 
-                        {/* Meio: Profissional Simples + Serviço */}
-                        <div className="flex items-center gap-2 min-w-0 my-1">
-                          <img
-                            src={chair.avatar}
-                            alt={chair.professional}
-                            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-700 shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <h4 className={`text-[11px] font-bold truncate leading-tight ${
-                              isDark ? 'text-white' : 'text-slate-900'
-                            }`}>
-                              {chair.professional}
-                            </h4>
-                            <p className={`text-[9px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                              {chair.serviceTitle}
-                            </p>
-                          </div>
+                        {/* Meio: Profissional Simples */}
+                        <div className="min-w-0 my-0.5">
+                          <h4 className={`text-xs font-bold truncate leading-tight ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}>
+                            {chair.professional}
+                          </h4>
                         </div>
 
                         {/* Barra de Progresso e Previsão */}
@@ -643,7 +635,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                             />
                           </div>
                           <div className="flex items-center justify-between text-[9px] text-slate-400">
-                            <span>Progresso</span>
+                            <span>{chair.remainingMinutes}m rest.</span>
                             <span>Até <strong>{chair.endTime}</strong></span>
                           </div>
                         </div>
@@ -653,69 +645,67 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 </div>
               </div>
 
-              {/* 2. SEÇÃO: PRÓXIMOS HORÁRIOS LIVRES (GRID DE CARDS COM FOCO APENAS EM HORÁRIOS) */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center justify-between">
-                  <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    <Calendar className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Próximos Horários Livres</span>
-                  </h2>
-                  <span className={`text-[10px] font-semibold border px-2 py-0.5 rounded-md ${
-                    isDark
-                      ? 'text-emerald-400 bg-emerald-950/60 border-emerald-500/30'
-                      : 'text-[#087A2A] bg-emerald-50 border-emerald-400/40'
+              {/* 2. SEÇÃO: TABELA DE HORÁRIOS (SINCRONIZADA COM O MODAL) */}
+              <div className={`pt-2 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
+                    isDark ? 'text-white' : 'text-slate-900'
                   }`}>
-                    Hoje
-                  </span>
+                    <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
+                    <span>Horários</span>
+                  </h4>
+                  
+                  {/* Filtro de Turnos */}
+                  <div className={`flex items-center gap-0.5 p-0.5 rounded-lg border flex-shrink-0 ${
+                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+                  }`}>
+                    {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
+                      <button
+                        key={period}
+                        type="button"
+                        onClick={() => setTimePeriodFilter(period)}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold capitalize transition ${
+                          timePeriodFilter === period
+                            ? 'bg-[#20C933] text-white font-bold drop-shadow-xs'
+                            : isDark
+                            ? 'text-slate-400 hover:text-white'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        {period}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Grid de Horários */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {upcomingOpenSlots.map((slot) => (
-                    <div
-                      key={slot.id}
-                      onClick={() => {
-                        const matchedSrv = catalogServices.find((s) => s.title === slot.serviceTitle) || catalogServices[0];
-                        handleOpenBooking(matchedSrv, true);
-                      }}
-                      className={`border rounded-xl p-2.5 flex flex-col justify-between gap-2 transition-all duration-200 cursor-pointer group shadow-xs active:scale-[0.98] ${
-                        isDark
-                          ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/60'
-                          : 'bg-white border-slate-200/90 hover:border-emerald-500/60'
-                      }`}
-                    >
-                      {/* Topo do Card: Horário Destaque */}
-                      <div className="flex items-center justify-between">
-                        <div className="w-full px-2 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center">
-                          <span className="text-sm font-black block tracking-tight leading-none">{slot.timeSlot}</span>
-                        </div>
-                      </div>
+                {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {filteredAgendaSlots.map((slot) => {
+                    const isAvailable = slot.available;
 
-                      {/* Profissional e Duração */}
-                      <div className="min-w-0">
-                        <span className={`text-[11px] font-bold block truncate ${
-                          isDark ? 'text-white group-hover:text-emerald-300' : 'text-slate-900 group-hover:text-emerald-700'
-                        }`}>
-                          {slot.professionalName}
-                        </span>
-                        <span className={`text-[10px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                          {slot.duration} • R${slot.price}
-                        </span>
-                      </div>
-
-                      {/* Botão de Reserva Rápida */}
+                    return (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const matchedSrv = catalogServices.find((s) => s.title === slot.serviceTitle) || catalogServices[0];
-                          handleOpenBooking(matchedSrv, true);
+                        key={slot.time}
+                        disabled={!isAvailable}
+                        onClick={() => {
+                          const matchedSrv = catalogServices[0];
+                          handleOpenBooking(matchedSrv, true, slot.time);
                         }}
-                        className="w-full py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white text-[10px] font-bold rounded-lg transition active:scale-95 uppercase tracking-wider text-center"
+                        className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
+                          !isAvailable
+                            ? isDark
+                              ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
+                              : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
+                            : isDark
+                            ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
+                        }`}
                       >
-                        Reservar
+                        <Clock className={`w-3 h-3 ${isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />
+                        <span>{slot.time}</span>
                       </button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               </div>
@@ -779,8 +769,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
                         {/* Botão de Ação / Ícone no Topo Direito */}
                         <div className="absolute top-2 right-2 z-10">
-                          <div className="w-5.5 h-5.5 rounded-[4px] bg-emerald-500 group-hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-110">
-                            <Scissors className="w-3 h-3" />
+                          <div className="w-5.5 h-5.5 rounded-[4px] bg-emerald-500 group-hover:bg-emerald-400 text-white flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-110">
+                            <Scissors className="w-3 h-3 text-white" />
                           </div>
                         </div>
 
@@ -943,6 +933,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         initialService={bookingService}
         baseOffer={primaryOffer}
         skipDateStep={skipDateStep}
+        initialTimeSlot={selectedTimeSlotForBooking}
         onConfirmAppointment={handleConfirmSchedule}
       />
     </div>

@@ -85,7 +85,7 @@ export const FavoritesScreen: React.FC<FavoritesScreenProps> = ({
             </p>
             <button
               onClick={onGoHome}
-              className="mt-2 px-5 py-2.5 bg-[#20C933] hover:bg-[#1bb32d] text-slate-950 text-xs font-black uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer active:scale-95 inline-flex items-center gap-2 font-['Poppins']"
+              className="mt-2 px-5 py-2.5 bg-[#20C933] hover:bg-[#1bb32d] text-white drop-shadow-xs text-xs font-black uppercase tracking-wider rounded-xl shadow-lg transition cursor-pointer active:scale-95 inline-flex items-center gap-2 font-['Poppins']"
             >
               <Compass className="w-4 h-4" />
               <span>Explorar Vagas no Radar</span>

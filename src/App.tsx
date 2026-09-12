@@ -352,7 +352,7 @@ export const App: React.FC = () => {
   const [clientSelectedCategory, setClientSelectedCategory] = useState<string>('flash');
 
   return (
-    <div className={`h-[100dvh] w-full ${isDark ? 'bg-[#151A1E]' : 'bg-slate-200'} sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-slate-950 overflow-hidden`}>
+    <div className={`h-[100dvh] w-full ${isDark ? 'bg-[#151A1E]' : 'bg-slate-200'} sm:bg-slate-200 flex justify-center items-center antialiased selection:bg-[#20C933] selection:text-white overflow-hidden`}>
       {/* Real Fullscreen Mobile Container */}
       <main className={`w-full max-w-md h-[100dvh] ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} flex flex-col relative shadow-2xl overflow-hidden font-sans`}>
         

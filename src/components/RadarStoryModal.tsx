@@ -149,7 +149,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                   <h4 className="text-sm font-bold text-white leading-none">
                     {activeOffer.salonName}
                   </h4>
-                  <span className="bg-emerald-500 text-slate-950 text-[9px] font-black uppercase px-1.5 py-0.5 rounded">
+                  <span className="bg-emerald-500 text-white drop-shadow-xs text-[9px] font-black uppercase px-1.5 py-0.5 rounded">
                     VAGA AGORA
                   </span>
                 </div>
@@ -263,9 +263,9 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                     onConfirmBooking(activeOffer);
                     onClose();
                   }}
-                  className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wide"
+                  className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white drop-shadow-xs font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wide"
                 >
-                  <Zap className="w-4 h-4 fill-slate-950" />
+                  <Zap className="w-4 h-4 fill-white text-white" />
                   <span>RESERVAR ESTE HORÁRIO</span>
                 </button>
 

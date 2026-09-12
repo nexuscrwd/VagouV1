@@ -150,9 +150,9 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
 
         <button
           onClick={onOpenPublishModal}
-          className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+          className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white drop-shadow-xs font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
         >
-          <Zap className="w-3.5 h-3.5 fill-emerald-950" />
+          <Zap className="w-3.5 h-3.5 fill-white text-white" />
           <span>Criar Nova Vaga Relâmpago</span>
         </button>
       </div>

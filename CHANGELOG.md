@@ -15,6 +15,68 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-12] — Sincronização da Tabela de Horários na Página do Estabelecimento e Eliminação Total de Texto Escuro sobre Fundo Verde/Frio
+- **Tipo:** `[Feat & UI/UX Audit]`
+- **Motivo:** 
+  1. Replicar e sincronizar a seção da Tabela de Horários (div ultra enxuta de horários com filtros de turno) na seção/aba "Vagas" do perfil do estabelecimento (`SalonProfileView`), conectando a seleção direta de qualquer horário com abertura do modal de agendamento (`SalonBookingModal`) já pré-selecionado.
+  2. Cumprimento emergencial e irrestrito da regra de contraste (Seção 7B do `KNOWLEDGE_BASE.md`): erradicação completa e em toda a base de código do uso de texto escuro (`text-slate-950`, `text-black`, `text-emerald-950`) sobre fundos verdes ou frios (`#20C933`, `bg-emerald-500`, etc.), padronizando rigorosamente com `text-white drop-shadow-xs`.
+- **Arquivos Impactados:**
+  - `src/utils/bookingSlots.ts`: Criado gerador centralizado e determinístico de slots de agendamento diário e turnos para sincronia de dados entre perfil e modal.
+  - `src/components/SalonBookingModal.tsx`: Suporte a `initialTimeSlot`, temas claro/escuro dinâmicos e contraste corrigido com `text-white drop-shadow-xs`.
+  - `src/components/SalonProfileView.tsx`: Substituída a seção anterior pela réplica exata e sincronizada da Tabela de Horários com filtros de turno ('todos', 'manha', 'tarde', 'noite'), abertura direta do modal com horário selecionado e correção de contraste nos botões e ícones.
+  - `src/components/HomeScreen.tsx`: Correção de contraste para `text-white drop-shadow-xs` nos botões de layout (Reels/Grid), chips de categorias ativos, botões de ação rápida e botões de explorar.
+  - `src/components/RadarOfferCard.tsx`: Correção de contraste no botão principal de agendamento rápido com `text-white drop-shadow-xs` e ícone branco.
+  - `src/components/ConfirmationScreen.tsx`: Correção no botão principal de ação e no ícone de confirmação.
+  - `src/components/FavoritesScreen.tsx`: Correção no botão de explorar vagas.
+  - `src/components/InterestOnboardingModal.tsx`: Correção no botão de salvar interesses e indicadores de seleção.
+  - `src/components/OfferDetailScreen.tsx`: Correção no botão CTA principal "AGENDAR AGORA".
+  - `src/components/RadarStoryModal.tsx`: Correção no selo "VAGA AGORA" e botão "RESERVAR ESTE HORÁRIO".
+  - `src/components/PartnerProfileScreen.tsx`: Correção no botão "Criar Nova Vaga Relâmpago".
+  - `src/components/PinterestExploreScreen.tsx`: Correção nas pílulas ativas e botões de ação rápida.
+  - `src/components/ProfileDrawer.tsx`: Correção nos seletores de perfil de preferência e badges.
+  - `src/App.tsx`: Correção da cor de seleção de texto para `selection:text-white`.
+- **Resumo Técnico:** Clean code aplicado, sem imports órfãos ou estados zumbis. Linter `tsc --noEmit` validado com 0 erros e compilação de produção aprovada com sucesso.
+
+---
+
+### [2026-09-12] — Correção de Retorno Indesejado de Aba e Suporte ao Tema Claro/Escuro no Modal de Agendamento
+- **Tipo:** `[Fix / UI/UX]`
+- **Motivo:** Ao selecionar uma data e avançar para a aba de horários, o modal automaticamente resetava e voltava para a seleção de datas devido a re-execuções de `useEffect` com dependências dinâmicas. Além disso, as cores do modal estavam fixadas no tema escuro mesmo quando o app estava no tema claro.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`:
+    - Adicionada referência com `useRef(false)` (`prevIsOpenRef`) para que a inicialização do modal e o reset para o passo inicial só ocorram estritamente na transição de fechado para aberto (`!prevIsOpenRef.current && isOpen`), preservando o estado do usuário durante toda a sessão de navegação.
+    - Integrado o hook `useTheme()` do `ThemeContext` e refatoradas todas as classes utilitárias Tailwind (fundo, bordas, divisores, textos e botões) para alternar dinamicamente entre tema claro (`bg-white`, `text-slate-900`, etc.) e tema escuro (`bg-slate-950`, `text-white`, etc.).
+- **Resumo Técnico:** Clean code aplicado, sem variáveis zumbis ou imports órfãos, linter validado (`tsc --noEmit` 100% limpo) e compilação de produção (`compile_applet`) bem-sucedida.
+
+---
+
+### [2026-09-12] — Simplificação dos Cards de Cadeiras em Atendimento (Focus Mode)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do avatar do profissional, título do serviço e badge superior de tempo dos cards de "Cadeiras em Atendimento", selecionados via Focus Mode para deixar o card ultra-minimalista.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Simplificada a estrutura visual do card de atendimento.
+- **Resumo Técnico:** Clean code verificado, linter executado sem erros e build compilado com sucesso.
+
+---
+
+### [2026-09-12] — Remoção do Selo 'Ao Vivo' no Cabeçalho de Cadeiras em Atendimento (Focus Mode)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção da tag/badge "Ao Vivo" no cabeçalho da seção "Cadeiras em Atendimento", selecionada via Focus Mode para simplificar e limpar a interface.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o elemento `<span>` com badge de pulso "Ao Vivo".
+- **Resumo Técnico:** Clean code verificado, linter executado sem erros e build compilado com sucesso.
+
+---
+
+### [2026-09-10] — Remoção da Cadeira 03 na Seção 'Cadeiras em Atendimento' (Focus Mode)
+- **Tipo:** `[UI/UX / Refactor]`
+- **Motivo:** Remoção do card referente à Cadeira 03 selecionado via Focus Mode na lista de "Cadeiras em Atendimento".
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o item `chair-3` da estrutura `activeChairsData`.
+- **Resumo Técnico:** Clean code verificado, zero variáveis zumbis, linter validado e build compilado com sucesso.
+
+---
+
 ### [2026-09-09] — Remoção da Seção 'Ofertas Relâmpago em Destaque' (Focus Mode)
 - **Tipo:** `[UI/UX / Refactor]`
 - **Motivo:** Remoção do contêiner de "Ofertas Relâmpago em Destaque" da aba principal do perfil do salão, simplificando a tela e priorizando a visualização das cadeiras e dos próximos horários livres.

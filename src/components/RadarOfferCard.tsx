@@ -337,9 +337,9 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               e.stopPropagation();
               onDirectBook(offer);
             }}
-            className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-slate-950 text-xs font-black rounded-lg transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"
+            className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-white drop-shadow-xs text-xs font-black rounded-lg transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"
           >
-            <Zap className="w-3.5 h-3.5 fill-slate-950 shrink-0" />
+            <Zap className="w-3.5 h-3.5 fill-white text-white shrink-0" />
             <span>AGENDAR • R${offer.price.toFixed(0)}</span>
           </button>
         </div>

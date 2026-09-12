@@ -155,7 +155,7 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
           <button
             id="btn-agendar-agora"
             onClick={() => onConfirmBooking(offer)}
-            className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-slate-950 font-black text-sm rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider font-['Poppins']"
+            className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white drop-shadow-xs font-black text-sm rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider font-['Poppins']"
           >
             AGENDAR AGORA
           </button>

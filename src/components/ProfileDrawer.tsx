@@ -86,7 +86,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 className="w-12 h-12 rounded-full object-cover border-2 border-[#20C933]"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#20C933] flex items-center justify-center text-slate-950">
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#20C933] flex items-center justify-center text-white">
                 <UserCheck className="w-2.5 h-2.5 stroke-[3]" />
               </div>
             </div>
@@ -116,7 +116,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClick={() => onSelectSegment('barbearia')}
                 className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'barbearia'
-                    ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
                     : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -128,7 +128,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClick={() => onSelectSegment('salao')}
                 className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'salao'
-                    ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
                     : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -140,7 +140,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 onClick={() => onSelectSegment('todos')}
                 className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
                   currentSegment === 'todos'
-                    ? 'bg-[#20C933] text-slate-950 shadow-sm'
+                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
                     : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -273,8 +273,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               className="w-full p-3 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-[#20C933]/30 text-left flex items-center justify-between transition group cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#20C933] text-slate-950 flex items-center justify-center font-bold">
-                  <Building2 className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#20C933] text-white flex items-center justify-center font-bold drop-shadow-xs">
+                  <Building2 className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <span className="text-xs font-black text-white block">Painel do Estabelecimento</span>

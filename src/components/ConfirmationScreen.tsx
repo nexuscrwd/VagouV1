@@ -39,8 +39,8 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
       <div className="space-y-6 pt-4">
         {/* Check Success Icon */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#20C933] text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
-            <Check className="w-9 h-9 stroke-[3]" />
+          <div className="w-16 h-16 rounded-2xl bg-[#20C933] text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300 drop-shadow-xs">
+            <Check className="w-9 h-9 stroke-[3] text-white" />
           </div>
           <h1 className="text-xl font-black text-slate-900 mt-4 font-['Poppins']">Agendamento confirmado!</h1>
           <p className="text-xs text-slate-500 max-w-xs mt-1">
@@ -93,7 +93,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-ver-agenda-confirmacao"
           onClick={onNavigateToAgenda}
-          className="w-full py-3.5 bg-[#20C933] hover:bg-emerald-500 active:scale-[0.99] text-slate-950 font-black text-xs rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-3.5 bg-[#20C933] hover:bg-emerald-500 active:scale-[0.99] text-white font-black text-xs drop-shadow-xs rounded-xl transition shadow-md shadow-emerald-600/20 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>VER MINHA AGENDA</span>
           <ArrowRight className="w-4 h-4 stroke-[2.5]" />
