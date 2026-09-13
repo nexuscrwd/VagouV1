@@ -15,14 +15,14 @@ export const INTEREST_OPTIONS: InterestCategoryOption[] = [
     id: 'barbearia',
     title: 'Barbearia & Beleza Masculina',
     subtitle: 'Barba, corte masculino, degradê e pigmentação',
-    badge: 'Anderson',
+    badge: 'Barba & Corte',
     categoryIds: ['barba', 'cabelo'],
   },
   {
     id: 'salao',
     title: 'Salão Feminino, Cabelo & Mechas',
     subtitle: 'Corte, escova, mechas, luzes e hidratação',
-    badge: 'Esposa / Beleza',
+    badge: 'Cabelo & Mechas',
     categoryIds: ['cabelo'],
   },
   {

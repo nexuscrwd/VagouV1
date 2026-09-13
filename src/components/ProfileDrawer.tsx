@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   X,
   Calendar,
   Building2,
-  Bell,
   SlidersHorizontal,
   HelpCircle,
   ShieldCheck,
@@ -12,9 +11,23 @@ import {
   Heart,
   Sun,
   Moon,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Edit2,
+  Check,
+  Shield,
 } from 'lucide-react';
 import { VagouLogo } from './VagouLogo';
 import { useTheme } from '../context/ThemeContext';
+
+interface UserPrivateProfile {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+}
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -25,8 +38,8 @@ interface ProfileDrawerProps {
   onSwitchToPartnerMode: () => void;
   onOpenInterestConfig: () => void;
   onOpenHelpModal?: () => void;
-  currentSegment: string;
-  onSelectSegment: (segment: 'barbearia' | 'salao' | 'todos') => void;
+  currentSegment?: string;
+  onSelectSegment?: (segment: 'barbearia' | 'salao' | 'todos') => void;
   userName?: string;
   userAvatarUrl?: string;
 }
@@ -40,12 +53,57 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   onSwitchToPartnerMode,
   onOpenInterestConfig,
   onOpenHelpModal,
-  currentSegment,
-  onSelectSegment,
   userName = 'Anderson Silva',
   userAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
 }) => {
   const { isDark, toggleTheme } = useTheme();
+
+  // Perfil privado do usuário (carregado do localStorage)
+  const [profile, setProfile] = useState<UserPrivateProfile>(() => {
+    try {
+      const saved = localStorage.getItem('vagou_private_user_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          fullName: parsed.fullName || userName || 'Anderson Silva',
+          email: parsed.email || 'anderson.silva@email.com',
+          phone: parsed.phone || '(11) 98765-4321',
+          address: parsed.address || 'Rua Oscar Freire, 1200 - São Paulo, SP',
+        };
+      }
+    } catch {
+      // fallback padrão
+    }
+    return {
+      fullName: userName || 'Anderson Silva',
+      email: 'anderson.silva@email.com',
+      phone: '(11) 98765-4321',
+      address: 'Rua Oscar Freire, 1200 - São Paulo, SP',
+    };
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<UserPrivateProfile>(profile);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleStartEdit = () => {
+    setFormData(profile);
+    setIsEditing(true);
+    setSaveSuccess(false);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfile(formData);
+    try {
+      localStorage.setItem('vagou_private_user_profile', JSON.stringify(formData));
+    } catch {
+      // ignore
+    }
+    setIsEditing(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
+  };
 
   if (!isOpen) return null;
 
@@ -82,7 +140,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
             <div className="relative">
               <img
                 src={userAvatarUrl}
-                alt={userName}
+                alt={profile.fullName}
                 className="w-12 h-12 rounded-full object-cover border-2 border-[#20C933]"
                 referrerPolicy="no-referrer"
               />
@@ -93,61 +151,206 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
             <div className="flex-1 min-w-0">
               <h3 className={`text-sm font-black truncate font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                {userName}
+                {profile.fullName}
               </h3>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[10px] text-[#087A2A] dark:text-[#20C933] font-bold bg-[#20C933]/15 px-2 py-0.5 rounded-full border border-[#20C933]/30">
-                  Cliente VIP
-                </span>
-                <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>São Paulo, SP</span>
-              </div>
             </div>
           </div>
 
-          {/* Quick Segment Switcher (Netflix Profiles) */}
-          <div className="mt-5">
-            <span className={`text-[10px] font-bold uppercase tracking-wider block mb-2 font-['Poppins'] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              Perfil de Preferência (Feed)
-            </span>
-            <div className={`grid grid-cols-3 gap-1.5 p-1 rounded-xl border ${
-              isDark ? 'bg-slate-950 border-slate-800/90' : 'bg-slate-200/80 border-slate-300'
-            }`}>
-              <button
-                onClick={() => onSelectSegment('barbearia')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
-                  currentSegment === 'barbearia'
-                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Barbearia</span>
-                <span className="text-[9px] opacity-80 font-normal">Anderson</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSegment('salao')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
-                  currentSegment === 'salao'
-                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Salão</span>
-                <span className="text-[9px] opacity-80 font-normal">Esposa</span>
-              </button>
-
-              <button
-                onClick={() => onSelectSegment('todos')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-bold transition flex flex-col items-center gap-0.5 cursor-pointer ${
-                  currentSegment === 'todos'
-                    ? 'bg-[#20C933] text-white drop-shadow-xs shadow-sm font-black'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Geral</span>
-                <span className="text-[9px] opacity-80 font-normal">Todas</span>
-              </button>
+          {/* Perfil Privado do Usuário (Nome Completo, E-mail, Telefone, Endereço) */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-[10px] font-bold uppercase tracking-wider font-['Poppins'] flex items-center gap-1.5 ${
+                isDark ? 'text-slate-400' : 'text-slate-500'
+              }`}>
+                <Shield className="w-3 h-3 text-[#20C933]" />
+                Perfil do Usuário
+              </span>
+              {!isEditing ? (
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-[10px] font-bold text-[#20C933] hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  <Edit2 className="w-2.5 h-2.5" />
+                  Editar
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className={`text-[10px] font-medium hover:underline cursor-pointer ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                >
+                  Cancelar
+                </button>
+              )}
             </div>
+
+            {isEditing ? (
+              <form onSubmit={handleSave} className={`p-3 rounded-xl border space-y-2 text-xs ${
+                isDark ? 'bg-slate-950/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                <div>
+                  <label className={`text-[9px] font-bold uppercase tracking-wider block mb-1 ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    Nome Completo
+                  </label>
+                  <div className="relative">
+                    <User className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      className={`w-full pl-8 pr-2.5 py-1.5 rounded-lg border text-xs outline-none transition ${
+                        isDark
+                          ? 'bg-slate-900 border-slate-700 text-white focus:border-[#20C933]'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#20C933]'
+                      }`}
+                      placeholder="Nome Completo"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`text-[9px] font-bold uppercase tracking-wider block mb-1 ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    E-mail
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className={`w-full pl-8 pr-2.5 py-1.5 rounded-lg border text-xs outline-none transition ${
+                        isDark
+                          ? 'bg-slate-900 border-slate-700 text-white focus:border-[#20C933]'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#20C933]'
+                      }`}
+                      placeholder="email@exemplo.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`text-[9px] font-bold uppercase tracking-wider block mb-1 ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    Telefone
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className={`w-full pl-8 pr-2.5 py-1.5 rounded-lg border text-xs outline-none transition ${
+                        isDark
+                          ? 'bg-slate-900 border-slate-700 text-white focus:border-[#20C933]'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#20C933]'
+                      }`}
+                      placeholder="(11) 90000-0000"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`text-[9px] font-bold uppercase tracking-wider block mb-1 ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}>
+                    Endereço
+                  </label>
+                  <div className="relative">
+                    <MapPin className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className={`w-full pl-8 pr-2.5 py-1.5 rounded-lg border text-xs outline-none transition ${
+                        isDark
+                          ? 'bg-slate-900 border-slate-700 text-white focus:border-[#20C933]'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#20C933]'
+                      }`}
+                      placeholder="Rua, número, bairro e cidade"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full mt-2 py-1.5 bg-[#20C933] hover:bg-[#1bb82d] text-white font-bold rounded-lg text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
+                >
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                  Salvar Dados
+                </button>
+              </form>
+            ) : (
+              <div className={`p-3 rounded-xl border space-y-2.5 text-xs transition-all ${
+                isDark ? 'bg-slate-950/80 border-slate-800/90' : 'bg-white border-slate-200 shadow-xs'
+              }`}>
+                {saveSuccess && (
+                  <div className="text-[10px] text-[#20C933] font-bold flex items-center gap-1 pb-1 border-b border-emerald-500/20">
+                    <Check className="w-3 h-3" />
+                    Dados atualizados com sucesso!
+                  </div>
+                )}
+                
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <User className="w-3.5 h-3.5 text-[#20C933] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <span className={`text-[9px] uppercase tracking-wider block font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Nome Completo
+                    </span>
+                    <span className={`text-xs font-semibold truncate block ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                      {profile.fullName}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <span className={`text-[9px] uppercase tracking-wider block font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                      E-mail
+                    </span>
+                    <span className={`text-xs truncate block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      {profile.email}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <span className={`text-[9px] uppercase tracking-wider block font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Telefone
+                    </span>
+                    <span className={`text-xs font-mono block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      {profile.phone}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <span className={`text-[9px] uppercase tracking-wider block font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Endereço
+                    </span>
+                    <span className={`text-xs line-clamp-2 block ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      {profile.address}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Navigation Links */}

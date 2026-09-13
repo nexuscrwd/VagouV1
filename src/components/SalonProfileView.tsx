@@ -5,7 +5,8 @@ import {
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Users, UserCheck, Store,
   ChevronLeft, ChevronRight, ArrowRight,
-  Share2, ShieldCheck, Check, MessageCircle
+  Share2, ShieldCheck, Check, MessageCircle,
+  Scissors, Hand, Smile, Eye, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
@@ -250,6 +251,91 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const spaceTabLabel = salonInfo.isHomeCare ? 'Atendimento' : 'Espaço';
   const SpaceIcon = salonInfo.isHomeCare ? Car : Store;
 
+  // Ícone dinâmico da aba Serviços baseado na categoria e especialidade do estabelecimento
+  const ServicesIcon = useMemo(() => {
+    const mainCategory = (primaryOffer?.serviceCategory || '').toLowerCase();
+    const nameLower = salonName.toLowerCase();
+    const serviceTitles = (salonOffers.length > 0 ? salonOffers : offers)
+      .map((o) => `${o.serviceTitle} ${o.serviceCategory || ''}`.toLowerCase())
+      .join(' ');
+
+    // 1. Unhas / Manicure / Pedicure / Nails / Esmaltação
+    if (
+      mainCategory === 'unhas' ||
+      nameLower.includes('unha') ||
+      nameLower.includes('nail') ||
+      nameLower.includes('manicure') ||
+      nameLower.includes('pedicure') ||
+      nameLower.includes('esmalte') ||
+      serviceTitles.includes('unha') ||
+      serviceTitles.includes('manicure') ||
+      serviceTitles.includes('pedicure') ||
+      serviceTitles.includes('esmaltação')
+    ) {
+      return Hand;
+    }
+
+    // 2. Estética Facial / Rosto / Skincare / Limpeza de Pele / Visagismo
+    if (
+      (mainCategory === 'estetica' || mainCategory === 'beleza') &&
+      (nameLower.includes('facial') ||
+        nameLower.includes('rosto') ||
+        nameLower.includes('pele') ||
+        nameLower.includes('estética') ||
+        nameLower.includes('estetica') ||
+        nameLower.includes('skincare') ||
+        nameLower.includes('face') ||
+        serviceTitles.includes('facial') ||
+        serviceTitles.includes('limpeza de pele') ||
+        serviceTitles.includes('peeling') ||
+        serviceTitles.includes('visagismo facial'))
+    ) {
+      return Smile;
+    }
+
+    // 3. Sobrancelhas / Olhar / Cílios / Lash
+    if (
+      nameLower.includes('sobrancelha') ||
+      nameLower.includes('lash') ||
+      nameLower.includes('cílios') ||
+      nameLower.includes('cilios') ||
+      nameLower.includes('brow') ||
+      serviceTitles.includes('sobrancelha') ||
+      serviceTitles.includes('extensão de cílios') ||
+      serviceTitles.includes('micropigmentação')
+    ) {
+      return Eye;
+    }
+
+    // 4. Barbearia / Corte de Cabelo / Barba / Hair / Salão Tradicional
+    if (
+      mainCategory === 'cabelo' ||
+      mainCategory === 'barba' ||
+      nameLower.includes('barber') ||
+      nameLower.includes('barba') ||
+      nameLower.includes('corte') ||
+      nameLower.includes('cabelo') ||
+      nameLower.includes('hair') ||
+      nameLower.includes('salão') ||
+      nameLower.includes('salao') ||
+      serviceTitles.includes('corte') ||
+      serviceTitles.includes('degradê') ||
+      serviceTitles.includes('barba') ||
+      serviceTitles.includes('mechas') ||
+      serviceTitles.includes('escova')
+    ) {
+      return Scissors;
+    }
+
+    // 5. Estética / Beleza geral
+    if (mainCategory === 'estetica' || mainCategory === 'beleza') {
+      return Smile;
+    }
+
+    // Fallback universal
+    return Sparkles;
+  }, [primaryOffer, salonName, salonOffers, offers]);
+
   // Registrar context do menu de navegação do rodapé
   useEffect(() => {
     if (onRegisterBottomNav) {
@@ -260,6 +346,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         spaceTabLabel,
         TeamIcon,
         SpaceIcon,
+        ServicesIcon,
       });
     }
     return () => {
@@ -267,7 +354,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         onRegisterBottomNav(null);
       }
     };
-  }, [activeTab, teamTabLabel, spaceTabLabel, TeamIcon, SpaceIcon, onRegisterBottomNav]);
+  }, [activeTab, teamTabLabel, spaceTabLabel, TeamIcon, SpaceIcon, ServicesIcon, onRegisterBottomNav]);
 
   // Cadeiras em Atendimento Ao Vivo no Salão
   const activeChairsData = [

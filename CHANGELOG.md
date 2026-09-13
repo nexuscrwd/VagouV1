@@ -15,6 +15,44 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-13] — Remoção de Redundâncias no Card do Perfil (Focus Mode)
+- **Tipo:** `[UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("Remover redundancia" nos elementos selecionados: selo de status "Cliente VIP" e fragmento de endereço/cidade), removeu-se os elementos repetitivos do card de identificação do topo da gaveta de perfil, eliminando duplicações em relação ao bloco detalhado de informações do perfil privado logo abaixo.
+- **Arquivos Impactados:**
+  - `src/components/ProfileDrawer.tsx`: Removido o contêiner e spans com a tag "Cliente VIP" e o texto de cidade/endereço duplicado, mantendo a foto e o nome do usuário com layout limpo e direto.
+- **Resumo Técnico:** Zero poluição, estrita observância das regras de Focus Mode, código validado com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Conversão em Perfil Privado do Usuário (Nome, E-mail, Telefone e Endereço)
+- **Tipo:** `[Feat / UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("Converta esse botão em perfil do usuário como nome completo, e-mail, telefone e endereço. Somente isso! Cada usuário tera perfil privado, sem nada vinculado a ele como Esposa e etc."), removeu-se os botões de troca de perfil de terceiros ("Esposa", etc.) e converteu-se a seção em dados de perfil privado individual do usuário.
+- **Arquivos Impactados:**
+  - `src/components/ProfileDrawer.tsx`: Substituído o bloco seletor de segmentos/perfis vinculados por um módulo dedicado de **Perfil do Usuário** contendo:
+    - **Nome Completo** (com ícone `User`)
+    - **E-mail** (com ícone `Mail`)
+    - **Telefone** (com ícone `Phone`)
+    - **Endereço** (com ícone `MapPin`)
+    - Ações de visualização limpa e edição/salvamento com persistência local em `localStorage` (`vagou_private_user_profile`).
+  - `src/components/InterestOnboardingModal.tsx`: Limpeza de referências residuais ("Esposa / Beleza" ➔ "Cabelo & Mechas" e "Anderson" ➔ "Barba & Corte"), assegurando que o ecossistema opere 100% como perfil privado individual.
+- **Resumo Técnico:** Clean code aplicado, remoção de imports zumbis (`Bell`), tipagem TypeScript estrita e validação concluída com sucesso via `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Ícone Dinâmico da Aba Serviços por Categoria do Estabelecimento (Focus Mode)
+- **Tipo:** `[UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("esse icone deve ser escolhido em relação a categoria de serviços. Se barbearia, corte de cabelo então tesoura, se unhas então unha, se estética facial então rosto, etc."), foi implementada a seleção dinâmica do ícone da aba de Serviços no menu de navegação inferior (`BottomNav`) de acordo com a especialidade e categoria de cada estabelecimento.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Adicionada lógica de resolução semântica `ServicesIcon` mapeando:
+    - **Barbearia / Cabelo / Corte / Barba** ➔ `Scissors` (Tesoura)
+    - **Unhas / Manicure / Pedicure / Esmaltação** ➔ `Hand` (Mão / Unhas)
+    - **Estética Facial / Rosto / Skincare / Visagismo** ➔ `Smile` (Rosto)
+    - **Sobrancelhas / Olhar / Cílios** ➔ `Eye` (Olhar)
+    - **Estética Geral / Spa / Beleza Universal** ➔ `Sparkles`
+- **Resumo Técnico:** Clean code aplicado, tipagem estrita com TypeScript. Validação bem-sucedida via `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-13] — Atualização do Ícone de Serviços para Sparkles (Focus Mode)
 - **Tipo:** `[UI Refinement & Focus Mode]`
 - **Motivo:** Conforme solicitado pelo usuário ("mude este icne para algo mais geral"), o ícone específico de tesoura (`Scissors`) da aba "Serviços" no menu de navegação do estabelecimento (`BottomNav`) foi substituído por `Sparkles`, ícone universalmente representativo de tratamentos, beleza, bem-estar e catálogo de serviços em múltiplos segmentos.
