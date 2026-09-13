@@ -4,7 +4,7 @@ import {
   Heart, Zap, CheckCircle2, 
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Users, Store,
-  ChevronLeft, ChevronRight, ArrowRight,
+  ChevronLeft, ChevronRight, ChevronDown, ArrowRight,
   Share2, ShieldCheck, Check, MessageCircle,
   Scissors, Hand, Smile, Eye, Sparkles,
   Star
@@ -338,9 +338,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   // Navegação suave entre seções da landing page e sincronização do activeTab
   const handleSelectTab = (tab: 'home' | 'servicos' | 'vagas' | 'espaco') => {
     setActiveTab(tab);
-    let targetId = 'salon-section-home';
-    if (tab === 'servicos') targetId = 'salon-section-servicos';
-    else if (tab === 'vagas') targetId = 'salon-section-agenda';
+    if (tab === 'home') {
+      const scrollParent = document.getElementById('salon-section-home')?.closest('.overflow-y-auto') || window;
+      scrollParent.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    let targetId = 'salon-section-servicos';
+    if (tab === 'vagas') targetId = 'salon-section-agenda';
     else if (tab === 'espaco') targetId = 'salon-section-espaco';
 
     const el = document.getElementById(targetId);
@@ -514,42 +518,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
   ];
 
-  // Slides de portfólio para o Slider da Página Inicial
-  const portfolioSlides = [
-    {
-      id: 'slide-1',
-      tag: 'Cabelo & Estilo',
-      title: 'Corte Fade / Degradê Moderno',
-      tagline: 'Aproveite para dar um up no seu visual hoje mesmo',
-      image: primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80',
-      service: catalogServices[0],
-    },
-    {
-      id: 'slide-2',
-      tag: 'Barboterapia',
-      title: 'Design de Barba com Toalha Quente',
-      tagline: 'Alinhamento preciso e relaxamento com óleos essenciais',
-      image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
-      service: catalogServices[1],
-    },
-    {
-      id: 'slide-3',
-      tag: 'Experiência VIP',
-      title: 'Combo Corte + Barba Completo',
-      tagline: 'O cuidado completo que você merece para o fim de semana',
-      image: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=800&q=80',
-      service: catalogServices[2],
-    },
-  ];
-
-  // Autoplay suave para o slider da página inicial
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [portfolioSlides.length]);
-
   const handleOpenBooking = (srv?: CatalogServiceItem, directToTimeGrid = false, timeSlot?: string, dateIso?: string) => {
     setBookingService(srv || catalogServices[0]);
     setSkipDateStep(directToTimeGrid);
@@ -559,6 +527,62 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     }
     setIsBookingModalOpen(true);
   };
+
+  // Slides de portfólio para o Slider da Página Inicial (Apresentação publicitária e instrução de cada seção)
+  const portfolioSlides = useMemo(() => [
+    {
+      id: 'slide-servicos',
+      tag: 'Procedimentos & Estilo',
+      badge: 'Catálogo VIP',
+      title: 'Nossos Serviços',
+      tagline: 'Cortes modernos, barboterapia, visagismo e procedimentos com valores transparentes.',
+      image: primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200&q=80',
+      ctaText: 'VER NOSSOS SERVIÇOS',
+      ctaAction: () => handleSelectTab('servicos'),
+      ctaIcon: Scissors,
+    },
+    {
+      id: 'slide-agendamento',
+      tag: 'Praticidade 100% Online',
+      badge: 'Sem Fila',
+      title: 'Agende de Forma Rápida',
+      tagline: 'Escolha seu procedimento e confirme seu atendimento em poucos toques, de forma rápida e segura.',
+      image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80',
+      ctaText: 'AGENDAR AGORA',
+      ctaAction: () => handleOpenBooking(catalogServices[0]),
+      ctaIcon: Zap,
+    },
+    {
+      id: 'slide-horarios',
+      tag: 'Disponibilidade Hoje',
+      badge: 'Tempo Real',
+      title: 'Consulte os Horários',
+      tagline: 'Consulte os horários de forma eficiente: vagas abertas para hoje ou agende para até 60 dias.',
+      image: 'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80',
+      ctaText: 'VER HORÁRIOS DISPONÍVEIS',
+      ctaAction: () => handleSelectTab('vagas'),
+      ctaIcon: Calendar,
+    },
+    {
+      id: 'slide-espaco',
+      tag: 'Estrutura & Especialistas',
+      badge: 'Equipe VIP',
+      title: 'Conheça a Nossa Equipe',
+      tagline: 'Profissionais renomados e ambiente climatizado com café, Wi-Fi e estacionamento privativo.',
+      image: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1200&q=80',
+      ctaText: 'CONHECER NOSSO ESPAÇO',
+      ctaAction: () => handleSelectTab('espaco'),
+      ctaIcon: Store,
+    },
+  ], [primaryOffer?.imageUrl, catalogServices]);
+
+  // Autoplay suave para o slider da página inicial
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [portfolioSlides.length]);
 
   const handleConfirmSchedule = (bookingData: {
     service: CatalogServiceItem;
@@ -905,165 +929,129 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
       <div className="pt-0 space-y-6 pb-12">
-        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO FULLSCREEN PUBLICITÁRIO */}
-        <section id="salon-section-home" className="space-y-3 scroll-mt-14">
-          {/* 1. SLIDER / CARROSSEL FULLSCREEN PUBLICITÁRIO HERO */}
-              <div className={`relative w-full h-[58vh] min-h-[390px] max-h-[500px] overflow-hidden shadow-xl select-none touch-pan-y ${
-                isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
-              }`}>
-                <AnimatePresence mode="wait">
-                  {portfolioSlides.map((slide, idx) => {
-                    if (idx !== activeSlideIndex) return null;
-                    return (
-                      <motion.div
-                        key={slide.id}
-                        drag="x"
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0.2}
-                        onDragEnd={(_, info) => {
-                          if (info.offset.x < -40 || info.velocity.x < -300) {
-                            setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
-                          } else if (info.offset.x > 40 || info.velocity.x > 300) {
-                            setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
-                          }
-                        }}
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.35, ease: 'easeOut' }}
-                        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
-                      >
-                        {/* Imagem de Fundo Fullscreen */}
-                        <img
-                          src={slide.image}
-                          alt={slide.title}
-                          className="w-full h-full object-cover"
-                          referrerPolicy="no-referrer"
-                        />
-
-                        {/* Degradês Publicitários: Escurecimento Elegante para Legibilidade Perfeita */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/65 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-
-                        {/* Conteúdo Publicitário */}
-                        <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between z-10 max-w-[85%] sm:max-w-[70%]">
-                          {/* Topo do Slide: Tag de Categoria & Selo Publicitário */}
-                          <div className="flex items-center gap-2 pt-1">
-                            <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
-                              {slide.tag}
-                            </span>
-                            <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
-                              DESTAQUE
-                            </span>
-                          </div>
-
-                          {/* Centro / Base do Slide: Título + Tagline + Preço + Botão CTA */}
-                          <div className="space-y-3 pb-1">
-                            <div>
-                              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
-                                {slide.title}
-                              </h3>
-                              <p className="text-xs sm:text-sm text-slate-200/90 font-normal leading-relaxed line-clamp-2 mt-1.5 drop-shadow-xs">
-                                {slide.tagline}
-                              </p>
-                            </div>
-
-                            {/* Preço de Chamada Publicitária */}
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] text-slate-300 font-medium uppercase tracking-wide">A partir de</span>
-                              <span className="text-base sm:text-lg font-black text-[#20C933] drop-shadow-md">
-                                R$ {slide.service.price}
-                              </span>
-                            </div>
-
-                            {/* Botão Chamativo de Agendamento Imediato */}
-                            <div>
-                              <button
-                                onClick={() => handleOpenBooking(slide.service)}
-                                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[5px] bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.99] text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer"
-                              >
-                                <Sparkles className="w-4 h-4 text-white drop-shadow-xs" />
-                                <span>AGENDAR ESTE HORÁRIO</span>
-                                <ArrowRight className="w-3.5 h-3.5 text-white" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
-
-                {/* Controles do Slide: Indicadores de Paginação */}
-                <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800 shadow-md">
-                  {portfolioSlides.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      onClick={() => setActiveSlideIndex(dotIdx)}
-                      className={`transition-all rounded-full cursor-pointer ${
-                        dotIdx === activeSlideIndex
-                          ? 'w-5 h-1.5 bg-[#20C933]'
-                          : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-                      }`}
-                      aria-label={`Slide ${dotIdx + 1}`}
+        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO FULLSCREEN RESPONSIVO PUBLICITÁRIO */}
+        <section id="salon-section-home" className="w-full relative scroll-mt-0">
+          {/* SLIDER / CARROSSEL FULLSCREEN QUE COMPLETA TODA A TELA DO DISPOSITIVO MÓVEL */}
+          <div className={`relative w-full h-[calc(100vh-174px)] h-[calc(100dvh-174px)] min-h-[480px] overflow-hidden select-none touch-pan-y ${
+            isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
+          }`}>
+            <AnimatePresence mode="wait">
+              {portfolioSlides.map((slide, idx) => {
+                if (idx !== activeSlideIndex) return null;
+                const IconComponent = slide.ctaIcon;
+                return (
+                  <motion.div
+                    key={slide.id}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.2}
+                    onDragEnd={(_, info) => {
+                      if (info.offset.x < -40 || info.velocity.x < -300) {
+                        setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
+                      } else if (info.offset.x > 40 || info.velocity.x > 300) {
+                        setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
+                      }
+                    }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                    className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+                  >
+                    {/* Imagem de Fundo Fullscreen */}
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
                     />
-                  ))}
-                </div>
 
-                {/* Setas Sutis de Navegação */}
-                <button
-                  onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
-                  aria-label="Slide anterior"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
-                  aria-label="Próximo slide"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+                    {/* Degradês Publicitários de Alta Qualidade para Leitura Impecável */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
 
-          {/* Barra de Acesso Rápido às Seções da Landing Page */}
-          <div className="px-3.5 pt-1 pb-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    {/* Conteúdo Publicitário */}
+                    <div className="absolute inset-0 p-5 sm:p-7 flex flex-col justify-between z-10 max-w-[92%] sm:max-w-[75%]">
+                      {/* Topo do Slide: Tag de Categoria & Selo Publicitário */}
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
+                          {slide.tag}
+                        </span>
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
+                          {slide.badge}
+                        </span>
+                      </div>
+
+                      {/* Centro / Base do Slide: Título + Tagline + Botão CTA */}
+                      <div className="space-y-3.5 pb-8 sm:pb-6">
+                        <div>
+                          <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
+                            {slide.title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-200/95 font-normal leading-relaxed line-clamp-3 mt-2 drop-shadow-xs max-w-md">
+                            {slide.tagline}
+                          </p>
+                        </div>
+
+                        {/* Botão Chamativo de Chamada Publicitária / Ação da Seção */}
+                        <div>
+                          <button
+                            type="button"
+                            onClick={slide.ctaAction}
+                            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.98] text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer whitespace-nowrap"
+                          >
+                            <IconComponent className="w-4 h-4 text-white drop-shadow-xs" />
+                            <span>{slide.ctaText}</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-white" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+
+            {/* Controles do Slide: Indicadores de Paginação */}
+            <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800 shadow-md">
+              {portfolioSlides.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  onClick={() => setActiveSlideIndex(dotIdx)}
+                  className={`transition-all rounded-full cursor-pointer ${
+                    dotIdx === activeSlideIndex
+                      ? 'w-5 h-1.5 bg-[#20C933]'
+                      : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
+                  }`}
+                  aria-label={`Slide ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Dica de Navegação Rolar para Ver Mais Seções */}
             <button
               type="button"
               onClick={() => handleSelectTab('servicos')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
-                isDark
-                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
-              }`}
+              className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 text-[10px] font-medium text-slate-300 hover:text-white transition cursor-pointer bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800/80 shadow-md"
             >
-              <Scissors className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Serviços & Preços</span>
+              <span>Role para navegar</span>
+              <ChevronDown className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
+            </button>
+
+            {/* Setas Sutis de Navegação */}
+            <button
+              onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
+              aria-label="Slide anterior"
+            >
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <button
-              type="button"
-              onClick={() => handleSelectTab('vagas')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
-                isDark
-                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
-              }`}
+              onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
+              aria-label="Próximo slide"
             >
-              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Agenda Completa</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSelectTab('espaco')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
-                isDark
-                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
-                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Espaço & Equipe</span>
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </section>

@@ -15,6 +15,24 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-13] — Refatoração da Home: Slide Fullscreen Responsivo e Chamadas Publicitárias Instrutivas por Seção
+- **Tipo:** `[Refactor / UX & Mobile Responsiveness]`
+- **Motivo:** Conforme solicitação do usuário ("a página home ela deve ser composta apenas pelo slide. O slide deve ser responsivo e completar toda a tela do dispositivo móvel, pois parece estar quebrado... o slide deve instruir o usuário e fazer uma chamada publicitária, por exemplo: Nossos serviços, Agende de forma rápida, Consulte os horários de forma eficiente, Veja os nossos horários, Conheça a nossa equipe"):
+  - **Exclusividade do Slide na Seção Home:** Removida a barra de acesso rápido da seção Home, deixando-a composta única e exclusivamente pelo slider hero publicitário.
+  - **Altura Responsiva Fullscreen Mobile:** Ajustada a altura do container do slide para ocupar 100% da tela visível no dispositivo móvel (`h-[calc(100vh-174px)] h-[calc(100dvh-174px)] min-h-[480px]`), descontando precisamente a barra superior do salão e o BottomNav inferior, eliminando qualquer aspecto quebrado ou cortes indesejados.
+  - **Slides Publicitários & Instrutivos:** Reconfigurado o catálogo de slides para orientar o cliente sobre cada seção da landing page com botões de ação e navegação contextual direta:
+    1. **Nossos Serviços:** Apresentação dos procedimentos e visagismo -> Botão *"VER NOSSOS SERVIÇOS"* (scroll suave para a Seção de Serviços).
+    2. **Agende de Forma Rápida:** Apresentação do agendamento 100% online sem fila -> Botão *"AGENDAR AGORA"* (abre modal imediato de agendamento).
+    3. **Consulte os Horários:** Apresentação da disponibilidade em tempo real e vagas abertas -> Botão *"VER HORÁRIOS DISPONÍVEIS"* (scroll suave para a Seção de Agenda).
+    4. **Conheça a Nossa Equipe:** Apresentação dos especialistas e infraestrutura do espaço -> Botão *"CONHECER NOSSO ESPAÇO"* (scroll suave para a Seção de Espaço & Equipe).
+  - **Dica de Navegação & Suporte a Gestos:** Adicionado indicativo flutuante sutil de rolagem (*"Role para navegar"* com ícone `ChevronDown` animado) e navegação contínua por swipe lateral em touch screen.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Refatoração da Seção Home (`#salon-section-home`), ajuste da altura viewport dinâmica (`dvh`), implementação dos 4 slides instrutivos com CTAs direcionados, suporte a rolagem suave aprimorada no `handleSelectTab`, remoção da barra secundária de botões.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, sem dependências ou variáveis mortas, tipagem estrita validada via `lint_applet` e build validado via `compile_applet`.
+
+---
+
 ### [2026-09-13] — Transformação em Landing Page do Estabelecimento (Início, Serviços, Agenda, Espaço com Equipe Integrada)
 - **Tipo:** `[Feat / UX & Architecture Refactoring]`
 - **Motivo:** Conforme ideia e aprovação do usuário ("Que tal uma landing page? 1 Inicio - Slide, 2 Serviços, 3 Agenda, 4 Espaço (dentro de espaço inseriremos a equipe, removendo o botão do nav)"):
