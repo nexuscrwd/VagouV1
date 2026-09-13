@@ -4,8 +4,8 @@ import { ScreenId } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
 export interface SalonNavContext {
-  activeTab: 'vagas' | 'servicos' | 'sobre' | 'espaco';
-  onSelectTab: (tab: 'vagas' | 'servicos' | 'sobre' | 'espaco') => void;
+  activeTab: 'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco';
+  onSelectTab: (tab: 'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco') => void;
   teamTabLabel?: string;
   spaceTabLabel?: string;
   TeamIcon?: React.ComponentType<{ className?: string }>;
@@ -35,6 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   // Se estiver navegando dentro de um estabelecimento, exibe o menu do estabelecimento
   if (salonContext) {
     const establishmentTabs = [
+      { id: 'home', label: 'Início', icon: Home },
       { id: 'vagas', label: 'Agenda', icon: Calendar },
       { id: 'servicos', label: 'Serviços', icon: salonContext.ServicesIcon || Sparkles },
       { id: 'sobre', label: salonContext.teamTabLabel || 'Equipe', icon: salonContext.TeamIcon || Users },

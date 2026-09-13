@@ -15,6 +15,25 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-13] — Criação da Seção Home do Estabelecimento, Botão Home no Menu e Slider Publicitário Fullscreen
+- **Tipo:** `[Feat / UI Refinement & Architecture]`
+- **Motivo:** Conforme solicitado pelo usuário ("crie pra mim uma seção home no perfil do estabelecimento. Crie um botão para seção com ícone home. O slide que está na seção agenda deve ser movido para esta nova seção a ser criada. Deve ser fullscreen, com resumos das principais seções, de modo mais publicitário"):
+  - Adicionada a aba `Início` (Home) como primeira opção no menu de navegação do estabelecimento (`BottomNav.tsx`) com ícone `Home`.
+  - O slider de serviços que ficava na aba Agenda foi transferido integralmente para a nova aba `Home`, tornando-se um slider publicitário fullscreen de alto impacto visual com degradês para contraste perfeito, tags de destaque, preços de chamada e botão de ação direta ("AGENDAR ESTE HORÁRIO").
+  - Adicionados os resumos publicitários das 4 principais seções na Home:
+    1. **Agenda Aberta Hoje**: Próximos horários disponíveis no dia e atalho para a agenda completa.
+    2. **Mais Pedidos (Serviços)**: Mini-vitrine dos 3 serviços mais procurados com valores e agendamento rápido.
+    3. **Especialistas da Casa (Equipe)**: Apresentação da equipe de profissionais qualificados com avaliação por estrelas.
+    4. **Estrutura & Conforto (Espaço)**: Comodidades do espaço (Wi-Fi, climatização, café/bar, estacionamento) e rota.
+  - A aba `Agenda` agora abre direta, limpa e sem distrações visuais no topo, focada puramente na ferramenta de agendamento e horários.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: `SalonNavContext` atualizado para incluir `'home'`, e adicionado o botão `Início` com ícone `Home` e ID `nav-salon-home`.
+  - `src/components/SalonProfileView.tsx`: Implementada a aba `'home'` com slider hero fullscreen publicitário e resumos das seções; removido o slider da aba `'vagas'` (Agenda); definido `'home'` como aba inicial padrão do perfil do salão.
+  - `CHANGELOG.md`: Registro do histórico de mudanças para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code aplicado, tipagem rigorosa, zero imports mortos e total aderência às diretrizes de síntese mobile.
+
+---
+
 ### [2026-09-13] — Remoção de Redundâncias no Card do Perfil (Focus Mode)
 - **Tipo:** `[UI Refinement & Focus Mode]`
 - **Motivo:** Conforme solicitado pelo usuário ("Remover redundancia" nos elementos selecionados: selo de status "Cliente VIP" e fragmento de endereço/cidade), removeu-se os elementos repetitivos do card de identificação do topo da gaveta de perfil, eliminando duplicações em relação ao bloco detalhado de informações do perfil privado logo abaixo.

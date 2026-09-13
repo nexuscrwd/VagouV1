@@ -6,7 +6,8 @@ import {
   Bell, Users, UserCheck, Store,
   ChevronLeft, ChevronRight, ArrowRight,
   Share2, ShieldCheck, Check, MessageCircle,
-  Scissors, Hand, Smile, Eye, Sparkles
+  Scissors, Hand, Smile, Eye, Sparkles,
+  Home, Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
@@ -51,7 +52,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   onNavigateToAgenda,
 }) => {
   const { isDark } = useTheme();
-  const [activeTab, setActiveTab] = useState<'vagas' | 'servicos' | 'sobre' | 'espaco'>('vagas');
+  const [activeTab, setActiveTab] = useState<'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco'>('home');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
@@ -898,19 +899,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       {/* 5. CONTEÚDO DAS ABAS (Com Transição Suave via Motion) */}
       <div className="pt-0">
         <AnimatePresence mode="wait">
-          {/* ABA: AGENDA / VAGAS COM O SLIDER NO TOPO + HORÁRIOS HOJE + CADEIRAS AO VIVO + PRÓXIMOS 4 HORÁRIOS */}
-          {activeTab === 'vagas' && (
+          {/* ABA: HOME / INÍCIO DO ESTABELECIMENTO (SLIDER FULLSCREEN PUBLICITÁRIO + RESUMOS DAS SEÇÕES) */}
+          {activeTab === 'home' && (
             <motion.div
-              key="aba-vagas"
+              key="aba-home"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3"
+              className="space-y-4 pb-8"
             >
-              {/* 3. SLIDER / CARROSSEL DA PÁGINA INICIAL */}
-              <div className={`relative w-full h-[210px] sm:h-[240px] overflow-hidden shadow-md select-none touch-pan-y ${
-                isDark ? 'bg-slate-900 border-y border-slate-800' : 'bg-slate-200 border-y border-slate-300'
+              {/* 1. SLIDER / CARROSSEL FULLSCREEN PUBLICITÁRIO HERO */}
+              <div className={`relative w-full h-[58vh] min-h-[390px] max-h-[500px] overflow-hidden shadow-xl select-none touch-pan-y ${
+                isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
               }`}>
                 <AnimatePresence mode="wait">
                   {portfolioSlides.map((slide, idx) => {
@@ -923,10 +924,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         dragElastic={0.2}
                         onDragEnd={(_, info) => {
                           if (info.offset.x < -40 || info.velocity.x < -300) {
-                            // Swipe para a esquerda -> Próximo slide
                             setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length);
                           } else if (info.offset.x > 40 || info.velocity.x > 300) {
-                            // Swipe para a direita -> Slide anterior
                             setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length);
                           }
                         }}
@@ -936,7 +935,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         transition={{ duration: 0.35, ease: 'easeOut' }}
                         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
                       >
-                        {/* Imagem de Fundo do Serviço Ampliada */}
+                        {/* Imagem de Fundo Fullscreen */}
                         <img
                           src={slide.image}
                           alt={slide.title}
@@ -944,33 +943,52 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           referrerPolicy="no-referrer"
                         />
 
-                        {/* Degradê Linear Lateral e Inferior para legibilidade perfeita */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                        {/* Degradês Publicitários: Escurecimento Elegante para Legibilidade Perfeita */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/65 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-                        {/* Conteúdo à Esquerda: Categoria + Título + Chamada Publicitária + Botão Agendar */}
-                        <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between z-10 max-w-[80%] sm:max-w-[70%]">
-                          <div>
-                            <span className="inline-block px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider mb-1.5 backdrop-blur-xs">
+                        {/* Conteúdo Publicitário */}
+                        <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between z-10 max-w-[85%] sm:max-w-[70%]">
+                          {/* Topo do Slide: Tag de Categoria & Selo Publicitário */}
+                          <div className="flex items-center gap-2 pt-1">
+                            <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
                               {slide.tag}
                             </span>
-                            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight line-clamp-2 drop-shadow-xs font-['Poppins']">
-                              {slide.title}
-                            </h3>
-                            <p className="text-xs text-slate-300 font-normal leading-relaxed line-clamp-2 mt-1 drop-shadow-xs">
-                              {slide.tagline}
-                            </p>
+                            <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
+                              DESTAQUE
+                            </span>
                           </div>
 
-                          {/* Botão Sutil "Agendar" */}
-                          <div>
-                            <button
-                              onClick={() => handleOpenBooking(slide.service)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white drop-shadow-xs text-xs font-bold transition-all shadow-md cursor-pointer"
-                            >
-                              <span>Agendar Serviço</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </button>
+                          {/* Centro / Base do Slide: Título + Tagline + Preço + Botão CTA */}
+                          <div className="space-y-3 pb-1">
+                            <div>
+                              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
+                                {slide.title}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-slate-200/90 font-normal leading-relaxed line-clamp-2 mt-1.5 drop-shadow-xs">
+                                {slide.tagline}
+                              </p>
+                            </div>
+
+                            {/* Preço de Chamada Publicitária */}
+                            <div className="flex items-center gap-2">
+                              <span className="text-[11px] text-slate-300 font-medium uppercase tracking-wide">A partir de</span>
+                              <span className="text-base sm:text-lg font-black text-[#20C933] drop-shadow-md">
+                                R$ {slide.service.price}
+                              </span>
+                            </div>
+
+                            {/* Botão Chamativo de Agendamento Imediato */}
+                            <div>
+                              <button
+                                onClick={() => handleOpenBooking(slide.service)}
+                                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[5px] bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.99] text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer"
+                              >
+                                <Sparkles className="w-4 h-4 text-white drop-shadow-xs" />
+                                <span>AGENDAR ESTE HORÁRIO</span>
+                                <ArrowRight className="w-3.5 h-3.5 text-white" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </motion.div>
@@ -978,15 +996,15 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   })}
                 </AnimatePresence>
 
-                {/* Controles do Slide: Indicadores de Bolinhas no Canto Inferior Direito */}
-                <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-800/80 shadow-md">
+                {/* Controles do Slide: Indicadores de Paginação */}
+                <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800 shadow-md">
                   {portfolioSlides.map((_, dotIdx) => (
                     <button
                       key={dotIdx}
                       onClick={() => setActiveSlideIndex(dotIdx)}
                       className={`transition-all rounded-full cursor-pointer ${
                         dotIdx === activeSlideIndex
-                          ? 'w-4 h-1.5 bg-emerald-400'
+                          ? 'w-5 h-1.5 bg-[#20C933]'
                           : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
                       }`}
                       aria-label={`Slide ${dotIdx + 1}`}
@@ -997,20 +1015,253 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 {/* Setas Sutis de Navegação */}
                 <button
                   onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
                   aria-label="Slide anterior"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-slate-950/50 hover:bg-slate-950/90 text-white/80 hover:text-white flex items-center justify-center transition border border-white/10 cursor-pointer backdrop-blur-xs"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
                   aria-label="Próximo slide"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
 
+              {/* 2. RESUMOS DAS PRINCIPAIS SEÇÕES (MODO PUBLICITÁRIO E SÍNTESE MOBILE) */}
+              <div className="px-3.5 space-y-4">
+                {/* RESUMO A: AGENDA & HORÁRIOS ABERTOS HOJE */}
+                <div className={`p-3.5 rounded-2xl border transition-all ${
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+                }`}>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <Calendar className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          Agenda Aberta Hoje
+                        </h4>
+                        <p className="text-[10px] text-slate-400">Vagas com confirmação imediata</p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold">
+                      HOJE
+                    </span>
+                  </div>
+
+                  {/* Horários Rápidos */}
+                  <div className="grid grid-cols-4 gap-1.5 py-1 mb-2.5">
+                    {upcomingOpenSlots.map((slot) => (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        onClick={() => {
+                          const matchedSrv = catalogServices[0];
+                          handleOpenBooking(matchedSrv, true, slot.timeSlot, todayIso);
+                        }}
+                        className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 ${
+                          isDark
+                            ? 'bg-slate-950 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
+                        }`}
+                      >
+                        <Clock className="w-3 h-3 text-[#20C933]" />
+                        <span>{slot.timeSlot}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Botão de Atalho para a Aba Agenda */}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('vagas')}
+                    className={`w-full py-2.5 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99] ${
+                      isDark
+                        ? 'bg-slate-950 hover:bg-slate-800 border-slate-800 text-emerald-400 hover:text-emerald-300'
+                        : 'bg-emerald-50/60 hover:bg-emerald-100/70 border-emerald-200 text-emerald-700'
+                    }`}
+                  >
+                    <span>Ver Agenda Completa & Calendário</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* RESUMO B: SERVIÇOS MAIS PEDIDOS */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                      <h4 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] ${
+                        isDark ? 'text-white' : 'text-slate-900'
+                      }`}>
+                        Mais Pedidos
+                      </h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('servicos')}
+                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
+                    >
+                      <span>Ver todos ({catalogServices.length})</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Cards dos 3 Serviços Destaque */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {catalogServices.slice(0, 3).map((srv) => (
+                      <div
+                        key={srv.id}
+                        onClick={() => handleOpenBooking(srv)}
+                        className={`rounded-xl overflow-hidden border transition-all cursor-pointer group flex flex-col justify-between ${
+                          isDark
+                            ? 'bg-slate-900 border-slate-800 hover:border-emerald-500/50'
+                            : 'bg-white border-slate-200 hover:border-emerald-500/50 shadow-xs'
+                        }`}
+                      >
+                        <div className="relative h-20 sm:h-24 w-full overflow-hidden">
+                          <img
+                            src={srv.image}
+                            alt={srv.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-bold text-emerald-400 border border-white/10">
+                            R${srv.price}
+                          </span>
+                        </div>
+                        <div className="p-2 min-w-0">
+                          <h5 className={`text-[11px] font-bold truncate leading-tight ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}>
+                            {srv.title}
+                          </h5>
+                          <p className="text-[9px] text-slate-400 truncate mt-0.5">{srv.duration}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* RESUMO C: EQUIPE & ESPECIALISTAS */}
+                <div className={`p-3.5 rounded-2xl border transition-all ${
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+                }`}>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <Users className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          {teamTabLabel} de Especialistas
+                        </h4>
+                        <p className="text-[10px] text-slate-400">Profissionais prontos para atender você</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('sobre')}
+                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
+                    >
+                      <span>Ver equipe</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Profissionais em Linha */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {salonInfo.professionals.map((prof, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setActiveTab('sobre')}
+                        className={`p-2 rounded-xl border flex flex-col items-center text-center cursor-pointer transition ${
+                          isDark
+                            ? 'bg-slate-950 border-slate-800/80 hover:border-emerald-500/40'
+                            : 'bg-slate-50 border-slate-200 hover:border-emerald-500/40'
+                        }`}
+                      >
+                        <img
+                          src={prof.avatar}
+                          alt={prof.name}
+                          className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/40 mb-1"
+                          referrerPolicy="no-referrer"
+                        />
+                        <span className={`text-[11px] font-bold truncate w-full ${
+                          isDark ? 'text-white' : 'text-slate-900'
+                        }`}>
+                          {prof.name.split(' ')[0]}
+                        </span>
+                        <span className="text-[9px] text-emerald-400 flex items-center gap-0.5 font-bold">
+                          <Star className="w-2.5 h-2.5 fill-emerald-400" />
+                          {prof.rating}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* RESUMO D: ESPAÇO & ESTRUTURA */}
+                <div className={`p-3.5 rounded-2xl border transition-all ${
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <Store className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          {spaceTabLabel} & Conforto
+                        </h4>
+                        <p className="text-[10px] text-slate-400">{salonInfo.address} • {salonInfo.distance}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('espaco')}
+                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
+                    >
+                      <span>Detalhes</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Comodidades em Chips Compactos */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    {salonInfo.amenities.map((amenity, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex items-center gap-1.5 p-2 rounded-lg border text-[11px] ${
+                          isDark
+                            ? 'bg-slate-950 border-slate-800 text-slate-300'
+                            : 'bg-slate-50 border-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <amenity.icon className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <span className="truncate">{amenity.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ABA: AGENDA / VAGAS COM O CALENDÁRIO MENSAL, CADEIRAS AO VIVO E HORÁRIOS */}
+          {activeTab === 'vagas' && (
+            <motion.div
+              key="aba-vagas"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="space-y-3 pt-2 pb-6"
+            >
               {/* Ferramenta Agenda Completa do Estabelecimento com Calendário Mensal e Horários */}
               {renderAgendaTool()}
             </motion.div>
