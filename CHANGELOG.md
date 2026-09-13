@@ -15,6 +15,51 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-13] — Atualização do Ícone de Serviços para Sparkles (Focus Mode)
+- **Tipo:** `[UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("mude este icne para algo mais geral"), o ícone específico de tesoura (`Scissors`) da aba "Serviços" no menu de navegação do estabelecimento (`BottomNav`) foi substituído por `Sparkles`, ícone universalmente representativo de tratamentos, beleza, bem-estar e catálogo de serviços em múltiplos segmentos.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Substituído `Scissors` por `Sparkles` no menu de estabelecimento e adicionado suporte a `ServicesIcon` opcional no contexto.
+- **Resumo Técnico:** Clean code aplicado, imports obsoletos removidos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Remoção do Filtro de Turnos na Tabela de Horários (Focus Mode)
+- **Tipo:** `[UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("Remover, pois os turnos não é necessário, deve ser apresentado todos os horários em geral"), o filtro de turnos (todos / manhã / tarde / noite) foi removido da seção de tabela de horários, exibindo diretamente todos os horários do dia selecionado em geral.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o contêiner de botões de turno, o estado `timePeriodFilter` e o memo `filteredAgendaSlots`, renderizando `agendaSlots` integralmente.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis ou funções mortas. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Remoção do Ícone de Status do Título de Cadeiras em Atendimento (Focus Mode)
+- **Tipo:** `[UI Refinement & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("remover") através do Focus Mode mirando no elemento `svg` dentro do `h2` ("Cadeiras em Atendimento"), o ícone animado (`Activity`) foi removido do título da seção, mantendo a tipografia limpa e sem poluição visual.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Removido o elemento `<Activity />` do cabeçalho `h2` e seu import não utilizado de `lucide-react`.
+- **Resumo Técnico:** Clean code rigoroso aplicado sem resíduos. Validação bem-sucedida via `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Ajuste de Altura do BottomNav para 70px (Focus Mode)
+- **Tipo:** `[UI Styling & Focus Mode]`
+- **Motivo:** Aplicação direta do CSS selecionado via Focus Mode para a barra de navegação inferior (`BottomNav`): `height: 70px` (`h-[70px]`), garantindo a altura exata definida pelo usuário.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Atualizada classe de altura de `h-[60px]` para `h-[70px]` em ambas as variantes do menu.
+- **Resumo Técnico:** Clean code aplicado, sem variáveis mortas. Validação com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-13] — Aumento de Dimensão e Espaçamento da Barra Inferior (BottomNav)
+- **Tipo:** `[UI Styling & Focus Mode]`
+- **Motivo:** Conforme solicitado pelo usuário ("Aumente em mais 10% esse nav para que s botoes tenham mais margens e espaçamento"), a altura da barra de navegação (`BottomNav`) foi aumentada em 10% (de 54px para 60px), acompanhada de padding equilibrado (`px-3 py-1`) e mais margens e espaçamento interno nos botões de navegação (`py-1 px-2.5`, `gap-1`), proporcionando mais conforto e toque tátil responsivo.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Atualizada altura (`h-[60px]`), padding da barra e margens/gaps dos botões de navegação.
+- **Resumo Técnico:** Limpeza pós-obra executada, sem variáveis ou imports mortos. Validação com `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-12] — Ajuste de Espaçamento Vertical na Grade de Horários (Focus Mode)
 - **Tipo:** `[UI Styling & Focus Mode]`
 - **Motivo:** Aplicação direta do CSS selecionado via Focus Mode para a grade de slots de horários da ferramenta de agenda: `padding-top: 5px; padding-bottom: 5px;` (`py-[5px]`).

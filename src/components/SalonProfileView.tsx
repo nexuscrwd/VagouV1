@@ -4,7 +4,7 @@ import {
   Heart, Zap, CheckCircle2, 
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Users, UserCheck, Store,
-  Activity, ChevronLeft, ChevronRight, ArrowRight,
+  ChevronLeft, ChevronRight, ArrowRight,
   Share2, ShieldCheck, Check, MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -68,7 +68,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   } | null>(null);
 
   // Sincronização da tabela de horários com o modal
-  const [timePeriodFilter, setTimePeriodFilter] = useState<'todos' | 'manha' | 'tarde' | 'noite'>('todos');
   const [selectedTimeSlotForBooking, setSelectedTimeSlotForBooking] = useState<string | null>(null);
 
   // Se o usuário veio de um clique direto em "Agendar" no feed, abrir automaticamente o fluxo do estabelecimento
@@ -186,11 +185,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const agendaSlots = useMemo(() => {
     return getAvailableSlotsForDate(selectedCalendarDateIso, 'any');
   }, [selectedCalendarDateIso]);
-
-  const filteredAgendaSlots = useMemo(() => {
-    if (timePeriodFilter === 'todos') return agendaSlots;
-    return agendaSlots.filter((s) => s.period === timePeriodFilter);
-  }, [agendaSlots, timePeriodFilter]);
 
   // Formatação resumida da data selecionada para o cabeçalho
   const selectedDateFormattedLabel = useMemo(() => {
@@ -526,8 +520,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className={`text-xs font-bold flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+          <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
             <span>Cadeiras em Atendimento</span>
           </h2>
         </div>
@@ -686,33 +679,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
             <span>Horários • {selectedDateFormattedLabel}</span>
           </h4>
-          
-          {/* Filtro de Turnos */}
-          <div className={`flex items-center gap-0.5 p-0.5 rounded-lg border flex-shrink-0 ${
-            isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
-          }`}>
-            {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
-              <button
-                key={period}
-                type="button"
-                onClick={() => setTimePeriodFilter(period)}
-                className={`px-1.5 py-0.5 rounded text-[9px] font-bold capitalize transition cursor-pointer ${
-                  timePeriodFilter === period
-                    ? 'bg-[#20C933] text-white font-bold drop-shadow-xs'
-                    : isDark
-                    ? 'text-slate-400 hover:text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
         <div className="grid grid-cols-4 gap-1.5 py-[5px]">
-          {filteredAgendaSlots.map((slot) => {
+          {agendaSlots.map((slot) => {
             const isAvailable = slot.available;
 
             return (

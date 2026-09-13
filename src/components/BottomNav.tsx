@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, MapPin, Calendar, Search, Zap, Scissors, Users, Store } from 'lucide-react';
+import { Home, MapPin, Calendar, Search, Zap, Sparkles, Users, Store } from 'lucide-react';
 import { ScreenId } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
@@ -10,6 +10,7 @@ export interface SalonNavContext {
   spaceTabLabel?: string;
   TeamIcon?: React.ComponentType<{ className?: string }>;
   SpaceIcon?: React.ComponentType<{ className?: string }>;
+  ServicesIcon?: React.ComponentType<{ className?: string }>;
 }
 
 interface BottomNavProps {
@@ -35,17 +36,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   if (salonContext) {
     const establishmentTabs = [
       { id: 'vagas', label: 'Agenda', icon: Calendar },
-      { id: 'servicos', label: 'Serviços', icon: Scissors },
+      { id: 'servicos', label: 'Serviços', icon: salonContext.ServicesIcon || Sparkles },
       { id: 'sobre', label: salonContext.teamTabLabel || 'Equipe', icon: salonContext.TeamIcon || Users },
       { id: 'espaco', label: salonContext.spaceTabLabel || 'Espaço', icon: salonContext.SpaceIcon || Store },
     ];
 
     return (
-      <nav className={`flex-shrink-0 w-full h-[54px] ${
+      <nav className={`flex-shrink-0 w-full h-[70px] ${
         isDark
           ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
           : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'
-      } backdrop-blur-md border-t pl-[9px] pr-3 py-0 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
+      } backdrop-blur-md border-t px-3 py-1 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
         {establishmentTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = salonContext.activeTab === tab.id;
@@ -55,7 +56,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               key={tab.id}
               id={`nav-salon-${tab.id}`}
               onClick={() => salonContext.onSelectTab(tab.id as any)}
-              className="flex flex-col items-center justify-center gap-0.5 pt-[7px] pb-1 px-3 transition active:scale-95 cursor-pointer group"
+              className="flex flex-col items-center justify-center gap-1 py-1 px-3 transition active:scale-95 cursor-pointer group"
             >
               <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
                 isActive
@@ -107,11 +108,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   };
 
   return (
-    <nav className={`flex-shrink-0 w-full h-[54px] ${
+    <nav className={`flex-shrink-0 w-full h-[70px] ${
       isDark
         ? 'bg-[#151A1E]/95 border-slate-800/90 shadow-[0_-4px_16px_rgba(0,0,0,0.5)]'
         : 'bg-white/95 border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]'
-    } backdrop-blur-md border-t pl-[9px] pr-3 py-0 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
+    } backdrop-blur-md border-t px-3 py-1 my-0 mx-0 flex items-center justify-around z-30 transition-colors`}>
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isFlash = tab.isFlash;
@@ -129,7 +130,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             key={tab.id}
             id={isFlash ? "nav-flash-btn" : `nav-${tab.id}`}
             onClick={() => handleTabClick(tab.id, tab.isAction, tab.isFlash)}
-            className="flex flex-col items-center justify-center gap-0.5 pt-[7px] pb-1 px-2 transition active:scale-95 cursor-pointer group"
+            className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 transition active:scale-95 cursor-pointer group"
           >
             <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
               isActive
