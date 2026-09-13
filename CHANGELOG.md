@@ -15,6 +15,24 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-13] — Transformação em Landing Page do Estabelecimento (Início, Serviços, Agenda, Espaço com Equipe Integrada)
+- **Tipo:** `[Feat / UX & Architecture Refactoring]`
+- **Motivo:** Conforme ideia e aprovação do usuário ("Que tal uma landing page? 1 Inicio - Slide, 2 Serviços, 3 Agenda, 4 Espaço (dentro de espaço inseriremos a equipe, removendo o botão do nav)"):
+  - Reorganizado o perfil do estabelecimento para o modelo **Landing Page** contínua com rolagem fluida e seções sequenciais:
+    1. **1. Início**: Slider hero publicitário fullscreen com botões de acesso rápido às seções (`#salon-section-home`).
+    2. **2. Serviços**: Catálogo completo de procedimentos com grid estilo Pinterest masonry em 2 colunas com proporção dinâmica, valores e agendamento direto (`#salon-section-servicos`).
+    3. **3. Agenda**: Ferramenta completa de agenda com calendário mensal de até 60 dias, cadeiras ao vivo e horários em tempo real (`#salon-section-agenda`).
+    4. **4. Espaço**: Estrutura física, localização, horários de funcionamento, comodidades e a **Equipe de Especialistas integrada diretamente dentro de Espaço**, finalizando com o botão de rota do Google Maps (`#salon-section-espaco`).
+  - Atualizada a barra de navegação inferior (`BottomNav`) para 4 botões objetivos (`Início`, `Serviços`, `Agenda`, `Espaço`), removendo o botão isolado de Equipe.
+  - Sincronização bidirecional em tempo real: o `IntersectionObserver` detecta a seção visível na rolagem e atualiza o botão ativo no `BottomNav`, enquanto o clique nos botões aciona rolagem suave (`scrollIntoView`) direto para a seção escolhida.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`: Contexto `SalonNavContext` atualizado para 4 seções (`home`, `servicos`, `vagas`, `espaco`), remoção de `teamTabLabel`.
+  - `src/components/SalonProfileView.tsx`: Estruturação da página como landing page contínua (seções 1 a 4 sequenciais), integração da Equipe dentro da seção Espaço, remoção do chaveamento estanque de abas, observador de interseção para sincronização da rolagem, limpeza completa de imports e variáveis zumbis.
+  - `CHANGELOG.md`: Registro detalhado da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, zero código morto, linter e build de produção 100% aprovados.
+
+---
+
 ### [2026-09-13] — Criação da Seção Home do Estabelecimento, Botão Home no Menu e Slider Publicitário Fullscreen
 - **Tipo:** `[Feat / UI Refinement & Architecture]`
 - **Motivo:** Conforme solicitado pelo usuário ("crie pra mim uma seção home no perfil do estabelecimento. Crie um botão para seção com ícone home. O slide que está na seção agenda deve ser movido para esta nova seção a ser criada. Deve ser fullscreen, com resumos das principais seções, de modo mais publicitário"):

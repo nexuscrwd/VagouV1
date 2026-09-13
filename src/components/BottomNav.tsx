@@ -1,14 +1,12 @@
 import React from 'react';
-import { Home, MapPin, Calendar, Search, Zap, Sparkles, Users, Store } from 'lucide-react';
+import { Home, MapPin, Calendar, Search, Zap, Sparkles, Store } from 'lucide-react';
 import { ScreenId } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
 export interface SalonNavContext {
-  activeTab: 'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco';
-  onSelectTab: (tab: 'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco') => void;
-  teamTabLabel?: string;
+  activeTab: 'home' | 'servicos' | 'vagas' | 'espaco';
+  onSelectTab: (tab: 'home' | 'servicos' | 'vagas' | 'espaco') => void;
   spaceTabLabel?: string;
-  TeamIcon?: React.ComponentType<{ className?: string }>;
   SpaceIcon?: React.ComponentType<{ className?: string }>;
   ServicesIcon?: React.ComponentType<{ className?: string }>;
 }
@@ -32,13 +30,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 }) => {
   const { isDark } = useTheme();
 
-  // Se estiver navegando dentro de um estabelecimento, exibe o menu do estabelecimento
+  // Se estiver navegando dentro de um estabelecimento, exibe o menu do estabelecimento (4 abas: Início, Serviços, Agenda, Espaço)
   if (salonContext) {
     const establishmentTabs = [
       { id: 'home', label: 'Início', icon: Home },
-      { id: 'vagas', label: 'Agenda', icon: Calendar },
       { id: 'servicos', label: 'Serviços', icon: salonContext.ServicesIcon || Sparkles },
-      { id: 'sobre', label: salonContext.teamTabLabel || 'Equipe', icon: salonContext.TeamIcon || Users },
+      { id: 'vagas', label: 'Agenda', icon: Calendar },
       { id: 'espaco', label: salonContext.spaceTabLabel || 'Espaço', icon: salonContext.SpaceIcon || Store },
     ];
 

@@ -3,11 +3,11 @@ import {
   ArrowLeft, MapPin, Clock, 
   Heart, Zap, CheckCircle2, 
   Calendar, Coffee, Wifi, Car, Wind,
-  Bell, Users, UserCheck, Store,
+  Bell, Users, Store,
   ChevronLeft, ChevronRight, ArrowRight,
   Share2, ShieldCheck, Check, MessageCircle,
   Scissors, Hand, Smile, Eye, Sparkles,
-  Home, Star
+  Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
@@ -52,7 +52,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   onNavigateToAgenda,
 }) => {
   const { isDark } = useTheme();
-  const [activeTab, setActiveTab] = useState<'home' | 'vagas' | 'servicos' | 'sobre' | 'espaco'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'servicos' | 'vagas' | 'espaco'>('home');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
@@ -246,8 +246,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
   // Dinâmica: Equipe vs Perfil / Espaço vs Atendimento
   const hasMultipleProfessionals = salonInfo.professionals.length > 1;
-  const teamTabLabel = hasMultipleProfessionals ? 'Equipe' : 'Perfil';
-  const TeamIcon = hasMultipleProfessionals ? Users : UserCheck;
 
   const spaceTabLabel = salonInfo.isHomeCare ? 'Atendimento' : 'Espaço';
   const SpaceIcon = salonInfo.isHomeCare ? Car : Store;
@@ -337,15 +335,64 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return Sparkles;
   }, [primaryOffer, salonName, salonOffers, offers]);
 
-  // Registrar context do menu de navegação do rodapé
+  // Navegação suave entre seções da landing page e sincronização do activeTab
+  const handleSelectTab = (tab: 'home' | 'servicos' | 'vagas' | 'espaco') => {
+    setActiveTab(tab);
+    let targetId = 'salon-section-home';
+    if (tab === 'servicos') targetId = 'salon-section-servicos';
+    else if (tab === 'vagas') targetId = 'salon-section-agenda';
+    else if (tab === 'espaco') targetId = 'salon-section-espaco';
+
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Observador de intersecção para sincronizar a aba ativa do menu inferior conforme o cliente rola a tela
+  useEffect(() => {
+    const sectionIds: { id: 'home' | 'servicos' | 'vagas' | 'espaco'; elementId: string }[] = [
+      { id: 'home', elementId: 'salon-section-home' },
+      { id: 'servicos', elementId: 'salon-section-servicos' },
+      { id: 'vagas', elementId: 'salon-section-agenda' },
+      { id: 'espaco', elementId: 'salon-section-espaco' },
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const matched = sectionIds.find((s) => s.elementId === entry.target.id);
+            if (matched) {
+              setActiveTab(matched.id);
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '-20% 0px -40% 0px',
+        threshold: 0.15,
+      }
+    );
+
+    sectionIds.forEach(({ elementId }) => {
+      const el = document.getElementById(elementId);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Registrar context do menu de navegação do rodapé (4 abas: Início, Serviços, Agenda, Espaço)
   useEffect(() => {
     if (onRegisterBottomNav) {
       onRegisterBottomNav({
         activeTab,
-        onSelectTab: (tab) => setActiveTab(tab),
-        teamTabLabel,
+        onSelectTab: (tab) => handleSelectTab(tab),
         spaceTabLabel,
-        TeamIcon,
         SpaceIcon,
         ServicesIcon,
       });
@@ -355,7 +402,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         onRegisterBottomNav(null);
       }
     };
-  }, [activeTab, teamTabLabel, spaceTabLabel, TeamIcon, SpaceIcon, ServicesIcon, onRegisterBottomNav]);
+  }, [activeTab, spaceTabLabel, SpaceIcon, ServicesIcon, onRegisterBottomNav]);
 
   // Cadeiras em Atendimento Ao Vivo no Salão
   const activeChairsData = [
@@ -380,46 +427,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       totalMinutes: 35,
       endTime: '14:10',
       isCurrentUser: false,
-    },
-  ];
-
-  // Próximos 4 horários futuros em aberto no dia
-  const upcomingOpenSlots = [
-    {
-      id: 'slot-1',
-      timeSlot: '14:00',
-      serviceTitle: 'Corte Degradê / Fade Moderno',
-      professionalName: 'Carlos',
-      price: 55,
-      duration: '40 min',
-      category: 'Cabelo',
-    },
-    {
-      id: 'slot-2',
-      timeSlot: '14:45',
-      serviceTitle: 'Barba Terapia Premium',
-      professionalName: 'Mateus',
-      price: 45,
-      duration: '35 min',
-      category: 'Barba',
-    },
-    {
-      id: 'slot-3',
-      timeSlot: '15:30',
-      serviceTitle: 'Combo Corte + Barba Completo',
-      professionalName: 'Carlos',
-      price: 90,
-      duration: '60 min',
-      category: 'Combos',
-    },
-    {
-      id: 'slot-4',
-      timeSlot: '16:15',
-      serviceTitle: 'Hidratação & Selagem de Fios',
-      professionalName: 'Juliana',
-      price: 75,
-      duration: '45 min',
-      category: 'Tratamentos',
     },
   ];
 
@@ -896,20 +903,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </div>
 
-      {/* 5. CONTEÚDO DAS ABAS (Com Transição Suave via Motion) */}
-      <div className="pt-0">
-        <AnimatePresence mode="wait">
-          {/* ABA: HOME / INÍCIO DO ESTABELECIMENTO (SLIDER FULLSCREEN PUBLICITÁRIO + RESUMOS DAS SEÇÕES) */}
-          {activeTab === 'home' && (
-            <motion.div
-              key="aba-home"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-4 pb-8"
-            >
-              {/* 1. SLIDER / CARROSSEL FULLSCREEN PUBLICITÁRIO HERO */}
+      {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
+      <div className="pt-0 space-y-6 pb-12">
+        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO FULLSCREEN PUBLICITÁRIO */}
+        <section id="salon-section-home" className="space-y-3 scroll-mt-14">
+          {/* 1. SLIDER / CARROSSEL FULLSCREEN PUBLICITÁRIO HERO */}
               <div className={`relative w-full h-[58vh] min-h-[390px] max-h-[500px] overflow-hidden shadow-xl select-none touch-pan-y ${
                 isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
               }`}>
@@ -1029,431 +1027,240 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 </button>
               </div>
 
-              {/* 2. RESUMOS DAS PRINCIPAIS SEÇÕES (MODO PUBLICITÁRIO E SÍNTESE MOBILE) */}
-              <div className="px-3.5 space-y-4">
-                {/* RESUMO A: AGENDA & HORÁRIOS ABERTOS HOJE */}
-                <div className={`p-3.5 rounded-2xl border transition-all ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
-                }`}>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                        <Calendar className="w-3.5 h-3.5" />
-                      </div>
-                      <div>
-                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                          Agenda Aberta Hoje
-                        </h4>
-                        <p className="text-[10px] text-slate-400">Vagas com confirmação imediata</p>
-                      </div>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold">
-                      HOJE
-                    </span>
-                  </div>
+          {/* Barra de Acesso Rápido às Seções da Landing Page */}
+          <div className="px-3.5 pt-1 pb-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <button
+              type="button"
+              onClick={() => handleSelectTab('servicos')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
+              }`}
+            >
+              <Scissors className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Serviços & Preços</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectTab('vagas')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Agenda Completa</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectTab('espaco')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 shrink-0 active:scale-95 cursor-pointer ${
+                isDark
+                  ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200 hover:border-emerald-500'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 shadow-2xs'
+              }`}
+            >
+              <Store className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Espaço & Equipe</span>
+            </button>
+          </div>
+        </section>
 
-                  {/* Horários Rápidos */}
-                  <div className="grid grid-cols-4 gap-1.5 py-1 mb-2.5">
-                    {upcomingOpenSlots.map((slot) => (
-                      <button
-                        key={slot.id}
-                        type="button"
-                        onClick={() => {
-                          const matchedSrv = catalogServices[0];
-                          handleOpenBooking(matchedSrv, true, slot.timeSlot, todayIso);
-                        }}
-                        className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer active:scale-95 ${
-                          isDark
-                            ? 'bg-slate-950 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                            : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700'
-                        }`}
-                      >
-                        <Clock className="w-3 h-3 text-[#20C933]" />
-                        <span>{slot.timeSlot}</span>
-                      </button>
-                    ))}
-                  </div>
+        {/* 2. SEÇÃO: SERVIÇOS -> GRID ESTILO PINTEREST MASONRY */}
+        <section id="salon-section-servicos" className="space-y-3 pt-2 scroll-mt-14">
+          <div className="space-y-2.5">
+            {/* Header da Seção de Serviços */}
+            <div className="px-4 py-1 flex items-center justify-between">
+              <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <Scissors className="w-4 h-4 text-emerald-500" />
+                <span>Serviços & Procedimentos</span>
+              </h2>
+              <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {catalogServices.length} disponíveis
+              </span>
+            </div>
 
-                  {/* Botão de Atalho para a Aba Agenda */}
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('vagas')}
-                    className={`w-full py-2.5 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99] ${
+            {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas) */}
+            <div className="px-4">
+              <div className="columns-2 gap-3.5 [column-fill:_balance]">
+                {catalogServices.map((srv) => (
+                  <div
+                    key={srv.id}
+                    onClick={() => handleOpenBooking(srv)}
+                    className={`break-inside-avoid mb-3.5 relative rounded-xl overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
                       isDark
-                        ? 'bg-slate-950 hover:bg-slate-800 border-slate-800 text-emerald-400 hover:text-emerald-300'
-                        : 'bg-emerald-50/60 hover:bg-emerald-100/70 border-emerald-200 text-emerald-700'
+                        ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
+                        : 'bg-white border-slate-200 hover:border-emerald-500/60'
                     }`}
+                    title={`${srv.title} - R$ ${srv.price}`}
                   >
-                    <span>Ver Agenda Completa & Calendário</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    {/* Contêiner de Imagem com Proporção Pinterest Dinâmica */}
+                    <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
+                      <img
+                        src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
+                        alt={srv.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
+                      />
 
-                {/* RESUMO B: SERVIÇOS MAIS PEDIDOS */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between px-0.5">
-                    <div className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                      <h4 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] ${
-                        isDark ? 'text-white' : 'text-slate-900'
-                      }`}>
-                        Mais Pedidos
-                      </h4>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('servicos')}
-                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
-                    >
-                      <span>Ver todos ({catalogServices.length})</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
+                      {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
+                      <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
 
-                  {/* Cards dos 3 Serviços Destaque */}
-                  <div className="grid grid-cols-3 gap-2">
-                    {catalogServices.slice(0, 3).map((srv) => (
-                      <div
-                        key={srv.id}
-                        onClick={() => handleOpenBooking(srv)}
-                        className={`rounded-xl overflow-hidden border transition-all cursor-pointer group flex flex-col justify-between ${
-                          isDark
-                            ? 'bg-slate-900 border-slate-800 hover:border-emerald-500/50'
-                            : 'bg-white border-slate-200 hover:border-emerald-500/50 shadow-xs'
-                        }`}
-                      >
-                        <div className="relative h-20 sm:h-24 w-full overflow-hidden">
-                          <img
-                            src={srv.image}
-                            alt={srv.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                          <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-bold text-emerald-400 border border-white/10">
+                      {/* Badge de Categoria no Topo Esquerdo */}
+                      <div className="absolute top-2.5 left-2.5 z-10">
+                        <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
+                          {srv.category}
+                        </span>
+                      </div>
+
+                      {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 flex flex-col justify-end">
+                        <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
+                          {srv.title}
+                        </h3>
+                        
+                        <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/15">
+                          <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
                             R${srv.price}
                           </span>
+                          <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5 text-slate-400" />
+                            {srv.duration}
+                          </span>
                         </div>
-                        <div className="p-2 min-w-0">
-                          <h5 className={`text-[11px] font-bold truncate leading-tight ${
-                            isDark ? 'text-white' : 'text-slate-900'
-                          }`}>
-                            {srv.title}
-                          </h5>
-                          <p className="text-[9px] text-slate-400 truncate mt-0.5">{srv.duration}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* RESUMO C: EQUIPE & ESPECIALISTAS */}
-                <div className={`p-3.5 rounded-2xl border transition-all ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
-                }`}>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                        <Users className="w-3.5 h-3.5" />
-                      </div>
-                      <div>
-                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                          {teamTabLabel} de Especialistas
-                        </h4>
-                        <p className="text-[10px] text-slate-400">Profissionais prontos para atender você</p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('sobre')}
-                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
-                    >
-                      <span>Ver equipe</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-
-                  {/* Profissionais em Linha */}
-                  <div className="grid grid-cols-3 gap-2">
-                    {salonInfo.professionals.map((prof, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setActiveTab('sobre')}
-                        className={`p-2 rounded-xl border flex flex-col items-center text-center cursor-pointer transition ${
-                          isDark
-                            ? 'bg-slate-950 border-slate-800/80 hover:border-emerald-500/40'
-                            : 'bg-slate-50 border-slate-200 hover:border-emerald-500/40'
-                        }`}
-                      >
-                        <img
-                          src={prof.avatar}
-                          alt={prof.name}
-                          className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/40 mb-1"
-                          referrerPolicy="no-referrer"
-                        />
-                        <span className={`text-[11px] font-bold truncate w-full ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}>
-                          {prof.name.split(' ')[0]}
-                        </span>
-                        <span className="text-[9px] text-emerald-400 flex items-center gap-0.5 font-bold">
-                          <Star className="w-2.5 h-2.5 fill-emerald-400" />
-                          {prof.rating}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* RESUMO D: ESPAÇO & ESTRUTURA */}
-                <div className={`p-3.5 rounded-2xl border transition-all ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
-                }`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                        <Store className="w-3.5 h-3.5" />
-                      </div>
-                      <div>
-                        <h4 className={`text-xs font-bold font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                          {spaceTabLabel} & Conforto
-                        </h4>
-                        <p className="text-[10px] text-slate-400">{salonInfo.address} • {salonInfo.distance}</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('espaco')}
-                      className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1"
-                    >
-                      <span>Detalhes</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-
-                  {/* Comodidades em Chips Compactos */}
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    {salonInfo.amenities.map((amenity, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center gap-1.5 p-2 rounded-lg border text-[11px] ${
-                          isDark
-                            ? 'bg-slate-950 border-slate-800 text-slate-300'
-                            : 'bg-slate-50 border-slate-200 text-slate-700'
-                        }`}
-                      >
-                        <amenity.icon className="w-3 h-3 text-emerald-500 shrink-0" />
-                        <span className="truncate">{amenity.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ABA: AGENDA / VAGAS COM O CALENDÁRIO MENSAL, CADEIRAS AO VIVO E HORÁRIOS */}
-          {activeTab === 'vagas' && (
-            <motion.div
-              key="aba-vagas"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3 pt-2 pb-6"
-            >
-              {/* Ferramenta Agenda Completa do Estabelecimento com Calendário Mensal e Horários */}
-              {renderAgendaTool()}
-            </motion.div>
-          )}
-
-          {/* ABA: SEÇÃO SERVIÇOS -> GRID ESTILO PINTEREST MASONRY COM ESPAÇAMENTO CONFORTÁVEL */}
-          {activeTab === 'servicos' && (
-            <motion.div
-              key="aba-servicos"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3 pt-2"
-            >
-              {/* SEÇÃO: SERVIÇOS & PROCEDIMENTOS */}
-              <div className="space-y-2.5">
-                {/* Header da Seção de Serviços */}
-                <div className="px-4 py-1 flex items-center justify-between">
-                  <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    <span>Serviços & Procedimentos</span>
-                  </h2>
-                  <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {catalogServices.length} disponíveis
-                  </span>
-                </div>
-
-                {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas com Espaçamento Amplo das Bordas e Entre Cards) */}
-                <div className="px-4 pb-8">
-                  <div className="columns-2 gap-3.5 [column-fill:_balance]">
-                    {catalogServices.map((srv) => (
-                      <div
-                        key={srv.id}
-                        onClick={() => handleOpenBooking(srv)}
-                        className={`break-inside-avoid mb-3.5 relative rounded-xl overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
-                          isDark
-                            ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
-                            : 'bg-white border-slate-200 hover:border-emerald-500/60'
-                        }`}
-                        title={`${srv.title} - R$ ${srv.price}`}
-                      >
-                        {/* Contêiner de Imagem com Proporção Pinterest Dinâmica */}
-                        <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
-                          <img
-                            src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
-                            alt={srv.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            referrerPolicy="no-referrer"
-                            loading="lazy"
-                          />
-
-                          {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
-                          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
-
-                          {/* Badge de Categoria no Topo Esquerdo */}
-                          <div className="absolute top-2.5 left-2.5 z-10">
-                            <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
-                              {srv.category}
-                            </span>
-                          </div>
-
-                          {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
-                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 flex flex-col justify-end">
-                            <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
-                              {srv.title}
-                            </h3>
-                            
-                            <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/15">
-                              <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
-                                R${srv.price}
-                              </span>
-                              <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
-                                <Clock className="w-2.5 h-2.5 text-slate-400" />
-                                {srv.duration}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ABA: EQUIPE OU PERFIL DO PROFISSIONAL */}
-          {activeTab === 'sobre' && (
-            <motion.div
-              key="aba-sobre"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3 px-3.5 pt-2 pb-8"
-            >
-              {/* Apresentação */}
-              <div className={`border rounded-xl p-3.5 shadow-sm ${
-                isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
-              }`}>
-                <h3 className={`text-xs font-bold mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional'}
-                </h3>
-                <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
-                </p>
-              </div>
-
-              {/* Cards da Equipe */}
-              <div className="grid grid-cols-2 gap-2.5">
-                {salonInfo.professionals.map((prof, idx) => (
-                  <div key={idx} className={`flex flex-col items-center p-3 rounded-xl border text-center shadow-xs ${
-                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-                  }`}>
-                    <img
-                      src={prof.avatar}
-                      alt={prof.name}
-                      className="w-13 h-13 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
-                      referrerPolicy="no-referrer"
-                    />
-                    <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
-                    <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
                   </div>
                 ))}
               </div>
-            </motion.div>
-          )}
+            </div>
+          </div>
+        </section>
 
-          {/* ABA: ESPAÇO OU ATENDIMENTO */}
-          {activeTab === 'espaco' && (
-            <motion.div
-              key="aba-espaco"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="space-y-3 px-3.5 pt-2 pb-8"
-            >
-              {/* Localização e Horário */}
-              <div className={`flex flex-col gap-1.5 border rounded-xl p-3.5 text-xs shadow-sm ${
-                isDark ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
-              }`}>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{salonInfo.address}, {salonInfo.city}</span>
-                </div>
-                <div className={`flex items-center gap-2 pt-1.5 border-t mt-0.5 ${
-                  isDark ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+        {/* 3. SEÇÃO: AGENDA / VAGAS COM O CALENDÁRIO MENSAL, CADEIRAS AO VIVO E HORÁRIOS */}
+        <section id="salon-section-agenda" className="space-y-3 pt-2 scroll-mt-14">
+          <div className="px-4 py-1 flex items-center justify-between">
+            <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <Calendar className="w-4 h-4 text-emerald-500" />
+              <span>Agenda & Disponibilidade</span>
+            </h2>
+            <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Tempo Real
+            </span>
+          </div>
+
+          {/* Ferramenta Agenda Completa do Estabelecimento */}
+          {renderAgendaTool()}
+        </section>
+
+        {/* 4. SEÇÃO: ESPAÇO & ESTRUTURA (COM EQUIPE INTEGRADA DENTRO DESTA SEÇÃO) */}
+        <section id="salon-section-espaco" className="space-y-4 px-3.5 pt-2 scroll-mt-14">
+          <div className="px-0.5 py-1 flex items-center justify-between">
+            <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <Store className="w-4 h-4 text-emerald-500" />
+              <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Espaço & Equipe'}</span>
+            </h2>
+            <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              {salonInfo.city}
+            </span>
+          </div>
+
+          {/* Localização e Horário */}
+          <div className={`flex flex-col gap-1.5 border rounded-xl p-3.5 text-xs shadow-sm ${
+            isDark ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+          }`}>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{salonInfo.address}, {salonInfo.city}</span>
+            </div>
+            <div className={`flex items-center gap-2 pt-1.5 border-t mt-0.5 ${
+              isDark ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+            }`}>
+              <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>{salonInfo.hours}</span>
+            </div>
+          </div>
+
+          {/* Estrutura / Comodidades */}
+          <div className={`border rounded-xl p-3.5 space-y-2.5 shadow-sm ${
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <Store className="w-4 h-4 text-emerald-500" />
+              <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço'}</span>
+            </h3>
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              {salonInfo.description}
+            </p>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              {salonInfo.amenities.map((amenity, idx) => (
+                <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg border text-xs ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800 text-slate-300'
+                    : 'bg-slate-50 border-slate-200 text-slate-700'
                 }`}>
-                  <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span>{salonInfo.hours}</span>
+                  <amenity.icon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span className="truncate">{amenity.label}</span>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
 
-              {/* Estrutura / Comodidades */}
-              <div className={`border rounded-xl p-3.5 space-y-2.5 shadow-sm ${
-                isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
-              }`}>
-                <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  <Store className="w-4 h-4 text-emerald-500" />
-                  <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço'}</span>
-                </h3>
-                <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  {salonInfo.description}
-                </p>
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  {salonInfo.amenities.map((amenity, idx) => (
-                    <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg border text-xs ${
-                      isDark
-                        ? 'bg-slate-950 border-slate-800 text-slate-300'
-                        : 'bg-slate-50 border-slate-200 text-slate-700'
-                    }`}>
-                      <amenity.icon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                      <span className="truncate">{amenity.label}</span>
-                    </div>
-                  ))}
+          {/* EQUIPE & ESPECIALISTAS INTEGRADA DIRETAMENTE DENTRO DE ESPAÇO */}
+          <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm ${
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between">
+              <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <Users className="w-4 h-4 text-emerald-500" />
+                <span>{hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional'}</span>
+              </h3>
+              <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {salonInfo.professionals.length} especialistas
+              </span>
+            </div>
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
+            </p>
+
+            {/* Cards dos Especialistas */}
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              {salonInfo.professionals.map((prof, idx) => (
+                <div key={idx} className={`flex flex-col items-center p-3 rounded-xl border text-center shadow-xs ${
+                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <img
+                    src={prof.avatar}
+                    alt={prof.name}
+                    className="w-13 h-13 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
+                    referrerPolicy="no-referrer"
+                  />
+                  <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
+                  <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
+                  <div className="flex items-center gap-1 mt-1 text-[10px] text-emerald-400 font-bold">
+                    <Star className="w-2.5 h-2.5 fill-emerald-400" />
+                    <span>{prof.rating}</span>
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
 
-              {/* Mapa com Botão Como Chegar */}
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
-              >
-                <MapPin className="w-4 h-4 text-white" />
-                <span>COMO CHEGAR (GOOGLE MAPS)</span>
-              </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Mapa com Botão Como Chegar */}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
+          >
+            <MapPin className="w-4 h-4 text-white" />
+            <span>COMO CHEGAR (GOOGLE MAPS)</span>
+          </a>
+        </section>
       </div>
 
       {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}
