@@ -15,6 +15,73 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Integração de Embed Interativo do Google Maps no Card de Espaço
+- **Tipo:** `[Feat / GIS & UI Focus Mode]`
+- **Motivo:** Conforme solicitação do usuário em modo focus ("aqui vai uma embed do maps"):
+  - Substituído o botão estático de link por um **iframe interativo de embed do Google Maps**, centralizando a localização exata do estabelecimento (`salonInfo.name`, `salonInfo.address`, `salonInfo.city`).
+  - Adicionado botão flutuante e compacto `"Rota no Maps"` no canto inferior direito do mapa para abrir diretamente o aplicativo de navegação do usuário.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituição do link de rota pela `div` com `iframe` responsivo do Google Maps Embed e atalho flutuante.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, sem dependências adicionais ou resíduos, testado e validado via linter e compilação de produção.
+
+---
+
+### [2026-09-14] — Carrossel com Swipe Horizontal entre Espaço & Mapa e Equipe & Especialistas
+- **Tipo:** `[Feat / UI & Mobile UX Focus Mode]`
+- **Motivo:** Conforme solicitação do usuário em modo focus ("faça um swipw com essa divs, poi9s movendo para direita e esquerda"):
+  - Transformadas as duas divs contíguas da seção de Espaço (`div:nth-of-type(2)` com Estrutura, Endereço e Mapa, e `div:nth-of-type(3)` com a Equipe de Especialistas) em um sistema deslizável (swipeable carousel).
+  - Implementado suporte a arrasto e swipe horizontal tátil com `motion.div` (`drag="x"` e limites elásticos), permitindo alternar deslizando para a direita ou esquerda.
+  - Adicionadas abas compactas (`Espaço & Mapa` / `Equipe`), setas de navegação direta no cabeçalho e indicadores de pontos (dots) com dica de navegação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Inclusão dos estados `espacoSlideIndex` e `espacoSwipeDirection`, handlers de troca e contêiner animado com `AnimatePresence` e suporte a drag touch.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Código limpo, sem resíduos, verificado com `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-14] — Remoção de Selos/Subtítulos Secundários do Cabeçalho da Seção Agenda
+- **Tipo:** `[Refactor / Clean UI & Focus Mode]`
+- **Motivo:** Conforme solicitação do usuário em modo focus ("remover"):
+  - Removidos os elementos selecionados no cabeçalho da seção Agenda (`#salon-section-agenda`), especificamente o badge `"TEMPO REAL"` e o indicador textual `"Até 60 dias"`.
+  - O cabeçalho agora exibe estritamente o ícone em destaque e o título limpo e objetivo `"AGENDA & DISPONIBILIDADE"`, reduzindo o ruído visual em dispositivos móveis.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção das props `badge` e `count` do `SectionHeader` na seção `#salon-section-agenda`.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, sem dependências ou variáveis mortas, validação de lint e compilação de produção com 100% de sucesso.
+
+---
+
+### [2026-09-14] — Unificação de Estrutura do Espaço, Endereço e Mapa em um Único Container
+- **Tipo:** `[Refactor / UI Organization & Hierarchy]`
+- **Motivo:** Conforme solicitação do usuário em modo focus ("estrutura de espaço e endereço e mapa em uma unica div"):
+  - Unificados os blocos previamente fragmentados de "Estrutura do Espaço & Comodidades", "Endereço & Horário" e o botão "COMO CHEGAR (GOOGLE MAPS)" dentro de um único container/card contíguo.
+  - Utilizados divisores sutis internos (`border-t`) e hierarquia tipográfica equilibrada, eliminando cartões aninhados desnecessários e mantendo a seção da Equipe limpa e destacada logo abaixo.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Consolidação das divs da seção `#salon-section-espaco` em um único contêiner com estrutura, endereço, horário e botão de mapa integrado.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Limpeza de código sem elementos órfãos, compilação de produção e lint checados com sucesso.
+
+---
+
+### [2026-09-13] — Grid de Serviços Enquadrado com Swap (Swipe/Carrossel), Remoção de Cadeiras Ativas e Padronização de Cabeçalhos de Seção
+- **Tipo:** `[Feat / UI & Mobile UX]`
+- **Motivo:** Conforme solicitação do usuário:
+  1. **Serviços Enquadrados com Efeito Swap:** Substituído o layout Pinterest/Masonry por uma grade uniforme de cards enquadrados de mesmo tamanho (`2x2` por página, 4 serviços por visualização). Quando há mais de 4 serviços, é ativado o efeito swap com suporte a arrasto/swipe horizontal (gestos tácteis no celular) e botões de navegação lateral com transições animadas via `motion/react` (`AnimatePresence`).
+  2. **Remoção de Cadeiras Ocupadas/Ativas:** Removida a ferramenta "Cadeiras em Atendimento" da seção Agenda para manter o aplicativo enxuto, ágil e focado na disponibilidade direta.
+  3. **Cabeçalhos de Seção Padronizados:** Criado o componente padronizado `SectionHeader` para todas as seções (`Serviços`, `Agenda`, `Espaço` e subseção `Equipe`), trazendo ícone em container esmeralda, tipografia uniforme em caixa alta, badges de status/contagem e layout responsivo perfeitamente adaptado ao app.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`:
+    - Adicionado estado de paginação `servicePage` e direção de transição `swapDirection`.
+    - Implementação de `currentServices` fatiado em blocos de 4 itens para exibição uniforme enquadrada com imagens fixas em `aspect-[4/3]`.
+    - Controles de swap (gesto drag `x` no mobile, setas laterais e paginação por dots).
+    - Remoção integral de `activeChairsData` e do bloco "Cadeiras em Atendimento" em `renderAgendaTool`.
+    - Criação e aplicação do componente unificado `SectionHeader` em todas as seções.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, sem dependências ou variáveis mortas, validação completa via `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-13] — Refatoração da Home: Slide Fullscreen Responsivo e Chamadas Publicitárias Instrutivas por Seção
 - **Tipo:** `[Refactor / UX & Mobile Responsiveness]`
 - **Motivo:** Conforme solicitação do usuário ("a página home ela deve ser composta apenas pelo slide. O slide deve ser responsivo e completar toda a tela do dispositivo móvel, pois parece estar quebrado... o slide deve instruir o usuário e fazer uma chamada publicitária, por exemplo: Nossos serviços, Agende de forma rápida, Consulte os horários de forma eficiente, Veja os nossos horários, Conheça a nossa equipe"):

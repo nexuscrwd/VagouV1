@@ -58,6 +58,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
+  // Paginação e efeito swap para o catálogo enquadrado de serviços (4 por visualização)
+  const [servicePage, setServicePage] = useState<number>(0);
+  const [swapDirection, setSwapDirection] = useState<number>(1);
+
+  // Swipe/Carrossel para a seção de Espaço & Equipe (0: Espaço & Mapa, 1: Equipe & Especialistas)
+  const [espacoSlideIndex, setEspacoSlideIndex] = useState<number>(0);
+  const [espacoSwipeDirection, setEspacoSwipeDirection] = useState<number>(1);
+
   // Estado para agendamento confirmado exibido dentro da seção do salão
   const [confirmedBookingData, setConfirmedBookingData] = useState<{
     protocolCode: string;
@@ -408,33 +416,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     };
   }, [activeTab, spaceTabLabel, SpaceIcon, ServicesIcon, onRegisterBottomNav]);
 
-  // Cadeiras em Atendimento Ao Vivo no Salão
-  const activeChairsData = [
-    {
-      id: 'chair-1',
-      number: 'Cadeira 01',
-      professional: 'Carlos',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-      serviceTitle: 'Corte Degradê',
-      remainingMinutes: 14,
-      totalMinutes: 40,
-      endTime: '14:15',
-      isCurrentUser: true,
-    },
-    {
-      id: 'chair-2',
-      number: 'Cadeira 02',
-      professional: 'Mateus',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-      serviceTitle: 'Barba Terapia',
-      remainingMinutes: 8,
-      totalMinutes: 35,
-      endTime: '14:10',
-      isCurrentUser: false,
-    },
-  ];
-
-  // Catálogo completo de serviços com imagens coesas e proporções variadas no estilo Pinterest Masonry
+  // Catálogo completo de serviços com fotos e cards enquadrados de tamanho uniforme
   const catalogServices: CatalogServiceItem[] = [
     {
       id: 'srv-1',
@@ -636,71 +618,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </button>
       </div>
 
-      {/* 1. SEÇÃO: CADEIRAS EM ATENDIMENTO AO VIVO */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            <span>Cadeiras em Atendimento</span>
-          </h2>
-        </div>
-
-        {/* Grid de Cadeiras Ocupadas */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {activeChairsData.map((chair) => {
-            const progressPercent = Math.min(100, Math.max(0, Math.round(((chair.totalMinutes - chair.remainingMinutes) / chair.totalMinutes) * 100)));
-
-            return (
-              <div
-                key={chair.id}
-                className={`border rounded-xl p-2.5 relative overflow-hidden transition-all shadow-xs flex flex-col justify-between ${
-                  chair.isCurrentUser
-                    ? isDark
-                      ? 'bg-slate-900/95 border-emerald-500/70 ring-1 ring-emerald-500/30'
-                      : 'bg-emerald-50/50 border-emerald-500/60 ring-1 ring-emerald-500/20'
-                    : isDark
-                      ? 'bg-slate-900/80 border-slate-800'
-                      : 'bg-white border-slate-200/90'
-                }`}
-              >
-                {/* Topo do Card: Cadeira */}
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${
-                    isDark ? 'text-emerald-400' : 'text-emerald-600'
-                  }`}>
-                    {chair.number}
-                  </span>
-                </div>
-
-                {/* Meio: Profissional Simples */}
-                <div className="min-w-0 my-0.5">
-                  <h4 className={`text-xs font-bold truncate leading-tight ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    {chair.professional}
-                  </h4>
-                </div>
-
-                {/* Barra de Progresso e Previsão */}
-                <div className="mt-2 space-y-1">
-                  <div className="w-full h-1 rounded-full bg-slate-800 overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-[9px] text-slate-400">
-                    <span>{chair.remainingMinutes}m rest.</span>
-                    <span>Até <strong>{chair.endTime}</strong></span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 2. SEÇÃO: CALENDÁRIO MENSAL VISÍVEL NA TELA */}
-      <div className={`pt-2 border-t space-y-2.5 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+      {/* CALENDÁRIO MENSAL INTERATIVO VISÍVEL NA TELA */}
+      <div className="space-y-2.5">
         {/* Header do Mês com Controles */}
         <div className={`flex items-center justify-between p-2 px-3 rounded-xl border transition-colors ${
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
@@ -830,6 +749,76 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+
+  // Paginação e controle de swap para a seção de serviços (4 por visualização em grid enquadrado 2x2)
+  const SERVICES_PER_PAGE = 4;
+  const totalServicePages = Math.ceil(catalogServices.length / SERVICES_PER_PAGE);
+
+  const handlePrevServicePage = () => {
+    if (totalServicePages <= 1) return;
+    setSwapDirection(-1);
+    setServicePage((prev) => (prev - 1 + totalServicePages) % totalServicePages);
+  };
+
+  const handleNextServicePage = () => {
+    if (totalServicePages <= 1) return;
+    setSwapDirection(1);
+    setServicePage((prev) => (prev + 1) % totalServicePages);
+  };
+
+  const currentServices = useMemo(() => {
+    const start = servicePage * SERVICES_PER_PAGE;
+    return catalogServices.slice(start, start + SERVICES_PER_PAGE);
+  }, [catalogServices, servicePage]);
+
+  // Controles de swipe/swap para os dois blocos da Seção Espaço (0: Espaço & Mapa, 1: Equipe & Especialistas)
+  const handleNextEspacoSlide = () => {
+    setEspacoSwipeDirection(1);
+    setEspacoSlideIndex((prev) => (prev === 0 ? 1 : 0));
+  };
+
+  const handlePrevEspacoSlide = () => {
+    setEspacoSwipeDirection(-1);
+    setEspacoSlideIndex((prev) => (prev === 0 ? 1 : 0));
+  };
+
+  // Cabeçalho de Seção Padronizado para todas as seções da Landing Page
+  const SectionHeader: React.FC<{
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    badge?: string;
+    count?: string | number;
+    action?: React.ReactNode;
+    className?: string;
+  }> = ({ icon: Icon, title, badge, count, action, className = '' }) => (
+    <div className={`flex items-center justify-between gap-2 px-4 py-1.5 ${className}`}>
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+          <Icon className="w-3.5 h-3.5 text-emerald-400" />
+        </div>
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] truncate ${
+            isDark ? 'text-white' : 'text-slate-900'
+          }`}>
+            {title}
+          </h2>
+          {badge && (
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-bold uppercase tracking-wider shrink-0">
+              {badge}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        {count !== undefined && (
+          <span className={`text-[10px] font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            {count}
+          </span>
+        )}
+        {action}
       </div>
     </div>
   );
@@ -1056,36 +1045,78 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         </section>
 
-        {/* 2. SEÇÃO: SERVIÇOS -> GRID ESTILO PINTEREST MASONRY */}
+        {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP */}
         <section id="salon-section-servicos" className="space-y-3 pt-2 scroll-mt-14">
-          <div className="space-y-2.5">
-            {/* Header da Seção de Serviços */}
-            <div className="px-4 py-1 flex items-center justify-between">
-              <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                <Scissors className="w-4 h-4 text-emerald-500" />
-                <span>Serviços & Procedimentos</span>
-              </h2>
-              <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                {catalogServices.length} disponíveis
-              </span>
-            </div>
+          <SectionHeader
+            icon={Scissors}
+            title="Serviços & Procedimentos"
+            badge={`${catalogServices.length} opções`}
+            action={
+              totalServicePages > 1 ? (
+                <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
+                  <button
+                    type="button"
+                    onClick={handlePrevServicePage}
+                    className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
+                      isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
+                    }`}
+                    aria-label="Página anterior de serviços"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="text-[10px] font-bold text-emerald-400 min-w-[28px] text-center">
+                    {servicePage + 1}/{totalServicePages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleNextServicePage}
+                    className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
+                      isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
+                    }`}
+                    aria-label="Próxima página de serviços"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : undefined
+            }
+          />
 
-            {/* GRID ESTILO PINTEREST (Masonry em 2 Colunas) */}
-            <div className="px-4">
-              <div className="columns-2 gap-3.5 [column-fill:_balance]">
-                {catalogServices.map((srv) => (
+          {/* Grid Enquadrado de Serviços (4 por página, cards do mesmo tamanho, com suporte a Swap/Arrasto) */}
+          <div className="px-4 relative overflow-hidden select-none">
+            <AnimatePresence mode="wait" custom={swapDirection}>
+              <motion.div
+                key={servicePage}
+                custom={swapDirection}
+                initial={{ opacity: 0, x: swapDirection > 0 ? 40 : -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: swapDirection > 0 ? -40 : 40 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                drag={totalServicePages > 1 ? 'x' : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -35 || info.velocity.x < -200) {
+                    handleNextServicePage();
+                  } else if (info.offset.x > 35 || info.velocity.x > 200) {
+                    handlePrevServicePage();
+                  }
+                }}
+                className="grid grid-cols-2 gap-3 cursor-grab active:cursor-grabbing touch-pan-y"
+              >
+                {currentServices.map((srv) => (
                   <div
                     key={srv.id}
                     onClick={() => handleOpenBooking(srv)}
-                    className={`break-inside-avoid mb-3.5 relative rounded-xl overflow-hidden group cursor-pointer select-none transition-all duration-200 shadow-sm hover:shadow-lg active:scale-[0.98] border ${
+                    className={`group rounded-xl overflow-hidden border flex flex-col justify-between transition-all duration-200 cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md ${
                       isDark
-                        ? 'bg-slate-900 border-slate-800/80 hover:border-emerald-500/60'
+                        ? 'bg-slate-900 border-slate-800 hover:border-emerald-500/60'
                         : 'bg-white border-slate-200 hover:border-emerald-500/60'
                     }`}
                     title={`${srv.title} - R$ ${srv.price}`}
                   >
-                    {/* Contêiner de Imagem com Proporção Pinterest Dinâmica */}
-                    <div className={`relative w-full overflow-hidden ${srv.aspectRatio || 'aspect-[4/5]'}`}>
+                    {/* Imagem Enquadrada Fixa com mesma proporção */}
+                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-950/50">
                       <img
                         src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
                         alt={srv.title}
@@ -1093,161 +1124,350 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         referrerPolicy="no-referrer"
                         loading="lazy"
                       />
-
-                      {/* Gradiente Superior para destacar a Categoria estilo Pinterest */}
-                      <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/70 via-black/20 to-transparent pointer-events-none" />
-
-                      {/* Badge de Categoria no Topo Esquerdo */}
-                      <div className="absolute top-2.5 left-2.5 z-10">
-                        <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[9px] font-bold text-white border border-white/15 uppercase tracking-wider shadow-xs">
+                      {/* Badge de Categoria */}
+                      <div className="absolute top-2 left-2 z-10">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-950/80 backdrop-blur-md text-[9px] font-bold text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
                           {srv.category}
                         </span>
                       </div>
+                    </div>
 
-                      {/* Gradiente Inferior com Contraste Perfeito para as Informações do Serviço */}
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 flex flex-col justify-end">
-                        <h3 className="text-xs sm:text-sm font-bold text-white leading-snug drop-shadow-xs line-clamp-2 font-['Poppins']">
+                    {/* Informações Enquadradas do Serviço */}
+                    <div className="p-2.5 flex flex-col flex-1 justify-between space-y-2">
+                      <div>
+                        <h3 className={`text-xs font-bold leading-snug line-clamp-2 min-h-[2rem] font-['Poppins'] ${
+                          isDark ? 'text-white' : 'text-slate-900'
+                        }`}>
                           {srv.title}
                         </h3>
-                        
-                        <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/15">
-                          <span className="text-xs sm:text-sm font-extrabold text-emerald-400 drop-shadow-xs">
-                            R${srv.price}
-                          </span>
-                          <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 flex items-center gap-1">
-                            <Clock className="w-2.5 h-2.5 text-slate-400" />
-                            {srv.duration}
+                        <div className="flex items-center gap-1 mt-1 text-[10px] text-slate-400">
+                          <Clock className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+                          <span>{srv.duration}</span>
+                        </div>
+                      </div>
+
+                      {/* Preço e Ação de Agendamento */}
+                      <div className={`pt-2 border-t flex items-center justify-between gap-1.5 ${
+                        isDark ? 'border-slate-800/80' : 'border-slate-100'
+                      }`}>
+                        <div>
+                          <span className="text-[9px] uppercase tracking-wide text-slate-400 block -mb-0.5">Valor</span>
+                          <span className="text-xs sm:text-sm font-black text-emerald-400 font-['Poppins']">
+                            R$ {srv.price}
                           </span>
                         </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenBooking(srv);
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 font-bold text-[10px] uppercase tracking-wider transition-colors cursor-pointer"
+                        >
+                          Agendar
+                        </button>
                       </div>
                     </div>
                   </div>
                 ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Paginação em Pontos e Dica de Swap para a direita/esquerda */}
+            {totalServicePages > 1 && (
+              <div className="mt-3 flex items-center justify-between px-1">
+                <span className="text-[10px] text-slate-400">
+                  Deslize para ver mais serviços
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: totalServicePages }).map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      onClick={() => {
+                        setSwapDirection(dotIdx > servicePage ? 1 : -1);
+                        setServicePage(dotIdx);
+                      }}
+                      className={`transition-all rounded-full cursor-pointer ${
+                        dotIdx === servicePage
+                          ? 'w-5 h-1.5 bg-emerald-500'
+                          : 'w-1.5 h-1.5 bg-slate-700 hover:bg-slate-500'
+                      }`}
+                      aria-label={`Página ${dotIdx + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
 
-        {/* 3. SEÇÃO: AGENDA / VAGAS COM O CALENDÁRIO MENSAL, CADEIRAS AO VIVO E HORÁRIOS */}
+        {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
         <section id="salon-section-agenda" className="space-y-3 pt-2 scroll-mt-14">
-          <div className="px-4 py-1 flex items-center justify-between">
-            <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              <Calendar className="w-4 h-4 text-emerald-500" />
-              <span>Agenda & Disponibilidade</span>
-            </h2>
-            <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Tempo Real
-            </span>
-          </div>
+          <SectionHeader
+            icon={Calendar}
+            title="Agenda & Disponibilidade"
+          />
 
           {/* Ferramenta Agenda Completa do Estabelecimento */}
           {renderAgendaTool()}
         </section>
 
-        {/* 4. SEÇÃO: ESPAÇO & ESTRUTURA (COM EQUIPE INTEGRADA DENTRO DESTA SEÇÃO) */}
-        <section id="salon-section-espaco" className="space-y-4 px-3.5 pt-2 scroll-mt-14">
-          <div className="px-0.5 py-1 flex items-center justify-between">
-            <h2 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              <Store className="w-4 h-4 text-emerald-500" />
-              <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Espaço & Equipe'}</span>
-            </h2>
-            <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              {salonInfo.city}
-            </span>
+        {/* 4. SEÇÃO: ESPAÇO & ESTRUTURA (COM SWIPE ENTRE ESPAÇO E EQUIPE) */}
+        <section id="salon-section-espaco" className="space-y-3 px-3.5 pt-2 scroll-mt-14">
+          <SectionHeader
+            icon={espacoSlideIndex === 0 ? Store : Users}
+            title={espacoSlideIndex === 0 ? (salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Espaço & Estrutura') : (hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional')}
+            badge={espacoSlideIndex === 0 ? salonInfo.city : `${salonInfo.professionals.length} prof.`}
+            action={
+              <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
+                <button
+                  type="button"
+                  onClick={handlePrevEspacoSlide}
+                  className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
+                    isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
+                  }`}
+                  aria-label="Aba anterior"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+                <span className="text-[10px] font-bold text-emerald-400 min-w-[28px] text-center">
+                  {espacoSlideIndex + 1}/2
+                </span>
+                <button
+                  type="button"
+                  onClick={handleNextEspacoSlide}
+                  className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
+                    isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
+                  }`}
+                  aria-label="Próxima aba"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            }
+            className="px-0"
+          />
+
+          {/* Abas Rápidas de Navegação (Pills Compactos para Celular) */}
+          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-900/80 border border-slate-800">
+            <button
+              type="button"
+              onClick={() => {
+                setEspacoSwipeDirection(-1);
+                setEspacoSlideIndex(0);
+              }}
+              className={`py-1.5 px-2 rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                espacoSlideIndex === 0
+                  ? 'bg-emerald-500 text-white shadow-xs'
+                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span>Espaço & Mapa</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEspacoSwipeDirection(1);
+                setEspacoSlideIndex(1);
+              }}
+              className={`py-1.5 px-2 rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition cursor-pointer ${
+                espacoSlideIndex === 1
+                  ? 'bg-emerald-500 text-white shadow-xs'
+                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Equipe ({salonInfo.professionals.length})</span>
+            </button>
           </div>
 
-          {/* Localização e Horário */}
-          <div className={`flex flex-col gap-1.5 border rounded-xl p-3.5 text-xs shadow-sm ${
-            isDark ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
-          }`}>
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>{salonInfo.address}, {salonInfo.city}</span>
-            </div>
-            <div className={`flex items-center gap-2 pt-1.5 border-t mt-0.5 ${
-              isDark ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
-            }`}>
-              <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-              <span>{salonInfo.hours}</span>
-            </div>
-          </div>
+          {/* Container com Suporte a Gesto Swipe (Arrasto Horizontal para Esquerda e Direita) */}
+          <div className="relative overflow-hidden select-none">
+            <AnimatePresence mode="wait" custom={espacoSwipeDirection}>
+              {espacoSlideIndex === 0 ? (
+                <motion.div
+                  key="slide-espaco-mapa"
+                  custom={espacoSwipeDirection}
+                  initial={{ opacity: 0, x: espacoSwipeDirection > 0 ? 40 : -40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: espacoSwipeDirection > 0 ? -40 : 40 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -35 || info.velocity.x < -200) {
+                      handleNextEspacoSlide();
+                    } else if (info.offset.x > 35 || info.velocity.x > 200) {
+                      handlePrevEspacoSlide();
+                    }
+                  }}
+                  className="cursor-grab active:cursor-grabbing touch-pan-y"
+                >
+                  {/* CARD UNIFICADO: ESTRUTURA DO ESPAÇO, ENDEREÇO & MAPA */}
+                  <div className={`border rounded-xl p-3.5 space-y-3.5 shadow-sm ${
+                    isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    {/* 1. Estrutura do Espaço & Comodidades */}
+                    <div className="space-y-2">
+                      <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        <Store className="w-4 h-4 text-emerald-500" />
+                        <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço'}</span>
+                      </h3>
+                      <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                        {salonInfo.description}
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        {salonInfo.amenities.map((amenity, idx) => (
+                          <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg border text-xs ${
+                            isDark
+                              ? 'bg-slate-950 border-slate-800 text-slate-300'
+                              : 'bg-slate-50 border-slate-200 text-slate-700'
+                          }`}>
+                            <amenity.icon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span className="truncate">{amenity.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-          {/* Estrutura / Comodidades */}
-          <div className={`border rounded-xl p-3.5 space-y-2.5 shadow-sm ${
-            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
-          }`}>
-            <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              <Store className="w-4 h-4 text-emerald-500" />
-              <span>{salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço'}</span>
-            </h3>
-            <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              {salonInfo.description}
-            </p>
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              {salonInfo.amenities.map((amenity, idx) => (
-                <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg border text-xs ${
-                  isDark
-                    ? 'bg-slate-950 border-slate-800 text-slate-300'
-                    : 'bg-slate-50 border-slate-200 text-slate-700'
-                }`}>
-                  <amenity.icon className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                  <span className="truncate">{amenity.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+                    {/* Divisor */}
+                    <div className={`border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`} />
 
-          {/* EQUIPE & ESPECIALISTAS INTEGRADA DIRETAMENTE DENTRO DE ESPAÇO */}
-          <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm ${
-            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
-          }`}>
-            <div className="flex items-center justify-between">
-              <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                <Users className="w-4 h-4 text-emerald-500" />
-                <span>{hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional'}</span>
-              </h3>
-              <span className={`text-[10px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                {salonInfo.professionals.length} especialistas
-              </span>
-            </div>
-            <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
-            </p>
+                    {/* 2. Endereço e Horário */}
+                    <div className="space-y-2">
+                      <div className="flex items-start gap-2 text-xs">
+                        <MapPin className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <div className="min-w-0 flex-1">
+                          <span className={`font-semibold block truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            {salonInfo.address}
+                          </span>
+                          <span className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                            {salonInfo.city}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`flex items-center gap-2 text-xs ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
+                        <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span>{salonInfo.hours}</span>
+                      </div>
+                    </div>
 
-            {/* Cards dos Especialistas */}
-            <div className="grid grid-cols-2 gap-2.5 pt-1">
-              {salonInfo.professionals.map((prof, idx) => (
-                <div key={idx} className={`flex flex-col items-center p-3 rounded-xl border text-center shadow-xs ${
-                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                }`}>
-                  <img
-                    src={prof.avatar}
-                    alt={prof.name}
-                    className="w-13 h-13 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
-                    referrerPolicy="no-referrer"
-                  />
-                  <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
-                  <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
-                  <div className="flex items-center gap-1 mt-1 text-[10px] text-emerald-400 font-bold">
-                    <Star className="w-2.5 h-2.5 fill-emerald-400" />
-                    <span>{prof.rating}</span>
+                    {/* 3. Embed Interativo do Google Maps */}
+                    <div className="space-y-2 pt-0.5">
+                      <div className={`relative w-full h-44 sm:h-52 rounded-xl overflow-hidden border shadow-xs ${
+                        isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-slate-100'
+                      }`}>
+                        <iframe
+                          title={`Localização no Google Maps - ${salonInfo.name}`}
+                          src={`https://maps.google.com/maps?q=${encodeURIComponent(salonInfo.name + ', ' + salonInfo.address + ', ' + salonInfo.city)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                          className="w-full h-full border-0"
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          allowFullScreen
+                        />
+                        {/* Botão flutuante compacto para abrir direto no aplicativo do Maps */}
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute bottom-2 right-2 px-2.5 py-1.5 bg-slate-950/90 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-lg text-[10px] font-bold shadow-md backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 uppercase tracking-wider"
+                        >
+                          <MapPin className="w-3 h-3 text-emerald-400" />
+                          <span>Rota no Maps</span>
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="slide-equipe"
+                  custom={espacoSwipeDirection}
+                  initial={{ opacity: 0, x: espacoSwipeDirection > 0 ? 40 : -40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: espacoSwipeDirection > 0 ? -40 : 40 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -35 || info.velocity.x < -200) {
+                      handleNextEspacoSlide();
+                    } else if (info.offset.x > 35 || info.velocity.x > 200) {
+                      handlePrevEspacoSlide();
+                    }
+                  }}
+                  className="cursor-grab active:cursor-grabbing touch-pan-y"
+                >
+                  {/* EQUIPE & ESPECIALISTAS INTEGRADA DIRETAMENTE DENTRO DE ESPAÇO */}
+                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm ${
+                    isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    <SectionHeader
+                      icon={Users}
+                      title={hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional'}
+                      badge={`${salonInfo.professionals.length}`}
+                      count="Visagistas"
+                      className="px-0"
+                    />
+                    <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
+                    </p>
+
+                    {/* Cards dos Especialistas */}
+                    <div className="grid grid-cols-2 gap-2.5 pt-1">
+                      {salonInfo.professionals.map((prof, idx) => (
+                        <div key={idx} className={`flex flex-col items-center p-3 rounded-xl border text-center shadow-xs ${
+                          isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                        }`}>
+                          <img
+                            src={prof.avatar}
+                            alt={prof.name}
+                            className="w-13 h-13 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
+                            referrerPolicy="no-referrer"
+                          />
+                          <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
+                          <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
+                          <div className="flex items-center gap-1 mt-1 text-[10px] text-emerald-400 font-bold">
+                            <Star className="w-2.5 h-2.5 fill-emerald-400" />
+                            <span>{prof.rating}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Dica de Swipe e Indicador de Pontos */}
+            <div className="mt-3 flex items-center justify-between px-1">
+              <span className="text-[10px] text-slate-400">
+                Deslize para navegar entre espaço e equipe
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[0, 1].map((dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    onClick={() => {
+                      setEspacoSwipeDirection(dotIdx > espacoSlideIndex ? 1 : -1);
+                      setEspacoSlideIndex(dotIdx);
+                    }}
+                    className={`transition-all rounded-full cursor-pointer ${
+                      dotIdx === espacoSlideIndex
+                        ? 'w-5 h-1.5 bg-emerald-500'
+                        : 'w-1.5 h-1.5 bg-slate-700 hover:bg-slate-500'
+                    }`}
+                    aria-label={`Slide ${dotIdx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-
-          {/* Mapa com Botão Como Chegar */}
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
-          >
-            <MapPin className="w-4 h-4 text-white" />
-            <span>COMO CHEGAR (GOOGLE MAPS)</span>
-          </a>
         </section>
       </div>
 
