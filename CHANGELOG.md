@@ -15,6 +15,20 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Enquadramento 100% Fullscreen por Seção e Isolamento Visual Estrito
+- **Tipo:** `[Fix / Architecture / Mobile UX]`
+- **Motivo:** Solicitação do usuário ("estamos com problema de seção, Uma seção não deve aparecer na outra e isto esta ocorrendo. Ao rolar a seção pra cima ou seleciona-la pelo botão do menu, a seção deve aparcer preenchendo totlmente a tela entre o cabeçalho e o menu rodapé. não deve elementos de seção de baixo aparecer na de cima e vice versa"):
+  - **Dimensão 100% Viewport por Seção:** Cada seção agora possui altura calculada milimetricamente para preencher 100% da área útil entre os cabeçalhos fixos e a barra inferior (`h-[calc(100dvh-56px-64px)]` e `h-[calc(100dvh-104px-64px)]` para o Início), com `overflow-hidden` para blindar qualquer vazamento.
+  - **Grid 2x2 de Serviços em Full Height:** O carrossel/swap de serviços foi reestruturado em `grid-cols-2 grid-rows-2 flex-1 min-h-0`, esticando os cards de forma proporcional entre o cabeçalho da seção e a barra de paginação sem deixar sobras inferiores.
+  - **Scroll Snap Mandatório (`snap-mandatory`):** Ativado `snap-y snap-mandatory` no modo de perfil do salão, garantindo travamento ímã sem paradas intermediárias onde se veriam duas seções ao mesmo tempo.
+  - **Isolamento de Rolagem Interna:** As seções de Agenda e Espaço contam com rolagem interna independente (`overflow-y-auto min-h-0 flex-1`), mantendo o contêiner geral da seção travado na visualização fullscreen.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Aplicação de alturas exatas por viewport, grids flexíveis e eliminação de paddings residuais.
+  - `src/App.tsx`: Condicional de `snap-y snap-mandatory` exclusivo para a tela de perfil do estabelecimento.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Verificado via `lint_applet` e validado via `compile_applet`.
+
+
 ### [2026-09-14] — Correção de Interferência de Seções, Scroll Snap Imã e Cabeçalhos Colados
 - **Tipo:** `[Fix / UX Polish / Layout Architecture]`
 - **Motivo:** Solicitação do usuário ("o problema que temos agora é o seguinte. Estou com o smartphone nas maos testando porem uma seção esta interferindo em outra! Quando rolamos um seção pra cima, a rolagem não pode parar entre a anterior ou a proxima, ela deve automaticamente como imã subir e seu cabeçalho estar no topo. O cabeçalho de algumas seções esta animado constantemente... O cabeçalho de cada seção deve colado, grudado e sem espaço junto ao cabeçalho principal"):

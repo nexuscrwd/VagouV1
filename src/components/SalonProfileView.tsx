@@ -928,11 +928,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
-      <div className="pt-0 space-y-0 pb-28">
+      <div className="pt-0 space-y-0 p-0 m-0">
         {/* 1. SEÇÃO: INÍCIO - SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40">
+        <section id="salon-section-home" className="w-full relative snap-start h-[calc(100dvh-104px-64px)] sm:h-[calc(100dvh-112px-64px)] min-h-[440px] overflow-hidden flex flex-col border-b border-slate-800/40">
           {/* SLIDER / CARROSSEL PUBLICITÁRIO TOTALMENTE RESPONSIVO */}
-          <div className={`relative w-full h-[min(540px,calc(100dvh-120px))] min-h-[420px] max-h-[640px] overflow-hidden select-none touch-pan-y ${
+          <div className={`relative w-full h-full flex-1 min-h-0 overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
           }`}>
             <AnimatePresence mode="wait">
@@ -1071,11 +1071,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
-        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start p-0 m-0 border-b border-slate-800/40">
+        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-between">
           <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
           {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
-          <div className="relative overflow-hidden select-none w-full">
+          <div className="relative overflow-hidden select-none w-full flex-1 min-h-0 flex flex-col justify-between">
             <AnimatePresence mode="wait" custom={swapDirection}>
               <motion.div
                 key={servicePage}
@@ -1094,7 +1094,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     handlePrevServicePage();
                   }
                 }}
-                className={`grid grid-cols-2 gap-0 w-full cursor-grab active:cursor-grabbing touch-pan-y ${
+                className={`grid grid-cols-2 grid-rows-2 gap-0 w-full flex-1 min-h-0 cursor-grab active:cursor-grabbing touch-pan-y ${
                   isDark ? 'bg-slate-950' : 'bg-slate-100'
                 }`}
               >
@@ -1102,11 +1102,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   <div
                     key={srv.id}
                     onClick={() => handleOpenBooking(srv)}
-                    className="group relative overflow-hidden transition-all duration-300 cursor-pointer bg-slate-950"
+                    className="group relative overflow-hidden transition-all duration-300 cursor-pointer bg-slate-950 h-full w-full"
                     title={`${srv.title} - R$ ${srv.price}`}
                   >
                     {/* Imagem com Aspect Ratio Enquadrado e Zoom no Hover */}
-                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-950">
+                    <div className="relative w-full h-full overflow-hidden bg-slate-950">
                       <img
                         src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
                         alt={srv.title}
@@ -1162,7 +1162,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             {/* Barra de Paginação e Navegação de Alta Precisão */}
             {totalServicePages > 1 && (
               <div
-                className={`w-full px-4 py-2.5 flex items-center justify-between border-t transition-colors select-none ${
+                className={`w-full px-4 py-2.5 flex items-center justify-between border-t transition-colors select-none shrink-0 ${
                   isDark
                     ? 'bg-slate-950 border-slate-800/80 text-white'
                     : 'bg-white border-slate-200 text-slate-900'
@@ -1248,20 +1248,20 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40 pb-8">
+        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40 h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title="Agenda & Disponibilidade"
             isDark={isDark}
           />
 
-          <div className="px-3.5 sm:px-4 pt-3 space-y-3.5">
+          <div className="px-3.5 sm:px-4 py-2.5 space-y-2.5 flex-1 min-h-0 flex flex-col justify-start overflow-y-auto">
             {/* Ferramenta Agenda Completa do Estabelecimento */}
             {renderAgendaTool()}
           </div>
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start pb-28">
+        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title={
               espacoSlideIndex === 0
@@ -1273,7 +1273,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             isDark={isDark}
           />
 
-          <div className="px-3.5 sm:px-4 pt-3 space-y-3">
+          <div className="px-3.5 sm:px-4 py-2.5 space-y-2.5 flex-1 min-h-0 flex flex-col justify-start overflow-y-auto">
           <div className="grid grid-cols-3 gap-1.5 w-full">
             {/* Aba 1: Equipe */}
             <button
