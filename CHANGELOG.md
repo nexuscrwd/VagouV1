@@ -15,6 +15,63 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Remoção de Ícones, Contadores e Badges dos Cabeçalhos de Seções
+- **Tipo:** `[UI Refinement / Minimalist Design]`
+- **Motivo:** Solicitação do usuário ("Remover o ícone de todos os cabeçalhos de todas as sessões. Deixar somente o título da sessão. Se houver contador ou quaisquer outros elementos que compõem cada cabeçalho de cada sessão, remover, por favor."):
+  - **Refatoração do Componente `SectionHeader`:**
+    - Removido o contêiner e a renderização do ícone com moldura esmeralda.
+    - Removidos os elementos de badge decorativos (ex: "X opções", "Espaço", cidade) e contadores numéricos.
+    - O cabeçalho agora exibe exclusivamente o título da seção de forma limpa, direta e minimalista (mantendo apenas botões de ação funcionais quando aplicável, como a paginação de serviços).
+  - **Atualização de Todas as Seções do Perfil:**
+    - **Seção 2 (Serviços & Procedimentos):** Removidos ícone e badge com contagem de opções.
+    - **Seção 3 (Agenda & Disponibilidade):** Removido o ícone de calendário.
+    - **Seção 4 (Espaço, Equipe & Localização):** Removidos os ícones dinâmicos e badges correspondentes a cada aba.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Simplificação do `SectionHeader` e de suas chamadas.
+  - `CHANGELOG.md`: Registro detalhado da alteração.
+- **Resumo Técnico:** Clean code aplicado, sem avisos de linter (`tsc --noEmit`), compilação de produção (`compile_applet`) concluída com 100% de sucesso.
+
+---
+
+### [2026-09-14] — Abas Desacopladas em Tons de Cinza Claro e Cantos de 5px na Seção Espaço
+- **Tipo:** `[UI Refinement / Minimalist Design]`
+- **Motivo:** Solicitação do usuário ("Ainda em relação às abas que acabamos de alterar, tire essa div de fundo e deixe apenas os botões no tom cinza claro. E que os botões, os seus tamanhos sejam divididos de forma uniforme dentro da seção, sem muito espaçamento entre os botões. E suas bordas devem ter o canto arredondado o mínimo possível, quem sabe 5 pixels é o suficiente."):
+  - **Remoção do Contêiner de Fundo:**
+    - Eliminada a div envolvente com fundo e borda (`p-1 rounded-xl bg-slate-200 border-slate-300`), deixando os botões livres diretamente sobre a seção.
+  - **Distribuição Uniforme e Espaçamento Reduzido:**
+    - Grid 3 colunas (`grid grid-cols-3 gap-1.5 w-full`) garantindo dimensões 100% iguais para Equipe, Estrutura e Localização, com espaçamento ultra-compacto entre eles (`gap-1.5`).
+  - **Cantos Arredondados com 5px Exatos:**
+    - Aplicado `rounded-[5px]` nos 3 botões para acabamento sutil e minimalista.
+  - **Paleta em Tons de Cinza Claro & Texto Escuro:**
+    - Aba ativa: `bg-slate-100 text-slate-950 font-bold border border-slate-300`.
+    - Abas inativas: `bg-slate-200/80 text-slate-700 hover:bg-slate-200 hover:text-slate-950 font-medium border border-slate-300/60`.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajuste visual e estrutural das abas da seção espaço.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code verificado, zero resíduos, compilação de produção testada com sucesso.
+
+---
+
+### [2026-09-14] — Reordenação e Estilo Minimalista das Abas da Seção Espaço
+- **Tipo:** `[UI Refinement / Visual Redesign & Tab Reordering]`
+- **Motivo:** Solicitação do usuário ("Ainda na seção espaço do estabelecimento, a ordem das abas é primeiramente equipe, em seguida a estrutura, o que tem no espaço, e a última aba é a localização. Em relação às cores das abas, eu prefiro que as abas sejam minimalistas, que seja em tons de cinza claro e texto escuro."):
+  - **Nova Ordem das Abas e Slides:**
+    - **1ª Aba (Index 0): Equipe** — exibe os especialistas e visagistas cadastrados com contagem no chip.
+    - **2ª Aba (Index 1): Estrutura** — exibe as comodidades, fotos e diferenciais do espaço físico/atendimento.
+    - **3ª Aba (Index 2): Localização** — exibe endereço, horário, botão direto para rota no Maps e mapa interativo embed.
+    - Sincronização de gestos de swipe, cabeçalho dinâmico (`SectionHeader`) e paginação por pontos.
+  - **Design Minimalista (Cinza Claro & Texto Escuro):**
+    - Contêiner segmentado com fundo neutro suave (`bg-slate-200 border-slate-300`).
+    - Aba ativa em branco puro (`bg-white`), texto escuro de alto contraste (`text-slate-900 font-bold`) e borda delicada.
+    - Abas inativas com texto grafite suave (`text-slate-600 hover:text-slate-900`) e ícones em tom neutro.
+    - Indicador de paginação inferior alinhado à estética minimalista (`bg-slate-400`).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Reordenação estrutural dos slides e novo design minimalista dos botões de abas.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade.
+- **Resumo Técnico:** Validação estrita via `lint_applet` e `compile_applet` concluída com sucesso.
+
+---
+
 ### [2026-09-14] — Correção da Responsividade do Slide Hero e Redesign das Abas do Espaço
 - **Tipo:** `[Fix & UI Redesign / Mobile UX]`
 - **Motivo:** Solicitação do usuário ("Por favor, ajuste a responsividade do slide da página home da página do estabelecimento, pois os botões e elementos do slide estão desaparecendo. Outra alteração: na seção de espaço, as abas não estão boas. Refaça o design das abas da seção espaço."):
