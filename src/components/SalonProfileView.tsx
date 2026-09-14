@@ -923,10 +923,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
       <div className="pt-0 space-y-8 sm:space-y-10 pb-28">
-        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO FULLSCREEN RESPONSIVO PUBLICITÁRIO */}
+        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
         <section id="salon-section-home" className="w-full relative scroll-mt-0 snap-start">
-          {/* SLIDER / CARROSSEL FULLSCREEN QUE COMPLETA TODA A TELA DO DISPOSITIVO MÓVEL */}
-          <div className={`relative w-full h-[calc(100vh-104px)] h-[calc(100dvh-104px)] min-h-[500px] max-h-[720px] overflow-hidden select-none touch-pan-y ${
+          {/* SLIDER / CARROSSEL PUBLICITÁRIO TOTALMENTE RESPONSIVO */}
+          <div className={`relative w-full h-[min(540px,calc(100dvh-120px))] min-h-[420px] max-h-[640px] overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
           }`}>
             <AnimatePresence mode="wait">
@@ -961,42 +961,82 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     />
 
                     {/* Degradês Publicitários de Alta Qualidade para Leitura Impecável */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/30" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/35" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
 
-                    {/* Conteúdo Publicitário */}
-                    <div className="absolute inset-0 p-5 sm:p-7 flex flex-col justify-between z-10 max-w-[92%] sm:max-w-[75%]">
-                      {/* Topo do Slide: Tag de Categoria & Selo Publicitário */}
-                      <div className="flex items-center gap-2 pt-1">
-                        <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
-                          {slide.tag}
-                        </span>
-                        <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
-                          {slide.badge}
-                        </span>
+                    {/* Conteúdo Publicitário Integrado */}
+                    <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-between z-10 max-w-[90%] sm:max-w-[78%]">
+                      {/* Topo do Slide: Tag de Categoria, Selo e Paginação */}
+                      <div className="flex items-center justify-between gap-2 pt-1 w-full">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
+                            {slide.tag}
+                          </span>
+                          <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
+                            {slide.badge}
+                          </span>
+                        </div>
+
+                        {/* Indicadores de Paginação no Topo (Não Sobrepõem os Botões) */}
+                        <div className="flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-slate-800 shadow-md">
+                          {portfolioSlides.map((_, dotIdx) => (
+                            <button
+                              key={dotIdx}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveSlideIndex(dotIdx);
+                              }}
+                              className={`transition-all rounded-full cursor-pointer ${
+                                dotIdx === activeSlideIndex
+                                  ? 'w-4 h-1.5 bg-[#20C933]'
+                                  : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
+                              }`}
+                              aria-label={`Slide ${dotIdx + 1}`}
+                            />
+                          ))}
+                        </div>
                       </div>
 
-                      {/* Centro / Base do Slide: Título + Tagline + Botão CTA */}
-                      <div className="space-y-3.5 pb-8 sm:pb-6">
+                      {/* Base do Slide: Título + Tagline + Botão CTA + Dica de Rolagem */}
+                      <div className="space-y-2.5 pb-2 sm:pb-3">
                         <div>
-                          <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
                             {slide.title}
                           </h3>
-                          <p className="text-xs sm:text-sm text-slate-200/95 font-normal leading-relaxed line-clamp-3 mt-2 drop-shadow-xs max-w-md">
+                          <p className="text-xs sm:text-sm text-slate-200/95 font-normal leading-relaxed line-clamp-2 sm:line-clamp-3 mt-1.5 drop-shadow-xs max-w-md">
                             {slide.tagline}
                           </p>
                         </div>
 
-                        {/* Botão Chamativo de Chamada Publicitária / Ação da Seção */}
+                        {/* Botão Chamativo de Ação (Com Z-Index Seguro e Touch Acessível) */}
+                        <div className="pt-1">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              slide.ctaAction();
+                            }}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-95 text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer whitespace-nowrap z-20 pointer-events-auto"
+                          >
+                            <IconComponent className="w-4 h-4 text-white drop-shadow-xs shrink-0" />
+                            <span>{slide.ctaText}</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-white shrink-0" />
+                          </button>
+                        </div>
+
+                        {/* Dica de Navegação Rolar para Ver Mais Seções */}
                         <div>
                           <button
                             type="button"
-                            onClick={slide.ctaAction}
-                            className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-[0.98] text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer whitespace-nowrap"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectTab('servicos');
+                            }}
+                            className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-slate-300 hover:text-white transition cursor-pointer pt-0.5"
                           >
-                            <IconComponent className="w-4 h-4 text-white drop-shadow-xs" />
-                            <span>{slide.ctaText}</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-white" />
+                            <span>Role para navegar</span>
+                            <ChevronDown className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
                           </button>
                         </div>
                       </div>
@@ -1006,43 +1046,17 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               })}
             </AnimatePresence>
 
-            {/* Controles do Slide: Indicadores de Paginação */}
-            <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800 shadow-md">
-              {portfolioSlides.map((_, dotIdx) => (
-                <button
-                  key={dotIdx}
-                  onClick={() => setActiveSlideIndex(dotIdx)}
-                  className={`transition-all rounded-full cursor-pointer ${
-                    dotIdx === activeSlideIndex
-                      ? 'w-5 h-1.5 bg-[#20C933]'
-                      : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-                  }`}
-                  aria-label={`Slide ${dotIdx + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Dica de Navegação Rolar para Ver Mais Seções */}
-            <button
-              type="button"
-              onClick={() => handleSelectTab('servicos')}
-              className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 text-[10px] font-medium text-slate-300 hover:text-white transition cursor-pointer bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-800/80 shadow-md"
-            >
-              <span>Role para navegar</span>
-              <ChevronDown className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
-            </button>
-
-            {/* Setas Sutis de Navegação */}
+            {/* Setas Sutis de Navegação Lateral */}
             <button
               onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
               aria-label="Slide anterior"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
               aria-label="Próximo slide"
             >
               <ChevronRight className="w-4 h-4" />
@@ -1220,7 +1234,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
+        <section id="salon-section-espaco" className="space-y-3 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
           <SectionHeader
             icon={espacoSlideIndex === 0 ? Store : espacoSlideIndex === 1 ? MapPin : Users}
             title={
@@ -1237,83 +1251,90 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 ? salonInfo.city
                 : `${salonInfo.professionals.length} prof.`
             }
-            action={
-              <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
-                <button
-                  type="button"
-                  onClick={handlePrevEspacoSlide}
-                  className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
-                    isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
-                  }`}
-                  aria-label="Aba anterior"
-                >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
-                <span className="text-[10px] font-bold text-emerald-400 min-w-[28px] text-center">
-                  {espacoSlideIndex + 1}/3
-                </span>
-                <button
-                  type="button"
-                  onClick={handleNextEspacoSlide}
-                  className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
-                    isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
-                  }`}
-                  aria-label="Próxima aba"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            }
             className="px-0"
           />
 
-          {/* Abas Rápidas de Navegação (3 Pills Compactos para Celular) */}
-          <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-900/80 border border-slate-800">
-            <button
-              type="button"
-              onClick={() => {
-                setEspacoSwipeDirection(0 < espacoSlideIndex ? -1 : 1);
-                setEspacoSlideIndex(0);
-              }}
-              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
-                espacoSlideIndex === 0
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Store className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Estrutura</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEspacoSwipeDirection(1 < espacoSlideIndex ? -1 : 1);
-                setEspacoSlideIndex(1);
-              }}
-              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
-                espacoSlideIndex === 1
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <MapPin className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Endereço & Mapa</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setEspacoSwipeDirection(2 < espacoSlideIndex ? -1 : 1);
-                setEspacoSlideIndex(2);
-              }}
-              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
-                espacoSlideIndex === 2
-                  ? 'bg-emerald-500 text-white shadow-xs'
-                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">Equipe ({salonInfo.professionals.length})</span>
-            </button>
+          {/* Nova Barra de Abas Premium Segmentada (Design Mobile Refinado) */}
+          <div className="p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-md backdrop-blur-md">
+            <div className="grid grid-cols-3 gap-1.5">
+              {/* Aba 1: Estrutura */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEspacoSwipeDirection(0 < espacoSlideIndex ? -1 : 1);
+                  setEspacoSlideIndex(0);
+                }}
+                className={`py-2 px-1.5 rounded-xl text-center transition-all duration-200 cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+                  espacoSlideIndex === 0
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-500/25 border border-emerald-400/30'
+                    : isDark
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+                }`}
+              >
+                <Store className={`w-4 h-4 shrink-0 transition-transform ${
+                  espacoSlideIndex === 0 ? 'text-white scale-110' : 'text-emerald-500/80'
+                }`} />
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider truncate">
+                  Estrutura
+                </span>
+              </button>
+
+              {/* Aba 2: Localização & Mapa */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEspacoSwipeDirection(1 < espacoSlideIndex ? -1 : 1);
+                  setEspacoSlideIndex(1);
+                }}
+                className={`py-2 px-1.5 rounded-xl text-center transition-all duration-200 cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+                  espacoSlideIndex === 1
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-500/25 border border-emerald-400/30'
+                    : isDark
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+                }`}
+              >
+                <MapPin className={`w-4 h-4 shrink-0 transition-transform ${
+                  espacoSlideIndex === 1 ? 'text-white scale-110' : 'text-emerald-500/80'
+                }`} />
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider truncate">
+                  Localização
+                </span>
+              </button>
+
+              {/* Aba 3: Equipe */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEspacoSwipeDirection(2 < espacoSlideIndex ? -1 : 1);
+                  setEspacoSlideIndex(2);
+                }}
+                className={`py-2 px-1.5 rounded-xl text-center transition-all duration-200 cursor-pointer flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
+                  espacoSlideIndex === 2
+                    ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-500/25 border border-emerald-400/30'
+                    : isDark
+                    ? 'text-slate-400 hover:text-white hover:bg-slate-800/60 border border-transparent'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+                }`}
+              >
+                <div className="flex items-center gap-1">
+                  <Users className={`w-4 h-4 shrink-0 transition-transform ${
+                    espacoSlideIndex === 2 ? 'text-white scale-110' : 'text-emerald-500/80'
+                  }`} />
+                  <span className={`text-[10px] px-1 py-0.2 rounded-full font-black ${
+                    espacoSlideIndex === 2
+                      ? 'bg-white/20 text-white'
+                      : 'bg-emerald-500/20 text-emerald-400'
+                  }`}>
+                    {salonInfo.professionals.length}
+                  </span>
+                </div>
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider truncate">
+                  Equipe
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Container com Suporte a Gesto Swipe (Arrasto Horizontal para Esquerda e Direita) */}
@@ -1522,9 +1543,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </AnimatePresence>
 
             {/* Dica de Swipe e Indicador de Pontos */}
-            <div className="mt-3 flex items-center justify-between px-1">
+            <div className="mt-2.5 flex items-center justify-between px-1">
               <span className="text-[10px] text-slate-400">
-                Deslize para navegar entre as 3 abas
+                Deslize para alternar entre as abas
               </span>
               <div className="flex items-center gap-1.5">
                 {[0, 1, 2].map((dotIdx) => (
@@ -1536,7 +1557,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     }}
                     className={`transition-all rounded-full cursor-pointer ${
                       dotIdx === espacoSlideIndex
-                        ? 'w-5 h-1.5 bg-emerald-500'
+                        ? 'w-5 h-1.5 bg-[#20C933]'
                         : 'w-1.5 h-1.5 bg-slate-700 hover:bg-slate-500'
                     }`}
                     aria-label={`Aba ${dotIdx + 1}`}

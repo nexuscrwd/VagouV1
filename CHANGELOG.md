@@ -15,6 +15,27 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Correção da Responsividade do Slide Hero e Redesign das Abas do Espaço
+- **Tipo:** `[Fix & UI Redesign / Mobile UX]`
+- **Motivo:** Solicitação do usuário ("Por favor, ajuste a responsividade do slide da página home da página do estabelecimento, pois os botões e elementos do slide estão desaparecendo. Outra alteração: na seção de espaço, as abas não estão boas. Refaça o design das abas da seção espaço."):
+  - **Slide Hero Totalmente Responsivo:**
+    - Ajustada a altura para `h-[min(540px,calc(100dvh-120px))]` com limites flexíveis (`min-h-[420px] max-h-[640px]`), eliminando cortes em telas compactas.
+    - Reposicionamento dos indicadores de paginação (dots) para o topo direito do slide junto aos selos de categoria, eliminando a colisão com o botão CTA e garantindo que nenhum elemento fique sobreposto.
+    - Isolamento do botão CTA e da dica de navegação ("Role para navegar") em fluxo vertical dedicado, com `z-20 pointer-events-auto` e stopPropagation para evitar que gestos de swipe cancelem o clique.
+    - Setas de navegação compactadas e posicionadas lateralmente com feedback tátil suave.
+  - **Novo Design das Abas da Seção Espaço:**
+    - Substituição da grade de pills por um **Segmented Control** sofisticado em `slate-900/90` com bordas sutis e backdrop-blur.
+    - Estados ativos destacados em degradê esmeralda (`from-emerald-600 to-emerald-500`) com sombra de elevação e ícones ampliados.
+    - Layout adaptativo (`flex-col sm:flex-row`) nos botões de aba, impedindo que rótulos como "Estrutura", "Localização" e "Equipe" sofram quebra de linha ou truncamento.
+    - Contador de especialistas integrado de forma limpa ao ícone da aba Equipe.
+    - Remoção do seletor redundante de setas do cabeçalho, deixando a interface limpa e intuitiva.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Refatoração estrutural do Hero Slide e do Segmented Control da Seção Espaço.
+  - `CHANGELOG.md`: Registro detalhado da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code verificado, zero resíduos ou imports zumbis, validado via `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-14] — Enquadramento e Isolamento Responsivo das Seções da Landing Page
 - **Tipo:** `[Refactor / Layout & Mobile Architecture]`
 - **Motivo:** Solicitação do usuário ("Ele é uma landing page, pois cada seção não deve tomar espaço da outra. Por exemplo, ajuste os elementos de cada seção de modo que caiba responsivamente e de forma que elementos da seção abaixo não venham a interferir na seção atual."):
