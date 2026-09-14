@@ -87,7 +87,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 }) => {
   const { isDark } = useTheme();
   const [activeTab, setActiveTab] = useState<'home' | 'servicos' | 'vagas' | 'espaco'>('home');
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState<boolean>(false);
   const [bookingService, setBookingService] = useState<CatalogServiceItem | null>(null);
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
@@ -131,7 +130,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       setSkipDateStep(true);
       const cleanSlot = initialBookingOffer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', '');
       setSelectedTimeSlotForBooking(cleanSlot);
-      setIsBookingModalOpen(true);
+      setActiveTab('vagas');
     }
   }, [autoOpenBooking, initialBookingOffer]);
 
@@ -491,7 +490,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     if (dateIso) {
       setSelectedCalendarDateIso(dateIso);
     }
-    setIsBookingModalOpen(true);
+    handleSelectTab('vagas');
   };
 
   // Slides de portfólio para o Slider da Página Inicial (Apresentação publicitária e instrução de cada seção)
@@ -583,162 +582,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       });
     }
   };
-
-  // Renderização da Ferramenta Agenda Completa com Calendário Mensal e Grade de Horários
-  const renderAgendaTool = () => (
-    <div className="flex-1 min-h-0 flex flex-col justify-between p-3 sm:p-4 space-y-2 overflow-hidden w-full">
-      {/* BOTÃO DE DESTAQUE: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
-      <div className="shrink-0">
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedCalendarDateIso(todayIso);
-            handleOpenBooking(undefined, true, undefined, todayIso);
-          }}
-          className="w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
-        >
-          <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
-          <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
-        </button>
-      </div>
-
-      {/* CALENDÁRIO MENSAL INTERATIVO VISÍVEL NA TELA */}
-      <div className="space-y-1.5 shrink-0">
-        {/* Header do Mês com Controles */}
-        <div className={`flex items-center justify-between p-1.5 px-3 rounded-xl border transition-colors ${
-          isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-100 border-slate-200'
-        }`}>
-          <button
-            type="button"
-            onClick={handlePrevInlineMonth}
-            className={`p-1 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
-              isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
-            }`}
-            aria-label="Mês anterior"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
-            <h3 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] ${
-              isDark ? 'text-white' : 'text-slate-900'
-            }`}>
-              {inlineMonthData.monthLabel}
-            </h3>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleNextInlineMonth}
-            className={`p-1 rounded-lg transition cursor-pointer ${
-              isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
-            }`}
-            aria-label="Próximo mês"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Grid dos Dias da Semana */}
-        <div className="grid grid-cols-7 gap-1 text-center">
-          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
-            <div key={day} className={`text-[10px] font-bold py-0.5 uppercase ${
-              isDark ? 'text-slate-500' : 'text-slate-400'
-            }`}>
-              {day}
-            </div>
-          ))}
-
-          {/* Dias do Mês em Grade */}
-          {inlineMonthData.daysGrid.map((item, index) => {
-            if (item.dayNumber === null) {
-              return <div key={`empty-${index}`} className="h-7" />;
-            }
-
-            return (
-              <button
-                key={item.isoString || index}
-                type="button"
-                disabled={item.isDisabled}
-                onClick={() => {
-                  if (item.isoString) {
-                    setSelectedCalendarDateIso(item.isoString);
-                  }
-                }}
-                className={`h-7 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
-                  item.isSelected
-                    ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-md shadow-emerald-500/30 scale-105 z-10'
-                    : item.isDisabled
-                    ? isDark
-                      ? 'bg-slate-900/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
-                      : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40'
-                    : isDark
-                    ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
-                    : 'bg-white hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
-                }`}
-              >
-                <span>{item.dayNumber}</span>
-                {item.isToday && !item.isSelected && (
-                  <span className="w-1 h-1 rounded-full bg-[#20C933] absolute bottom-0.5" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 3. SEÇÃO: TABELA DE HORÁRIOS PARA A DATA SELECIONADA */}
-      <div className={`pt-2 border-t space-y-1.5 flex-1 min-h-0 flex flex-col justify-start overflow-hidden ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-        <div className="flex items-center justify-between gap-1 shrink-0">
-          <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
-            isDark ? 'text-white' : 'text-slate-900'
-          }`}>
-            <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
-            <span>Horários • {selectedDateFormattedLabel}</span>
-          </h4>
-          <span className="text-[10px] text-emerald-400 font-semibold">
-            {agendaSlots.filter(s => s.available).length} disponíveis
-          </span>
-        </div>
-
-        {/* Grade da Tabela de Horários - 4 Colunas compactas com rolagem suave */}
-        <div className="grid grid-cols-4 gap-1.5 py-0.5 flex-1 min-h-0 overflow-y-auto pr-0.5">
-          {agendaSlots.map((slot) => {
-            const isAvailable = slot.available;
-
-            return (
-              <button
-                key={slot.time}
-                type="button"
-                disabled={!isAvailable}
-                onClick={() => {
-                  const matchedSrv = catalogServices[0];
-                  handleOpenBooking(matchedSrv, true, slot.time, selectedCalendarDateIso);
-                }}
-                className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-                  !isAvailable
-                    ? isDark
-                      ? 'bg-slate-950/40 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
-                      : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
-                    : isDark
-                    ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
-                    : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700 shadow-2xs'
-                }`}
-              >
-                <Clock className={`w-3 h-3 ${isAvailable ? 'text-[#20C933]' : isDark ? 'text-slate-600' : 'text-slate-300'}`} />
-                <span>{slot.time}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
 
   // Paginação e controle de swap para a seção de serviços (4 por visualização em grid enquadrado 2x2)
   const SERVICES_PER_PAGE = 4;
@@ -1203,7 +1046,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </motion.div>
       )}
 
-      {/* ABA 3: AGENDA */}
+      {/* ABA 3: AGENDA (INTEGRADA EM ETAPAS DIRETAMENTE NA SEÇÃO, SEM MODAL) */}
       {activeTab === 'vagas' && (
         <motion.div
           key="tab-agenda"
@@ -1214,13 +1057,24 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           className="w-full h-full flex flex-col justify-start overflow-hidden"
         >
           <SectionHeader
-            title="Agenda & Disponibilidade"
+            title="Agendar"
             isDark={isDark}
           />
 
           <div className="flex-1 min-h-0 flex flex-col justify-start overflow-hidden w-full">
-            {/* Ferramenta Agenda Completa do Estabelecimento */}
-            {renderAgendaTool()}
+            <SalonBookingModal
+              isOpen={true}
+              inline={true}
+              salonName={salonInfo.name}
+              salonAddress={salonInfo.address}
+              services={catalogServices}
+              professionals={salonInfo.professionals}
+              initialService={bookingService}
+              skipDateStep={skipDateStep}
+              initialTimeSlot={selectedTimeSlotForBooking}
+              initialDateIso={selectedCalendarDateIso}
+              onConfirmAppointment={handleConfirmSchedule}
+            />
           </div>
         </motion.div>
       )}
@@ -1343,28 +1197,28 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   }}
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
-                  {/* ABA 1: EQUIPE & ESPECIALISTAS INTEGRADA */}
-                  <div className={`border rounded p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
+                  {/* ABA 1: EQUIPE INTEGRADA */}
+                  <div className={`border rounded p-3.5 space-y-3 shadow-sm min-h-[380px] max-h-[440px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div className="space-y-2 flex-1 min-h-0 flex flex-col">
+                      <div className="flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-emerald-500" />
                           <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                            {hasMultipleProfessionals ? 'Equipe de Especialistas' : 'Perfil do Profissional'}
+                            {hasMultipleProfessionals ? 'Equipe' : 'Perfil do Profissional'}
                           </h4>
                         </div>
                         <span className="text-[10px] font-bold text-emerald-400">
                           {salonInfo.professionals.length} Visagistas
                         </span>
                       </div>
-                      <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      <p className={`text-xs leading-relaxed shrink-0 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                         Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
                       </p>
 
-                      {/* Cards dos Especialistas */}
-                      <div className="grid grid-cols-2 gap-2.5 pt-1">
+                      {/* Cards dos Especialistas com Rolagem Limitada */}
+                      <div className="grid grid-cols-2 gap-2.5 pt-1 overflow-y-auto max-h-60 pr-1 flex-1 min-h-0">
                         {salonInfo.professionals.map((prof, idx) => (
                           <div key={idx} className={`flex flex-col items-center p-3 rounded border text-center shadow-xs ${
                             isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
@@ -1384,13 +1238,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           </div>
                         ))}
                       </div>
-                    </div>
-
-                    <div className={`pt-2 border-t text-[11px] flex items-center justify-between ${
-                      isDark ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
-                    }`}>
-                      <span>Profissionais credenciados</span>
-                      <span className="text-emerald-400 font-bold">Atendimento VIP</span>
                     </div>
                   </div>
                 </motion.div>
@@ -1569,22 +1416,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     )}
   </AnimatePresence>
 </div>
-
-      {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}
-      <SalonBookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        salonName={salonInfo.name}
-        salonAddress={salonInfo.address}
-        services={catalogServices}
-        professionals={salonInfo.professionals}
-        initialService={bookingService}
-        baseOffer={primaryOffer}
-        skipDateStep={skipDateStep}
-        initialTimeSlot={selectedTimeSlotForBooking}
-        initialDateIso={selectedCalendarDateIso}
-        onConfirmAppointment={handleConfirmSchedule}
-      />
 
       {/* 2. MODAL DE AGENDAMENTO CONFIRMADO (DENTRO DA SEÇÃO DO ESTABELECIMENTO) */}
       {confirmedBookingData && (

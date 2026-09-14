@@ -15,6 +15,123 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Seleção Multi-Serviço com Toggle e Avanço Exclusivo via Botão
+- **Tipo:** `[UX / Refactor]`
+- **Motivo:** Solicitação do usuário para desativar o avanço automático ao clicar no serviço, permitindo selecionar 1 ou mais serviços via toque/toggle (1º toque seleciona, 2º desativa) e avançar para a data exclusivamente através do botão inferior.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Substituída a seleção única com redirecionamento automático por estado de array `selectedServices` e manipulador `toggleServiceSelection`.
+  - O clique na linha da tabela de serviços altera seu estado de seleção (inclui/remove) mantendo o usuário na Etapa 1.
+  - O botão de ação inferior foi ativado e parametrizado para indicar a contagem de serviços selecionados (ex: `Avançar para Data (2 serviços)`) e realizar a transição apenas quando acionado.
+  - Calculados os valores totais de preço e duração combinados para uso nos passos subsequentes.
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção de Faixa de Título Redundante na Tabela de Serviços (Focus Mode)
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Solicitação do usuário via Focus Mode para remover o bloco/banner de título superior acima do cabeçalho de 3 colunas da tabela de serviços.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Removida a `div` com o título "Selecione o Serviço", exibindo diretamente o cabeçalho de 3 colunas (Serviço | Duração | Valor) no topo da tabela. Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção de Card/Box Aninhado na Tabela de Serviços (Focus Mode / Clean UI)
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Remoção de envoltório de caixa duplo ("box dentro de box") na seção de seleção de serviço conforme diretrizes de Anti-Slop Visual e solicitação do usuário via Focus Mode.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Eliminado o contêiner `div` externo com borda redundante na Etapa 1 (`service`), unificando o título da seção e o cabeçalho da tabela em um único contêiner limpo com `overflow-hidden border`. Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Reestruturação do Fluxo de Agendamento em 4 Subseções com Tabela de Serviços
+- **Tipo:** `[Refactor / UX]`
+- **Motivo:** Reestruturação do fluxo de agendamento em 4 etapas distintas (1. Serviço, 2. Data, 3. Horário, 4. Confirmar), movendo a lista de serviços para uma etapa dedicada em formato de tabela com 3 colunas (Serviço, Duração, Valor) e removendo o seletor redundante da etapa de data.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Atualizado o tipo `Step` para `'service' | 'date' | 'professionals_and_time' | 'confirmation'`.
+  - Criada a Etapa 1 (`service`) exibindo uma tabela em linhas de 3 colunas (Serviço, Duração, Valor).
+  - Ao selecionar o serviço, a aplicação avança automaticamente para a Etapa 2 (`date`), onde um resumo sintético do serviço escolhido é exibido no topo (com opção "Trocar") e o calendário mensal é habilitado para escolha da data.
+  - Atualizado o indicador de progresso (stepper) no cabeçalho para refletir as 4 etapas.
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Renomeio da Seção e da Aba do Menu para "Agendar" (Focus Mode)
+- **Tipo:** `[UI / Renaming]`
+- **Motivo:** Solicitação do usuário via Focus Mode para renomear a seção ("Agenda & Agendamento") e a terceira aba do menu inferior ("Agenda") para simplesmente "Agendar", tornando a navegação mais clara e direta.
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Atualizado o rótulo do item `vagas` em `BottomNav.tsx` de `'Agenda'` para `'Agendar'`. Atualizado o título do `SectionHeader` em `SalonProfileView.tsx` para `'Agendar'`. Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Aplicação de Tamanho de Fonte 12px no Seletor de Serviços (Focus Mode)
+- **Tipo:** `[UI / Styling]`
+- **Motivo:** Solicitação do usuário via Focus Mode para definir explicitamente `font-size: 12px` (`text-xs text-[12px]`) no elemento `select` de serviços e suas opções.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Adicionadas as classes `text-xs text-[12px]` no elemento `<select>` e nas suas `<option>` internas no componente `SalonBookingModal.tsx`. Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Inversão das Posições dos Rótulos das Etapas (Acima do Travessão)
+- **Tipo:** `[UI / Design Polish]`
+- **Motivo:** Solicitação do usuário via Focus Mode para posicionar os textos das etapas ("1. Data", "2. Horário", "3. Confirmar") acima das barras indicadoras de progresso (travessão).
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Reordenado o elemento `span` contendo os rótulos para ficar acima do elemento `div` das barras do indicador no componente `SalonBookingModal.tsx`. Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Ajuste de Dimensão de Altura no Header do Agendamento (Focus Mode)
+- **Tipo:** `[Fix / UI Styling]`
+- **Motivo:** Ajuste de altura (`height: 28px` / `h-7`) no contêiner do título/cabeçalho da caixa de agendamento via Focus Mode.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Aplicada a classe `h-7` no elemento selecionado no cabeçalho do agendamento, alinhando a altura a 28px conforme especificado na alteração de estilo solicitada. Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Correção e Bloqueio Estrito do Calendário Sem Seleção de Serviço
+- **Tipo:** `[Fix / UI Logic]`
+- **Motivo:** O usuário apontou que ao acessar a seção Agenda do salão, o calendário estava sendo inicializado pré-selecionado devido ao `baseOffer` do salão, permitindo clicar em datas antes de escolher explicitamente o serviço.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Removida a atribuição automática do `baseOffer` para o estado `selectedService`. Agora, ao abrir a seção Agenda do estabelecimento, o seletor inicia obrigatoriamente como `"Selecione o serviço"` (`null`). Adicionada a propriedade `pointer-events-none opacity-40 select-none grayscale` e o aviso "🔒 Calendário bloqueado" no contêiner do calendário. A seleção de datas fica 100% bloqueada e inativa até que um serviço seja explicitamente escolhido pelo usuário. Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Seletor de Serviços Cadastrados & Ativação Condicional do Calendário no Agendamento
+- **Tipo:** `[Feat / UI Logic]`
+- **Motivo:** O usuário solicitou que na div superior do fluxo de agendamento apareça a lista de serviços cadastrados pelo estabelecimento ("Selecione o serviço" por padrão). O calendário mensal deve permanecer inativo/desabilitado até que um serviço seja selecionado. Após a escolha da data, o usuário é avançado para a fase de horários, e após os horários para a fase de confirmação final.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Implementado o menu dropdown `select` estilizado contendo todos os serviços do estabelecimento e valor padrão `"Selecione o serviço"`. O calendário mensal e os botões de avanço agora são desabilitados quando nenhum serviço está selecionado (`selectedService === null`). Assim que o serviço é selecionado, o calendário é ativado e a seleção de data avança diretamente para a fase de horários, culminando na tela de confirmação. Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Integração Direta do Fluxo de Agendamento em Etapas na Seção Agenda
+- **Tipo:** `[Refactor / Mobile UX]`
+- **Motivo:** Solicitação do usuário para integrar a ferramenta de agendamento em etapas diretamente dentro da seção "Agenda" (Aba 3) do perfil do salão, desfazendo a modal overlay.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Adicionada a propriedade `inline` ao componente `SalonBookingModal.tsx` para permitir que o fluxo em etapas (1. Selecionar Data -> 2. Profissional & Horário -> 3. Confirmação) seja renderizado diretamente no layout da Seção Agenda. Em `SalonProfileView.tsx`, a aba de Agenda agora exibe o componente inline sem modal overlay de fundo, garantindo navegação suave, fluida e natural. Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção de Textos Redundantes ('Atendimento VIP' e 'Profissionais credenciados')
+- **Tipo:** `[Clean Code / Mobile UX]`
+- **Motivo:** Remoção do rodapé com os textos "Atendimento VIP" e "Profissionais credenciados" do card de Equipe em `SalonProfileView.tsx`, visando uma interface mobile sintetizada e livre de poluição.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Removido o elemento `div` contendo as descrições redundantes no rodapé da aba de equipe. Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Renomeação do Título do Card para 'Equipe' e Adição de Rolagem Interna Limitada
+- **Tipo:** `[UX Polish / UI Precision]`
+- **Motivo:** Solicitação do usuário para renomear o cabeçalho "Equipe de Especialistas" para "Equipe" e habilitar uma rolagem vertical interna nos cards de profissionais para permitir a inspeção completa.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Atualizado o título da aba/card de equipe para "Equipe" e aplicada a classe `overflow-y-auto max-h-60 flex-1` na grade de profissionais, permitindo visualizar e rolar todos os membros confortavelmente dentro do card.
+
 ### [2026-09-14] — Padronização Integral de Bordas Arredondadas (4px `rounded`) em Todos os Componentes
 - **Tipo:** `[Refactor / Design System / Clean Code]`
 - **Motivo:** Solicitação do usuário para garantir que todas as bordas e molduras do aplicativo Vagou utilizem o padrão de raio de curvatura de 4px (`rounded`).

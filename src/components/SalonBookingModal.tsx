@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   X, Calendar, Clock, User, CheckCircle2, ChevronLeft, ChevronRight, 
-  Sparkles, Star, Scissors, ArrowLeft, Building2
+  Sparkles, Star, Scissors, ArrowLeft, Building2, ChevronDown, AlertCircle
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { useTheme } from '../context/ThemeContext';
@@ -26,8 +26,9 @@ export interface SalonProfessionalItem {
 }
 
 interface SalonBookingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  inline?: boolean;
+  onClose?: () => void;
   salonName: string;
   salonAddress?: string;
   services: CatalogServiceItem[];
@@ -50,10 +51,11 @@ interface SalonBookingModalProps {
   }) => void;
 }
 
-type Step = 'date' | 'professionals_and_time' | 'confirmation';
+type Step = 'service' | 'date' | 'professionals_and_time' | 'confirmation';
 
 export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
-  isOpen,
+  isOpen = true,
+  inline = false,
   onClose,
   salonName,
   salonAddress = 'Rua das Flores, 1420 - Centro, Curitiba, PR',
@@ -68,30 +70,58 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 }) => {
   const { isDark } = useTheme();
 
-  // Step state: 'date' (Phase 1: Monthly Calendar only) -> 'professionals_and_time' (Phase 2: Professionals + Time Table below) -> 'confirmation' (Phase 3: Summary)
-  const [currentStep, setCurrentStep] = useState<Step>('date');
+  // 1. Selected Services State (Suporta a seleção de 1 ou mais serviços com toggle)
+  const [selectedServices, setSelectedServices] = useState<CatalogServiceItem[]>(() => {
+    if (initialService) return [initialService];
+    return [];
+  });
 
-  // 1. Selected Service State (Fixed to the published service/offer accessed)
-  const [selectedService, setSelectedService] = useState<CatalogServiceItem>(() => {
-    if (initialService) return initialService;
-    if (baseOffer) {
-      return {
-        id: baseOffer.id,
-        title: baseOffer.serviceTitle,
-        duration: baseOffer.duration,
-        price: baseOffer.price,
-        description: baseOffer.description,
-        category: baseOffer.serviceCategory,
-      };
+  const toggleServiceSelection = (srv: CatalogServiceItem) => {
+    setSelectedServices((prev) => {
+      const exists = prev.some((s) => s.id === srv.id);
+      if (exists) {
+        return prev.filter((s) => s.id !== srv.id);
+      } else {
+        return [...prev, srv];
+      }
+    });
+  };
+
+  // Objeto resumido consolidado para compatibilidade com os passos de data, horário e confirmação
+  const selectedService = useMemo(() => {
+    if (selectedServices.length === 0) return null;
+    if (selectedServices.length === 1) return selectedServices[0];
+
+    const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+    const combinedTitle = selectedServices.map((s) => s.title).join(' + ');
+
+    let totalMinutes = 0;
+    let canParseMinutes = true;
+    for (const s of selectedServices) {
+      const match = s.duration.match(/(\d+)/);
+      if (match) {
+        totalMinutes += parseInt(match[1], 10);
+      } else {
+        canParseMinutes = false;
+        break;
+      }
     }
-    return services?.[0] || {
-      id: 'srv-1',
-      title: 'Corte Degradê / Fade Moderno',
-      duration: '40 min',
-      price: 55,
-      description: 'Corte com acabamento preciso na lâmina',
-      category: 'Cabelo',
-    };
+    const combinedDuration = canParseMinutes ? `${totalMinutes} min` : selectedServices.map((s) => s.duration).join(' + ');
+
+    return {
+      id: selectedServices.map((s) => s.id).join('+'),
+      title: combinedTitle,
+      price: totalPrice,
+      duration: combinedDuration,
+      category: 'Combo',
+    } as CatalogServiceItem;
+  }, [selectedServices]);
+
+  // Step state: 'service' (Phase 1: Table of services) -> 'date' (Phase 2: Monthly Calendar) -> 'professionals_and_time' (Phase 3: Professionals + Time Table) -> 'confirmation' (Phase 4: Summary)
+  const [currentStep, setCurrentStep] = useState<Step>(() => {
+    if (initialTimeSlot) return 'confirmation';
+    if (initialService) return skipDateStep ? 'professionals_and_time' : 'date';
+    return 'service';
   });
 
   // 2. Date Selection State (Monthly Calendar)
@@ -133,23 +163,18 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         setSelectedTimeSlot(initialTimeSlot);
         setCurrentStep('confirmation');
       } else {
-        setCurrentStep(skipDateStep ? 'professionals_and_time' : 'date');
+        if (initialService) {
+          setCurrentStep(skipDateStep ? 'professionals_and_time' : 'date');
+        } else {
+          setCurrentStep('service');
+        }
         setSelectedTimeSlot(null);
       }
       setSelectedProfessional('any');
       if (initialService) {
-        setSelectedService(initialService);
-      } else if (baseOffer) {
-        setSelectedService({
-          id: baseOffer.id,
-          title: baseOffer.serviceTitle,
-          duration: baseOffer.duration,
-          price: baseOffer.price,
-          description: baseOffer.description,
-          category: baseOffer.serviceCategory,
-        });
-      } else if (services && services.length > 0) {
-        setSelectedService(services[0]);
+        setSelectedServices([initialService]);
+      } else {
+        setSelectedServices([]);
       }
     }
     prevIsOpenRef.current = isOpen;
@@ -264,66 +289,70 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
       salonAddress,
       price: selectedService.price,
     });
-    onClose();
+    onClose?.();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div 
-        className={`w-full max-w-lg border rounded max-h-[92vh] flex flex-col shadow-2xl overflow-hidden transition-colors ${
-          isDark
-            ? 'bg-slate-950 border-slate-800'
-            : 'bg-white border-slate-200'
-        }`}
-        role="dialog"
-        aria-modal="true"
-      >
-        {/* Header do Modal com Progresso das Etapas */}
-        <div className={`px-4 py-3 border-b sticky top-0 z-10 transition-colors ${
-          isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-slate-100/95 border-slate-200'
-        }`}>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              {currentStep !== 'date' ? (
-                <button
-                  onClick={() => {
-                    if (currentStep === 'professionals_and_time') setCurrentStep('date');
-                    else if (currentStep === 'confirmation') setCurrentStep('professionals_and_time');
-                  }}
-                  className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
-                    isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
-                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
-                  }`}
-                  aria-label="Voltar etapa anterior"
-                >
-                  <ArrowLeft className="w-4 h-4 text-[#20C933]" />
-                  <span className="text-xs font-bold">Voltar</span>
-                </button>
-              ) : (
-                <button
-                  onClick={onClose}
-                  className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
-                    isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
-                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
-                  }`}
-                  aria-label="Voltar e fechar"
-                  title="Voltar / Fechar"
-                >
-                  <ArrowLeft className="w-4 h-4 text-[#20C933]" />
-                  <span className="text-xs font-bold">Voltar</span>
-                </button>
-              )}
-              <h2 className={`text-sm sm:text-base font-bold font-['Poppins'] ${
-                isDark ? 'text-white' : 'text-slate-900'
-              }`}>
-                {currentStep === 'date' && 'Data'}
-                {currentStep === 'professionals_and_time' && 'Profissional & Horário'}
-                {currentStep === 'confirmation' && 'Confirmação'}
-              </h2>
-            </div>
+  const bookingContent = (
+    <div 
+      className={`w-full flex flex-col overflow-hidden transition-colors ${
+        inline ? 'h-full border-0 rounded-none' : 'max-w-lg border rounded max-h-[92vh] shadow-2xl'
+      } ${
+        isDark
+          ? 'bg-slate-950 border-slate-800'
+          : 'bg-white border-slate-200'
+      }`}
+      role={inline ? undefined : "dialog"}
+      aria-modal={inline ? undefined : "true"}
+    >
+      {/* Header do Agendamento com Progresso das Etapas */}
+      <div className={`px-3.5 py-2.5 border-b sticky top-0 z-10 transition-colors ${
+        isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-slate-100/95 border-slate-200'
+      }`}>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2 h-7">
+            {currentStep !== 'service' ? (
+              <button
+                onClick={() => {
+                  if (currentStep === 'date') setCurrentStep('service');
+                  else if (currentStep === 'professionals_and_time') setCurrentStep('date');
+                  else if (currentStep === 'confirmation') setCurrentStep('professionals_and_time');
+                }}
+                className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
+                  isDark
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
+                    : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
+                }`}
+                aria-label="Voltar etapa anterior"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+                <span className="text-xs font-bold">Voltar</span>
+              </button>
+            ) : !inline && onClose ? (
+              <button
+                onClick={onClose}
+                className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
+                  isDark
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
+                    : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
+                }`}
+                aria-label="Voltar e fechar"
+                title="Voltar / Fechar"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#20C933]" />
+                <span className="text-xs font-bold">Voltar</span>
+              </button>
+            ) : null}
+            <h2 className={`text-xs sm:text-sm font-bold font-['Poppins'] ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}>
+              {currentStep === 'service' && '1. Escolha o Serviço'}
+              {currentStep === 'date' && '2. Selecione a Data'}
+              {currentStep === 'professionals_and_time' && '3. Escolha Profissional & Horário'}
+              {currentStep === 'confirmation' && '4. Confirmar Agendamento'}
+            </h2>
+          </div>
 
+          {!inline && onClose && (
             <button
               onClick={onClose}
               className={`w-7 h-7 rounded flex items-center justify-center transition cursor-pointer ${
@@ -335,16 +364,18 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
             >
               <X className="w-4 h-4" />
             </button>
-          </div>
+          )}
+        </div>
 
-          {/* Stepper Indicator Compacto */}
-          <div className="grid grid-cols-3 gap-1.5">
+          {/* Stepper Indicator Compacto - 4 Etapas */}
+          <div className="grid grid-cols-4 gap-1">
             {[
-              { key: 'date', label: '1. Data' },
-              { key: 'professionals_and_time', label: '2. Horário' },
-              { key: 'confirmation', label: '3. Confirmar' },
+              { key: 'service', label: '1. Serviço' },
+              { key: 'date', label: '2. Data' },
+              { key: 'professionals_and_time', label: '3. Horário' },
+              { key: 'confirmation', label: '4. Confirmar' },
             ].map((st, idx) => {
-              const stepOrder: Record<Step, number> = { date: 1, professionals_and_time: 2, confirmation: 3 };
+              const stepOrder: Record<Step, number> = { service: 1, date: 2, professionals_and_time: 3, confirmation: 4 };
               const currentOrder = stepOrder[currentStep];
               const thisOrder = idx + 1;
               const isPassed = thisOrder < currentOrder;
@@ -352,6 +383,15 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
               return (
                 <div key={st.key} className="flex flex-col gap-0.5">
+                  <span className={`text-[8px] sm:text-[9.5px] font-bold uppercase tracking-wider text-center whitespace-nowrap ${
+                    isCurrent
+                      ? isDark ? 'text-emerald-400' : 'text-[#087A2A]'
+                      : isPassed
+                      ? isDark ? 'text-slate-300' : 'text-slate-600'
+                      : isDark ? 'text-slate-600' : 'text-slate-400'
+                  }`}>
+                    {st.label}
+                  </span>
                   <div
                     className={`h-1.5 rounded transition-all duration-300 ${
                       isCurrent
@@ -363,15 +403,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         : 'bg-slate-200'
                     }`}
                   />
-                  <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-center ${
-                    isCurrent
-                      ? isDark ? 'text-emerald-400' : 'text-[#087A2A]'
-                      : isPassed
-                      ? isDark ? 'text-slate-300' : 'text-slate-600'
-                      : isDark ? 'text-slate-600' : 'text-slate-400'
-                  }`}>
-                    {st.label}
-                  </span>
                 </div>
               );
             })}
@@ -380,132 +411,291 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
         {/* Scrollable Content Body */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
-          {/* Banner Compacto do Serviço Selecionado com Data/Horário Solicitados */}
-          <div className={`flex items-center justify-between px-3 py-2 border rounded transition-colors ${
-            isDark
-              ? 'bg-slate-900 border-slate-800'
-              : 'bg-slate-50 border-slate-200'
-          }`}>
-            <div className="flex items-center gap-2 min-w-0">
-              <Scissors className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
-              <div className="min-w-0">
-                <span className={`text-xs font-bold truncate block ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {selectedService.title}
-                </span>
-                <span className={`text-[10px] truncate block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {salonName} • {selectedService.duration}
-                </span>
+          {/* ============================================================ */}
+          {/* ETAPA 1: SELEÇÃO DE SERVIÇO (TABELA EM LINHAS DE 3 COLUNAS) */}
+          {/* ============================================================ */}
+          {currentStep === 'service' && (
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {/* Tabela de Serviços em Linhas de 3 Colunas */}
+              <div className={`rounded overflow-hidden border ${
+                isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-white'
+              }`}>
+                {/* Cabeçalho da Tabela */}
+                <div className={`grid grid-cols-12 gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border-b ${
+                  isDark ? 'bg-slate-900/40 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-500 border-slate-200'
+                }`}>
+                  <div className="col-span-6 flex items-center gap-1">
+                    <span>Serviço</span>
+                  </div>
+                  <div className="col-span-3 text-center">
+                    <span>Duração</span>
+                  </div>
+                  <div className="col-span-3 text-right">
+                    <span>Valor</span>
+                  </div>
+                </div>
+
+                {/* Linhas da Tabela */}
+                <div className="divide-y divide-slate-800/40">
+                  {services.map((srv) => {
+                    const isSelected = selectedServices.some((s) => s.id === srv.id);
+                    return (
+                      <button
+                        key={srv.id}
+                        type="button"
+                        onClick={() => {
+                          toggleServiceSelection(srv);
+                        }}
+                        className={`w-full grid grid-cols-12 gap-2 px-3 py-3 items-center text-left transition cursor-pointer ${
+                          isSelected
+                            ? isDark
+                              ? 'bg-emerald-950/60 border-l-4 border-l-[#20C933] text-white'
+                              : 'bg-emerald-50 border-l-4 border-l-[#20C933] text-slate-900'
+                            : isDark
+                            ? 'hover:bg-slate-900/80 text-slate-200'
+                            : 'hover:bg-slate-50 text-slate-800'
+                        }`}
+                      >
+                        {/* Coluna 1: Serviço */}
+                        <div className="col-span-6 pr-1">
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition ${
+                              isSelected
+                                ? 'bg-[#20C933] border-[#20C933] text-white'
+                                : isDark
+                                ? 'border-slate-700 bg-slate-900'
+                                : 'border-slate-300 bg-white'
+                            }`}>
+                              {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
+                            </div>
+                            <span className={`text-xs font-bold line-clamp-1 ${
+                              isSelected ? (isDark ? 'text-emerald-400' : 'text-[#087A2A]') : ''
+                            }`}>
+                              {srv.title}
+                            </span>
+                          </div>
+                          {srv.category && (
+                            <span className={`text-[9px] block mt-0.5 ml-5.5 ${
+                              isDark ? 'text-slate-500' : 'text-slate-400'
+                            }`}>
+                              {srv.category}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Coluna 2: Duração */}
+                        <div className="col-span-3 text-center">
+                          <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded ${
+                            isDark ? 'bg-slate-900 text-slate-300' : 'bg-slate-100 text-slate-700'
+                          }`}>
+                            {srv.duration}
+                          </span>
+                        </div>
+
+                        {/* Coluna 3: Valor */}
+                        <div className="col-span-3 text-right">
+                          <span className={`text-xs font-extrabold ${
+                            isSelected
+                              ? isDark ? 'text-emerald-400' : 'text-[#087A2A]'
+                              : isDark ? 'text-slate-200' : 'text-slate-900'
+                          }`}>
+                            R$ {srv.price.toFixed(0)}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Botão de Avançar com Função Ativa */}
+              <button
+                disabled={selectedServices.length === 0}
+                onClick={() => {
+                  if (selectedServices.length > 0) setCurrentStep('date');
+                }}
+                className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
+                  selectedServices.length > 0
+                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
+                    : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                }`}
+              >
+                <span>
+                  {selectedServices.length > 1
+                    ? `Avançar para Data (${selectedServices.length} serviços)`
+                    : selectedServices.length === 1
+                    ? 'Avançar para Data (1 serviço)'
+                    : 'Selecione ao menos 1 serviço'}
+                </span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <span className={`text-xs sm:text-sm font-black font-mono flex-shrink-0 ml-2 flex items-center gap-1 ${
-              isDark ? 'text-emerald-400' : 'text-[#087A2A]'
-            }`}>
-              <Clock className="w-3.5 h-3.5 text-[#20C933] shrink-0" />
-              <span>{selectedTimeSlot ? `${shortDateFormatted} às ${selectedTimeSlot}` : shortDateFormatted}</span>
-            </span>
-          </div>
+          )}
 
           {/* ============================================================ */}
-          {/* FASE 1: SOMENTE A AGENDA / CALENDÁRIO MENSAL */}
+          {/* ETAPA 2: SOMENTE A AGENDA / CALENDÁRIO MENSAL */}
           {/* ============================================================ */}
           {currentStep === 'date' && (
             <div className="space-y-3 animate-in fade-in duration-200">
-              {/* Header do Mês com Controles */}
-              <div className={`flex items-center justify-between p-2.5 px-3 rounded border transition-colors ${
-                isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <button
-                  onClick={handlePrevMonth}
-                  className={`p-2 rounded transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
-                    isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
-                  }`}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
+              {/* Resumo Sintético do Serviço Selecionado (Substitui a lista redundante) */}
+              {selectedService ? (
+                <div className={`p-2.5 px-3 border rounded flex items-center justify-between transition-colors ${
+                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="flex items-center gap-2 pr-2">
+                    <div className={`w-7 h-7 rounded flex items-center justify-center shrink-0 ${
+                      isDark ? 'bg-emerald-950/60 text-[#20C933]' : 'bg-emerald-50 text-[#087A2A]'
+                    }`}>
+                      <Scissors className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <span className={`text-[9px] font-bold uppercase tracking-wider block leading-tight ${
+                        isDark ? 'text-slate-400' : 'text-slate-500'
+                      }`}>
+                        Serviço Escolhido
+                      </span>
+                      <div className={`text-xs font-bold leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        {selectedService.title} — <span className={isDark ? 'text-emerald-400' : 'text-[#087A2A]'}>R$ {selectedService.price.toFixed(0)} ({selectedService.duration})</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep('service')}
+                    className={`px-2 py-1 text-[10px] font-bold rounded transition cursor-pointer shrink-0 ${
+                      isDark
+                        ? 'bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700'
+                        : 'bg-slate-200 hover:bg-slate-300 text-[#087A2A] border border-slate-300'
+                    }`}
+                  >
+                    Trocar
+                  </button>
+                </div>
+              ) : (
+                <div className={`p-2.5 rounded text-center text-xs font-bold border transition ${
+                  isDark ? 'bg-amber-950/40 text-amber-400 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
+                }`}>
+                  <p className="mb-1">Nenhum serviço selecionado.</p>
+                  <button
+                    onClick={() => setCurrentStep('service')}
+                    className="underline text-amber-400 hover:text-white cursor-pointer"
+                  >
+                    Clique para selecionar um serviço
+                  </button>
+                </div>
+              )}
 
-                <div className="text-center">
-                  <h3 className={`text-sm font-black uppercase tracking-wider font-['Poppins'] ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    {monthData.monthLabel}
-                  </h3>
+              {/* Conteúdo do Calendário (Totalmente bloqueado se selectedService for null) */}
+              <div className={`space-y-3 transition-all ${
+                !selectedService ? 'pointer-events-none opacity-40 select-none grayscale-[50%]' : ''
+              }`}>
+                {/* Header do Mês com Controles */}
+                <div className={`flex items-center justify-between p-2.5 px-3 rounded border transition-colors ${
+                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <button
+                    disabled={!selectedService}
+                    onClick={handlePrevMonth}
+                    className={`p-2 rounded transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                      isDark
+                        ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                        : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <div className="text-center">
+                    <h3 className={`text-sm font-black uppercase tracking-wider font-['Poppins'] ${
+                      isDark ? 'text-white' : 'text-slate-900'
+                    }`}>
+                      {monthData.monthLabel}
+                    </h3>
+                  </div>
+
+                  <button
+                    disabled={!selectedService}
+                    onClick={handleNextMonth}
+                    className={`p-2 rounded transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                      isDark
+                        ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                        : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
 
+                {/* Grid dos Dias da Semana */}
+                <div className="grid grid-cols-7 gap-1 text-center">
+                  {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
+                    <div key={day} className={`text-[10px] font-bold py-1 uppercase ${
+                      isDark ? 'text-slate-500' : 'text-slate-400'
+                    }`}>
+                      {day}
+                    </div>
+                  ))}
+
+                  {/* Dias do Mês em Grade */}
+                  {monthData.daysGrid.map((item, index) => {
+                    if (item.dayNumber === null) {
+                      return <div key={`empty-${index}`} className="h-10" />;
+                    }
+
+                    const isSelected = selectedService && selectedDateIso === item.isoString;
+                    const isDayDisabled = !selectedService || item.isDisabled;
+
+                    return (
+                      <button
+                        key={item.isoString || index}
+                        disabled={isDayDisabled}
+                        onClick={() => {
+                          if (item.isoString && selectedService) {
+                            handleSelectDateAndAdvance(item.isoString);
+                          }
+                        }}
+                        className={`h-11 rounded font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-lg shadow-emerald-500/30 scale-105 z-10'
+                            : isDayDisabled
+                            ? isDark
+                              ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50 opacity-40'
+                              : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40 opacity-40'
+                            : isDark
+                            ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
+                            : 'bg-slate-50 hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
+                        }`}
+                      >
+                        <span>{item.dayNumber}</span>
+                        {item.isToday && !isSelected && (
+                          <span className={`text-[8px] font-black uppercase ${
+                            isDark ? 'text-emerald-400' : 'text-[#087A2A]'
+                          }`}>Hoje</span>
+                        )}
+                        {item.isClosed && (
+                          <span className="text-[8px] text-rose-500 font-bold">Fechado</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Botão de Avanço da Fase 1 */}
                 <button
-                  onClick={handleNextMonth}
-                  className={`p-2 rounded transition cursor-pointer ${
-                    isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                  disabled={!selectedService}
+                  onClick={() => {
+                    if (selectedService) setCurrentStep('professionals_and_time');
+                  }}
+                  className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
+                    selectedService
+                      ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
+                      : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
                   }`}
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <span>Avançar para Horários</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-
-              {/* Grid dos Dias da Semana */}
-              <div className="grid grid-cols-7 gap-1 text-center">
-                {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
-                  <div key={day} className={`text-[10px] font-bold py-1 uppercase ${
-                    isDark ? 'text-slate-500' : 'text-slate-400'
-                  }`}>
-                    {day}
-                  </div>
-                ))}
-
-                {/* Dias do Mês em Grade */}
-                {monthData.daysGrid.map((item, index) => {
-                  if (item.dayNumber === null) {
-                    return <div key={`empty-${index}`} className="h-10" />;
-                  }
-
-                  const isSelected = selectedDateIso === item.isoString;
-
-                  return (
-                    <button
-                      key={item.isoString || index}
-                      disabled={item.isDisabled}
-                      onClick={() => {
-                        if (item.isoString) {
-                          handleSelectDateAndAdvance(item.isoString);
-                        }
-                      }}
-                      className={`h-11 rounded font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-lg shadow-emerald-500/30 scale-105 z-10'
-                          : item.isDisabled
-                          ? isDark
-                            ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
-                            : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40'
-                          : isDark
-                          ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
-                          : 'bg-slate-50 hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
-                      }`}
-                    >
-                      <span>{item.dayNumber}</span>
-                      {item.isToday && !isSelected && (
-                        <span className={`text-[8px] font-black uppercase ${
-                          isDark ? 'text-emerald-400' : 'text-[#087A2A]'
-                        }`}>Hoje</span>
-                      )}
-                      {item.isClosed && (
-                        <span className="text-[8px] text-rose-500 font-bold">Fechado</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Botão de Avanço da Fase 1 */}
-              <button
-                onClick={() => setCurrentStep('professionals_and_time')}
-                className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-white font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs"
-              >
-                <span>Avançar para Horários</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
             </div>
           )}
 
@@ -724,7 +914,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     <span className={`flex items-center gap-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                       <Scissors className="w-3.5 h-3.5 text-[#20C933]" /> Serviço:
                     </span>
-                    <span className={`font-bold text-right ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedService.title}</span>
+                    <span className={`font-bold text-right ${isDark ? 'text-white' : 'text-slate-900'}`}>{selectedService?.title || 'Serviço Selecionado'}</span>
                   </div>
 
                   <div className="flex justify-between items-center">
@@ -747,7 +937,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     isDark ? 'border-slate-800' : 'border-slate-200'
                   }`}>
                     <span className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Total a pagar:</span>
-                    <span className={`font-black text-lg ${isDark ? 'text-emerald-400' : 'text-[#087A2A]'}`}>R$ {selectedService.price.toFixed(0)}</span>
+                    <span className={`font-black text-lg ${isDark ? 'text-emerald-400' : 'text-[#087A2A]'}`}>R$ {selectedService?.price ? selectedService.price.toFixed(0) : '0'}</span>
                   </div>
                 </div>
               </div>
@@ -789,7 +979,16 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
             )}
           </div>
         )}
-      </div>
+    </div>
+  );
+
+  if (inline) {
+    return bookingContent;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      {bookingContent}
     </div>
   );
 };

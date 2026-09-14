@@ -35,7 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     const establishmentTabs = [
       { id: 'home', label: 'Início', icon: Home },
       { id: 'servicos', label: 'Serviços', icon: salonContext.ServicesIcon || Sparkles },
-      { id: 'vagas', label: 'Agenda', icon: Calendar },
+      { id: 'vagas', label: 'Agendar', icon: Calendar },
       { id: 'espaco', label: salonContext.spaceTabLabel || 'Espaço', icon: salonContext.SpaceIcon || Store },
     ];
 
