@@ -45,7 +45,7 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = React.memo(({ title, action, className = '', isDark = true }) => (
   <div
-    className={`sticky top-14 sm:top-16 z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md shrink-0 ${
+    className={`w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs shrink-0 ${
       isDark
         ? 'bg-gradient-to-r from-emerald-950/95 via-emerald-900/70 to-slate-950/95 border-emerald-500/30'
         : 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-50/95 border-emerald-500/30'
@@ -377,60 +377,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return Sparkles;
   }, [primaryOffer, salonName, salonOffers, offers]);
 
-  // Navegação suave entre seções da landing page e sincronização do activeTab
+  // Navegação direta e instantânea entre as abas do micro-app
   const handleSelectTab = (tab: 'home' | 'servicos' | 'vagas' | 'espaco') => {
     setActiveTab(tab);
-    if (tab === 'home') {
-      const scrollParent = document.getElementById('salon-section-home')?.closest('.overflow-y-auto') || window;
-      scrollParent.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    let targetId = 'salon-section-servicos';
-    if (tab === 'vagas') targetId = 'salon-section-agenda';
-    else if (tab === 'espaco') targetId = 'salon-section-espaco';
-
-    const el = document.getElementById(targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   };
-
-  // Observador de intersecção para sincronizar a aba ativa do menu inferior conforme o cliente rola a tela
-  useEffect(() => {
-    const sectionIds: { id: 'home' | 'servicos' | 'vagas' | 'espaco'; elementId: string }[] = [
-      { id: 'home', elementId: 'salon-section-home' },
-      { id: 'servicos', elementId: 'salon-section-servicos' },
-      { id: 'vagas', elementId: 'salon-section-agenda' },
-      { id: 'espaco', elementId: 'salon-section-espaco' },
-    ];
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const matched = sectionIds.find((s) => s.elementId === entry.target.id);
-            if (matched) {
-              setActiveTab(matched.id);
-            }
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '-20% 0px -40% 0px',
-        threshold: 0.15,
-      }
-    );
-
-    sectionIds.forEach(({ elementId }) => {
-      const el = document.getElementById(elementId);
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   // Registrar context do menu de navegação do rodapé (4 abas: Início, Serviços, Agenda, Espaço)
   useEffect(() => {
@@ -823,9 +773,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   };
 
   return (
-    <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-0 font-['Poppins'] transition-colors duration-200`}>
+    <div className={`w-full h-full flex flex-col overflow-hidden ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} font-['Poppins'] transition-colors duration-200`}>
       {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Logo Full Height & Botões Selecionados) */}
-      <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b pr-4 shadow-md flex items-center justify-between gap-3 transition-colors h-14 sm:h-16 overflow-hidden`}>
+      <header className={`sticky top-0 z-40 ${isDark ? 'bg-[#151A1E]/95 border-slate-800/80' : 'bg-white/95 border-slate-200/90 shadow-xs'} backdrop-blur-md border-b pr-4 shadow-md flex items-center justify-between gap-3 transition-colors h-14 sm:h-16 overflow-hidden shrink-0`}>
         {/* Lado Esquerdo: Logotipia em Texto da Empresa (Moderna, estilosa e limpa, 103px de largura) */}
         <div 
           className="h-full w-[103px] pl-3.5 pr-1 flex items-center shrink-0 select-none cursor-pointer"
@@ -886,10 +836,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </header>
 
-      {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
-      <div className="pt-0 space-y-0 p-0 m-0">
-        {/* 1. SEÇÃO: INÍCIO - SUBCABEÇALHO + SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col border-b border-slate-800/40">
+      {/* 2. ÁREA DE CONTEÚDO 100% ENQUADRADA E TOTALMENTE ISOLADA POR ABA */}
+      <div className="flex-1 min-h-0 w-full relative overflow-hidden flex flex-col">
+        <AnimatePresence mode="wait">
+          {/* ABA 1: INÍCIO */}
+          {activeTab === 'home' && (
+            <motion.div
+              key="tab-home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full flex flex-col overflow-hidden"
+            >
           {/* SUBCABEÇALHO DE BOAS-VINDAS DENTRO DA SEÇÃO INÍCIO */}
           <div className={`px-3.5 border-b flex items-center justify-between gap-3 transition-colors h-11 shrink-0 ${
             isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-slate-100/90 border-slate-200'
@@ -1055,10 +1014,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-        </section>
+        </motion.div>
+      )}
 
-        {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
-        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-between">
+      {/* ABA 2: SERVIÇOS */}
+      {activeTab === 'servicos' && (
+        <motion.div
+          key="tab-servicos"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="w-full h-full flex flex-col justify-between overflow-hidden"
+        >
           <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
           {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
@@ -1232,10 +1200,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               </div>
             )}
           </div>
-        </section>
+        </motion.div>
+      )}
 
-        {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always border-b border-slate-800/40 h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-start p-0 m-0">
+      {/* ABA 3: AGENDA */}
+      {activeTab === 'vagas' && (
+        <motion.div
+          key="tab-agenda"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="w-full h-full flex flex-col justify-start overflow-hidden"
+        >
           <SectionHeader
             title="Agenda & Disponibilidade"
             isDark={isDark}
@@ -1245,10 +1222,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             {/* Ferramenta Agenda Completa do Estabelecimento */}
             {renderAgendaTool()}
           </div>
-        </section>
+        </motion.div>
+      )}
 
-        {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-start p-0 m-0">
+      {/* ABA 4: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
+      {activeTab === 'espaco' && (
+        <motion.div
+          key="tab-espaco"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="w-full h-full flex flex-col justify-start overflow-hidden"
+        >
           <SectionHeader
             title={
               espacoSlideIndex === 0
@@ -1579,8 +1565,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </div>
           </div>
         </div>
-      </section>
-      </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+</div>
 
       {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}
       <SalonBookingModal

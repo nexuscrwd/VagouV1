@@ -118,5 +118,26 @@ Para oferecer uma experiência visual refinada e adaptável sem perder a elegân
 2. **Sem Preto sobre Verde:** Textos sobre botões esmeralda ou verde Vagou devem utilizar **branco puro com leve micro-sombra (`text-white drop-shadow-xs`)** ou grafite ultra-escuro com tipografia pesada, evitando sensações de peso visual ou baixa nobreza.
 3. **Transições de Tela Suaves:** Todas as trocas de seção no micro-app do salão e na navegação utilizam `motion/react` com `AnimatePresence`, transições de opacidade (`fade`) e translação vertical sutil (`y: 4 -> 0`), garantindo fluidez premium.
 
+---
+
+## 🏛️ 8. Padrão Estrutural: Micro-App do Estabelecimento (`SalonProfileView.tsx`)
+
+### O Problema Evitado:
+Pilhas de rolagem contínua (`snap-y`) ou empilhamento vertical com scroll suave causavam vazamentos visuais entre seções (elementos de serviços ou agenda aparecendo na tela de início), descolamento do cabeçalho secundário (`SectionHeader`) e barras de rolagem indesejadas no mobile.
+
+### A Estrutura Padrão Obrigatória:
+1. **Contêiner Raiz 100% Enquadrado:**
+   - O elemento pai do componente adota `w-full h-full flex flex-col overflow-hidden`.
+   - O cabeçalho principal do salão é fixado no topo com `sticky top-0 z-40 shrink-0`.
+2. **Área Útil com Isolamento Absoluto por Aba (`activeTab`):**
+   - A área de exibição ocupa `flex-1 min-h-0 w-full relative overflow-hidden flex flex-col`.
+   - Utilização de `AnimatePresence mode="wait"` onde **apenas a aba ativa (`home`, `servicos`, `vagas`, `espaco`) é montada no DOM**.
+   - Cada aba filha encapsula seu próprio contêiner com `w-full h-full flex flex-col overflow-hidden`.
+3. **Encaixe Perfeito do `SectionHeader`:**
+   - O `SectionHeader` é montado como `shrink-0 w-full` imediatamente abaixo do cabeçalho principal, garantindo contato visual direto sem vão, descolamento ou sobreposição.
+4. **Zero Vazamento & Responsividade Total:**
+   - Ao trocar de aba pelo menu inferior (`BottomNav`), a transição ocorre instantaneamente com transição suave de opacidade (`opacity: 0 -> 1`), mantendo a altura exata entre o topo e o rodapé em 100% dos smartphones.
+
+
 
 

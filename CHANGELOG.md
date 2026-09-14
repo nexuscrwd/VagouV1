@@ -15,6 +15,17 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Arquitetura de Exibição 100% Isolada por Aba (Zero Vazamento & Cabeçalho Perfeito)
+- **Tipo:** `[Fix / Architecture / Mobile UX]`
+- **Motivo:** Resolução definitiva para enquadramento 100% responsivo e isolamento estrito de seções solicitado pelo usuário ("Nenhuma seção ou seus elementos pode ou deverá aparecer nas seções ativas ou que não lhe pertença"):
+  - **Isolamento Absoluto por Aba via `activeTab`:** Substituída a pilha de rolagem contínua por renderização condicional com `AnimatePresence` e `flex-1 min-h-0`. Agora, apenas a aba ativa (`home`, `servicos`, `vagas` ou `espaco`) existe no DOM visual, tornando fisicamente impossível qualquer vazamento de elementos de outras seções na tela.
+  - **Alinhamento e Encaixe Perfeito do Cabeçalho:** O cabeçalho principal do salão permanece no topo como `shrink-0`, e o `SectionHeader` de cada aba monta imediatamente colado abaixo dele sem descolamento, vão ou sobreposições.
+  - **Ocupação 100% Responsiva do Viewport:** A área útil expande dinamicamente preenchendo 100% do espaço vertical exato entre o cabeçalho superior e o menu inferior (`BottomNav`), sem cortes e sem barra de rolagem indesejada.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Arquitetura de abas isoladas com `AnimatePresence`, remoção de `snap-y` e enquadramento `flex-1`.
+  - `CHANGELOG.md`: Registro detalhado da alteração.
+- **Resumo Técnico:** Verificado e aprovado com sucesso no `lint_applet` e `compile_applet`.
+
 ### [2026-09-14] — Correção de Cabeçalho Deslocado, Encaixe 100% Responsivo e Isolamento Absoluto de Seções
 - **Tipo:** `[Fix / Architecture / Mobile UX]`
 - **Motivo:** Solicitação do usuário ("O cabeçalho da seção está fora do seu lugar, é necessário ajustar e corrigir isto. Assim como ajustar o código para que a seção seja responsiva, encaixe e ocupe 100% da tela do dispositivo entre cabeçalhos e menu rodapé. Nenhuma seção ou seus elementos pode ou deverá aparecer nas seções ativas ou que não lhe pertença"):

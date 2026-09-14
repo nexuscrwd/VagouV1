@@ -25,6 +25,7 @@ O aplicativo possui dois modos operacionais principais controlados pelo estado g
 ### A. Modo Cliente (`AppMode: 'client'`)
 Focado na experiência do usuário final que busca atendimento rápido por proximidade:
 - **`HomeScreen`**: Feed principal com barra de stories do Radar, busca rápida, filtro por categorias e cards de vagas ativas ordenadas por urgência e distância.
+- **`SalonProfileView`**: Micro-app do salão / estabelecimento com navegação em 4 abas 100% isoladas (`Início`, `Serviços`, `Agenda`, `Espaço/Equipe`), cabeçalho de marca e enquadramento total de tela.
 - **`MapScreen`**: Visualização geoespacial (GIS) de salões próximos com raio de distância, filtros e cards flutuantes.
 - **`OfferDetailScreen`**: Detalhe da oferta com fotos/vídeo, serviços inclusos, tempo de expiração e botão de reserva imediata.
 - **`ConfirmationScreen`**: Tela de sucesso pós-reserva com protocolo de atendimento, mapa estático, QR code e rota.
