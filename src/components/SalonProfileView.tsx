@@ -35,6 +35,50 @@ export interface SalonProfileViewProps {
   onNavigateToAgenda?: () => void;
 }
 
+// Cabeçalho de Seção Fixo Padrão que gruda perfeitamente abaixo do cabeçalho principal
+interface SectionHeaderProps {
+  title: string;
+  action?: React.ReactNode;
+  className?: string;
+  isDark?: boolean;
+}
+
+const SectionHeader: React.FC<SectionHeaderProps> = React.memo(({ title, action, className = '', isDark = true }) => (
+  <div
+    className={`sticky top-14 sm:top-16 z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md ${
+      isDark
+        ? 'bg-gradient-to-r from-emerald-950/95 via-emerald-900/70 to-slate-950/95 border-emerald-500/30'
+        : 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-50/95 border-emerald-500/30'
+    } ${className}`}
+  >
+    <div className="flex items-center gap-2.5 min-w-0">
+      <motion.div
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.35 }}
+        className="w-1 h-3.5 sm:h-4 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0 origin-top"
+      />
+      <motion.h2
+        initial={{ opacity: 0, x: -8 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.4 }}
+        className={`text-[12px] font-bold uppercase tracking-wider font-['Poppins'] truncate ${
+          isDark ? 'text-white' : 'text-slate-900'
+        }`}
+      >
+        {title}
+      </motion.h2>
+    </div>
+    {action && (
+      <div className="flex items-center gap-2 shrink-0">
+        {action}
+      </div>
+    )}
+  </div>
+));
+
 export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   salonName,
   offers,
@@ -790,51 +834,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     setEspacoSlideIndex((prev) => (prev - 1 + 3) % 3);
   };
 
-  // Cabeçalho de Seção Padronizado com Animação, Gradiente Temático e Indicador Esmeralda
-  const SectionHeader: React.FC<{
-    title: string;
-    action?: React.ReactNode;
-    className?: string;
-  }> = ({ title, action, className = '' }) => (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, ease: 'easeOut' }}
-      className={`w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs ${
-        isDark
-          ? 'bg-gradient-to-r from-emerald-950/80 via-emerald-900/40 to-slate-950 border-emerald-500/30'
-          : 'bg-gradient-to-r from-emerald-500/15 via-emerald-500/10 to-emerald-50/80 border-emerald-500/25'
-      } ${className}`}
-    >
-      <div className="flex items-center gap-2.5 min-w-0">
-        <motion.div
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.35, delay: 0.15 }}
-          className="w-1 h-3.5 sm:h-4 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0 origin-top"
-        />
-        <motion.h2
-          initial={{ opacity: 0, x: -8 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className={`text-[12px] font-bold uppercase tracking-wider font-['Poppins'] truncate ${
-            isDark ? 'text-white' : 'text-slate-900'
-          }`}
-        >
-          {title}
-        </motion.h2>
-      </div>
-      {action && (
-        <div className="flex items-center gap-2 shrink-0">
-          {action}
-        </div>
-      )}
-    </motion.div>
-  );
-
   return (
     <div className={`w-full ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} min-h-full pb-0 font-['Poppins'] transition-colors duration-200`}>
       {/* 1. CABEÇALHO DO APLICATIVO DO SALÃO (Logo Full Height & Botões Selecionados) */}
@@ -929,9 +928,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
-      <div className="pt-0 space-y-8 sm:space-y-10 pb-28">
+      <div className="pt-0 space-y-0 pb-28">
         {/* 1. SEÇÃO: INÍCIO - SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative scroll-mt-0 snap-start">
+        <section id="salon-section-home" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40">
           {/* SLIDER / CARROSSEL PUBLICITÁRIO TOTALMENTE RESPONSIVO */}
           <div className={`relative w-full h-[min(540px,calc(100dvh-120px))] min-h-[420px] max-h-[640px] overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
@@ -1072,8 +1071,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
-        <section id="salon-section-servicos" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start -mt-8 sm:-mt-10 p-0 m-0 border-b border-slate-800/40">
-          <SectionHeader title="Serviços & Procedimentos" />
+        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start p-0 m-0 border-b border-slate-800/40">
+          <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
           {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
           <div className="relative overflow-hidden select-none w-full">
@@ -1160,28 +1159,88 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               </motion.div>
             </AnimatePresence>
 
-            {/* Paginação em Pontos e Dica de Swap para a direita/esquerda */}
+            {/* Barra de Paginação e Navegação de Alta Precisão */}
             {totalServicePages > 1 && (
-              <div className="py-2.5 flex items-center justify-between px-4 bg-slate-950/40 backdrop-blur-xs">
-                <span className="text-[10px] text-slate-400">
-                  Deslize para ver mais serviços
-                </span>
-                <div className="flex items-center gap-1.5">
-                  {Array.from({ length: totalServicePages }).map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      onClick={() => {
-                        setSwapDirection(dotIdx > servicePage ? 1 : -1);
-                        setServicePage(dotIdx);
-                      }}
-                      className={`transition-all rounded-full cursor-pointer ${
-                        dotIdx === servicePage
-                          ? 'w-5 h-1.5 bg-emerald-500'
-                          : 'w-1.5 h-1.5 bg-slate-700 hover:bg-slate-500'
-                      }`}
-                      aria-label={`Página ${dotIdx + 1}`}
-                    />
-                  ))}
+              <div
+                className={`w-full px-4 py-2.5 flex items-center justify-between border-t transition-colors select-none ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800/80 text-white'
+                    : 'bg-white border-slate-200 text-slate-900'
+                }`}
+              >
+                {/* Indicador de Página e Total */}
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold font-['Poppins'] ${
+                      isDark
+                        ? 'bg-slate-900 border-slate-800 text-slate-200'
+                        : 'bg-slate-100 border-slate-200 text-slate-800'
+                    }`}
+                  >
+                    <span className="text-emerald-400 font-extrabold">{servicePage + 1}</span>
+                    <span className={isDark ? 'text-slate-600' : 'text-slate-400'}>/</span>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{totalServicePages}</span>
+                  </div>
+                  <span
+                    className={`text-[11px] font-semibold tracking-wide uppercase ${
+                      isDark ? 'text-slate-300' : 'text-slate-700'
+                    }`}
+                  >
+                    Procedimentos
+                  </span>
+                </div>
+
+                {/* Controles de Navegação com Setas e Indicadores em Pílula */}
+                <div className="flex items-center gap-2">
+                  {/* Botão Anterior */}
+                  <button
+                    type="button"
+                    onClick={handlePrevServicePage}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                      isDark
+                        ? 'bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 active:scale-95'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 active:scale-95'
+                    }`}
+                    aria-label="Página anterior"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {/* Pílulas de Navegação com Brilho Esmeralda */}
+                  <div className="flex items-center gap-1 px-1">
+                    {Array.from({ length: totalServicePages }).map((_, dotIdx) => (
+                      <button
+                        key={dotIdx}
+                        type="button"
+                        onClick={() => {
+                          setSwapDirection(dotIdx > servicePage ? 1 : -1);
+                          setServicePage(dotIdx);
+                        }}
+                        className={`transition-all rounded-full cursor-pointer ${
+                          dotIdx === servicePage
+                            ? 'w-5 h-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'
+                            : isDark
+                            ? 'w-2 h-2 bg-slate-800 hover:bg-slate-700'
+                            : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                        }`}
+                        aria-label={`Ir para página ${dotIdx + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Botão Próximo */}
+                  <button
+                    type="button"
+                    onClick={handleNextServicePage}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                      isDark
+                        ? 'bg-slate-900 hover:bg-slate-800 text-white border border-slate-800 active:scale-95'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 active:scale-95'
+                    }`}
+                    aria-label="Próxima página"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             )}
@@ -1189,9 +1248,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
+        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40 pb-8">
           <SectionHeader
             title="Agenda & Disponibilidade"
+            isDark={isDark}
           />
 
           <div className="px-3.5 sm:px-4 pt-3 space-y-3.5">
@@ -1201,7 +1261,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
+        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start pb-28">
           <SectionHeader
             title={
               espacoSlideIndex === 0
@@ -1210,6 +1270,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 ? (salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço')
                 : 'Endereço & Localização'
             }
+            isDark={isDark}
           />
 
           <div className="px-3.5 sm:px-4 pt-3 space-y-3">

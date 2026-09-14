@@ -15,6 +15,33 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Correção de Interferência de Seções, Scroll Snap Imã e Cabeçalhos Colados
+- **Tipo:** `[Fix / UX Polish / Layout Architecture]`
+- **Motivo:** Solicitação do usuário ("o problema que temos agora é o seguinte. Estou com o smartphone nas maos testando porem uma seção esta interferindo em outra! Quando rolamos um seção pra cima, a rolagem não pode parar entre a anterior ou a proxima, ela deve automaticamente como imã subir e seu cabeçalho estar no topo. O cabeçalho de algumas seções esta animado constantemente... O cabeçalho de cada seção deve colado, grudado e sem espaço junto ao cabeçalho principal"):
+  - **Eliminação de Interferência entre Seções:** Removido `space-y-8` e margens negativas (`-mt-8`) que causavam sobreposição visual. Cada seção agora possui delimitação precisa e isolamento de layout.
+  - **Efeito Ímã (Scroll Snap Proximity):** Habilitado `scroll-smooth snap-y snap-proximity` no contêiner de rolagem principal e `snap-start scroll-mt-14 sm:scroll-mt-16` em todas as seções, garantindo que ao rolar o cabeçalho se alinhe perfeitamente no topo.
+  - **Cabeçalho Colado ao Topo (Zero Espaço):** `SectionHeader` configurado com `sticky top-14 sm:top-16 z-30` com backdrop-blur, fixando-se exatamente na borda inferior do cabeçalho principal sem nenhum vão ou folga.
+  - **Estabilização de Animações:** Componente `SectionHeader` extraído para o escopo estável com `React.memo` e `viewport={{ once: true }}`, executando a animação de entrada uma única vez ao ser chamado e evitando loops/piscamento durante a rolagem.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Extração de `SectionHeader`, ajuste de classes `sticky`, `scroll-mt` e eliminação de espaçamentos conflitantes.
+  - `src/App.tsx`: Adição de `scroll-smooth snap-y snap-proximity` no contêiner de visualização mobile.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Verificado via `lint_applet` e validado via `compile_applet`.
+
+### [2026-09-14] — Redesign de Alta Precisão da Barra de Navegação e Paginação de Serviços
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação do usuário ("essa div esta errada!!! Esse fundo e cor de texto esta horrivel!!!! nem da pra ler o texto poxa!!!"):
+  - **Eliminação de Poluição e Textos Redundantes:** Removido o texto genérico ("Deslize para ver mais serviços") e o fundo fosco com baixo contraste (`bg-slate-950/40 backdrop-blur-xs`).
+  - **Barra de Controle de Alta Definição:** Implementado layout nítido e responsivo com fundo temático sólido e bordas refinadas (`bg-slate-950 border-slate-800` no tema escuro e `bg-white border-slate-200` no tema claro).
+  - **Contador Numérico & Badge:** Adicionado badge compacto com contagem `1 / N` com número ativo em esmeralda de alto contraste.
+  - **Navegação Tátil com Setas & Pílulas Brilhantes:** Botões de navegação direta (`ChevronLeft` / `ChevronRight`) com feedback tátil de escala e pílulas de status com iluminação suave em esmeralda.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituição da div selecionada pelo novo controlador de navegação e paginação.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
 ### [2026-09-14] — Redesign Global de Cabeçalhos de Seções e Cards de Serviços Cinemáticos
 - **Tipo:** `[UI Redesign / Global Architecture]`
 - **Motivo:** Solicitação do usuário ("minha ideia sobre o design e estilo dos titulos dos serviços é inviavel e sem criatividade. Criae pra mim uma ideias mais genial, envolvente de estilo e design para este elemento. Aplique o estilo de cabeçalho para todas as seções"):
