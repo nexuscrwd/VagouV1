@@ -45,7 +45,7 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = React.memo(({ title, action, className = '', isDark = true }) => (
   <div
-    className={`sticky top-[104px] sm:top-[112px] z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md shrink-0 ${
+    className={`sticky top-14 sm:top-16 z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md shrink-0 ${
       isDark
         ? 'bg-gradient-to-r from-emerald-950/95 via-emerald-900/70 to-slate-950/95 border-emerald-500/30'
         : 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-50/95 border-emerald-500/30'
@@ -636,18 +636,16 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
   // Renderização da Ferramenta Agenda Completa com Calendário Mensal e Grade de Horários
   const renderAgendaTool = () => (
-    <div className={`border rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-sm ${
-      isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
-    }`}>
+    <div className="flex-1 min-h-0 flex flex-col justify-between p-3 sm:p-4 space-y-2 overflow-hidden w-full">
       {/* BOTÃO DE DESTAQUE: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
-      <div>
+      <div className="shrink-0">
         <button
           type="button"
           onClick={() => {
             setSelectedCalendarDateIso(todayIso);
             handleOpenBooking(undefined, true, undefined, todayIso);
           }}
-          className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
+          className="w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
         >
           <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
           <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
@@ -655,17 +653,17 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* CALENDÁRIO MENSAL INTERATIVO VISÍVEL NA TELA */}
-      <div className="space-y-2">
+      <div className="space-y-1.5 shrink-0">
         {/* Header do Mês com Controles */}
         <div className={`flex items-center justify-between p-1.5 px-3 rounded-xl border transition-colors ${
-          isDark ? 'bg-slate-950 border-slate-800/80' : 'bg-slate-50 border-slate-200'
+          isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-100 border-slate-200'
         }`}>
           <button
             type="button"
             onClick={handlePrevInlineMonth}
-            className={`p-1.5 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+            className={`p-1 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
               isDark
-                ? 'bg-slate-900 hover:bg-slate-800 text-slate-200'
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                 : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
             }`}
             aria-label="Mês anterior"
@@ -685,9 +683,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           <button
             type="button"
             onClick={handleNextInlineMonth}
-            className={`p-1.5 rounded-lg transition cursor-pointer ${
+            className={`p-1 rounded-lg transition cursor-pointer ${
               isDark
-                ? 'bg-slate-900 hover:bg-slate-800 text-slate-200'
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                 : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
             }`}
             aria-label="Próximo mês"
@@ -709,7 +707,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           {/* Dias do Mês em Grade */}
           {inlineMonthData.daysGrid.map((item, index) => {
             if (item.dayNumber === null) {
-              return <div key={`empty-${index}`} className="h-7 sm:h-8" />;
+              return <div key={`empty-${index}`} className="h-7" />;
             }
 
             return (
@@ -722,15 +720,15 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     setSelectedCalendarDateIso(item.isoString);
                   }
                 }}
-                className={`h-7 sm:h-8 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                className={`h-7 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
                   item.isSelected
                     ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-md shadow-emerald-500/30 scale-105 z-10'
                     : item.isDisabled
                     ? isDark
-                      ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
+                      ? 'bg-slate-900/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
                       : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40'
                     : isDark
-                    ? 'bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
+                    ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
                     : 'bg-white hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
                 }`}
               >
@@ -745,8 +743,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* 3. SEÇÃO: TABELA DE HORÁRIOS PARA A DATA SELECIONADA */}
-      <div className={`pt-2.5 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-        <div className="flex items-center justify-between gap-1">
+      <div className={`pt-2 border-t space-y-1.5 flex-1 min-h-0 flex flex-col justify-start overflow-hidden ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+        <div className="flex items-center justify-between gap-1 shrink-0">
           <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
             isDark ? 'text-white' : 'text-slate-900'
           }`}>
@@ -759,7 +757,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
 
         {/* Grade da Tabela de Horários - 4 Colunas compactas com rolagem suave */}
-        <div className="grid grid-cols-4 gap-1.5 py-1 max-h-40 overflow-y-auto pr-0.5">
+        <div className="grid grid-cols-4 gap-1.5 py-0.5 flex-1 min-h-0 overflow-y-auto pr-0.5">
           {agendaSlots.map((slot) => {
             const isAvailable = slot.available;
 
@@ -778,7 +776,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       ? 'bg-slate-950/40 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
                       : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
                     : isDark
-                    ? 'bg-slate-950 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                    ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
                     : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700 shadow-2xs'
                 }`}
               >
@@ -888,39 +886,38 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </header>
 
-      {/* 2. SUBCABEÇALHO DE BOAS-VINDAS */}
-      <div className={`px-3.5 border-b flex items-center justify-between gap-3 transition-colors h-12 ${
-        isDark ? 'bg-slate-900/60 border-slate-800/80' : 'bg-slate-100/80 border-slate-200'
-      }`}>
-        <div className="flex items-center gap-2.5 min-w-0 py-1">
-          {/* Botão Sair do Estabelecimento (movido para a esquerda das boas-vindas) */}
-          <button
-            onClick={onBack}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0 ${
-              isDark
-                ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
-                : 'bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
-            }`}
-            title="Sair do Estabelecimento"
-            aria-label="Sair"
-          >
-            <ArrowLeft className="w-4 h-4 text-emerald-500" />
-          </button>
-
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-
-          <div className="min-w-0">
-            <h2 className={`text-xs sm:text-sm font-bold truncate leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Seja bem-vindo, <span className="text-emerald-500">{userName ? userName.trim().split(' ')[0] : ''}</span>
-            </h2>
-          </div>
-        </div>
-      </div>
-
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
       <div className="pt-0 space-y-0 p-0 m-0">
-        {/* 1. SEÇÃO: INÍCIO - SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative snap-start snap-always h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col border-b border-slate-800/40">
+        {/* 1. SEÇÃO: INÍCIO - SUBCABEÇALHO + SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
+        <section id="salon-section-home" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col border-b border-slate-800/40">
+          {/* SUBCABEÇALHO DE BOAS-VINDAS DENTRO DA SEÇÃO INÍCIO */}
+          <div className={`px-3.5 border-b flex items-center justify-between gap-3 transition-colors h-11 shrink-0 ${
+            isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-slate-100/90 border-slate-200'
+          }`}>
+            <div className="flex items-center gap-2.5 min-w-0 py-1">
+              <button
+                onClick={onBack}
+                className={`w-7 h-7 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0 ${
+                  isDark
+                    ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
+                    : 'bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
+                }`}
+                title="Sair do Estabelecimento"
+                aria-label="Sair"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-emerald-500" />
+              </button>
+
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+
+              <div className="min-w-0">
+                <h2 className={`text-xs sm:text-sm font-bold truncate leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Seja bem-vindo, <span className="text-emerald-500">{userName ? userName.trim().split(' ')[0] : ''}</span>
+                </h2>
+              </div>
+            </div>
+          </div>
+
           {/* SLIDER / CARROSSEL PUBLICITÁRIO TOTALMENTE RESPONSIVO */}
           <div className={`relative w-full h-full flex-1 min-h-0 overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
@@ -1061,7 +1058,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
-        <section id="salon-section-servicos" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-between">
+        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-between">
           <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
           {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
@@ -1152,7 +1149,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             {/* Barra de Paginação e Navegação de Alta Precisão */}
             {totalServicePages > 1 && (
               <div
-                className={`w-full px-4 py-2.5 flex items-center justify-between border-t transition-colors select-none shrink-0 ${
+                className={`w-full px-4 py-2 flex items-center justify-between border-t transition-colors select-none shrink-0 ${
                   isDark
                     ? 'bg-slate-950 border-slate-800/80 text-white'
                     : 'bg-white border-slate-200 text-slate-900'
@@ -1238,20 +1235,20 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always border-b border-slate-800/40 h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-start p-0 m-0">
+        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always border-b border-slate-800/40 h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title="Agenda & Disponibilidade"
             isDark={isDark}
           />
 
-          <div className="px-3.5 sm:px-4 py-2.5 space-y-2.5 flex-1 min-h-0 flex flex-col justify-start overflow-y-auto">
+          <div className="flex-1 min-h-0 flex flex-col justify-start overflow-hidden w-full">
             {/* Ferramenta Agenda Completa do Estabelecimento */}
             {renderAgendaTool()}
           </div>
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-start p-0 m-0">
+        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start snap-always h-[calc(100dvh-126px)] sm:h-[calc(100dvh-134px)] min-h-[440px] max-h-[calc(100dvh-126px)] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title={
               espacoSlideIndex === 0

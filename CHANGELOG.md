@@ -15,6 +15,18 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Correção de Cabeçalho Deslocado, Encaixe 100% Responsivo e Isolamento Absoluto de Seções
+- **Tipo:** `[Fix / Architecture / Mobile UX]`
+- **Motivo:** Solicitação do usuário ("O cabeçalho da seção está fora do seu lugar, é necessário ajustar e corrigir isto. Assim como ajustar o código para que a seção seja responsiva, encaixe e ocupe 100% da tela do dispositivo entre cabeçalhos e menu rodapé. Nenhuma seção ou seus elementos pode ou deverá aparecer nas seções ativas ou que não lhe pertença"):
+  - **Eliminação do Vão no Cabeçalho da Seção (`top-14 sm:top-16`):** O cabeçalho de seção (`SectionHeader`) foi reposicionado para colar exatamente na base do cabeçalho principal de 56px (`top-14` / `sm:top-16`), eliminando o espaço em branco/vão de 48px que descolava o título da seção.
+  - **Incorporação do Subcabeçalho de Boas-Vindas no Início:** O subcabeçalho de boas-vindas com o botão Sair foi alocado no topo da Seção 1 (Início), rolando de forma natural e liberando 100% da altura para as seções 2 (Serviços), 3 (Agenda) e 4 (Espaço).
+  - **Recálculo Preciso da Altura Útil (`calc(100dvh - 126px)`):** Altura útil de todas as 4 seções recalibrada para `h-[calc(100dvh-126px)]` (descontando 56px do cabeçalho principal superior e 70px do rodapé inferior), com `scroll-mt-14 sm:scroll-mt-16` e `snap-start snap-always`, garantindo que cada seção ocupe 100% exato da tela sem vazamento para seções vizinhas.
+  - **Otimização da Ferramenta de Agenda:** Removidos contêineres e bordas duplicadas na visualização da agenda, assegurando enquadramento fluido do calendário e da grade de 4 colunas de horários disponíveis.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Reposicionamento de `SectionHeader`, reorganização da Seção 1, atualização de `scroll-mt` e alturas 100% viewport.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Verificado via `lint_applet` e validado via `compile_applet`.
+
 ### [2026-09-14] — Correção Definitiva de Deslocamento de Rolagem (Scroll Offset) e Snap Magnético Mandatório
 - **Tipo:** `[Fix / Architecture / Mobile UX]`
 - **Motivo:** Solicitação de re-análise do usuário ("Tente novamente"):
