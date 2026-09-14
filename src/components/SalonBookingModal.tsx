@@ -269,12 +269,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const resolvedProfessionalName = activeProfObj?.name || (professionals[0]?.name ?? 'Equipe do Salão');
   const resolvedProfessionalAvatar = activeProfObj?.avatar || professionals[0]?.avatar;
 
-  const handleSelectDateAndAdvance = (iso: string) => {
-    setSelectedDateIso(iso);
-    setSelectedTimeSlot(null);
-    setCurrentStep('professionals_and_time');
-  };
-
   const handleConfirmFinal = () => {
     if (!selectedTimeSlot) return;
 
@@ -537,62 +531,12 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           {/* ============================================================ */}
           {currentStep === 'date' && (
             <div className="space-y-3 animate-in fade-in duration-200">
-              {/* Resumo Sintético do Serviço Selecionado (Substitui a lista redundante) */}
-              {selectedService ? (
-                <div className={`p-2.5 px-3 border rounded flex items-center justify-between transition-colors ${
-                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-                }`}>
-                  <div className="flex items-center gap-2 pr-2">
-                    <div className={`w-7 h-7 rounded flex items-center justify-center shrink-0 ${
-                      isDark ? 'bg-emerald-950/60 text-[#20C933]' : 'bg-emerald-50 text-[#087A2A]'
-                    }`}>
-                      <Scissors className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <span className={`text-[9px] font-bold uppercase tracking-wider block leading-tight ${
-                        isDark ? 'text-slate-400' : 'text-slate-500'
-                      }`}>
-                        Serviço Escolhido
-                      </span>
-                      <div className={`text-xs font-bold leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                        {selectedService.title} — <span className={isDark ? 'text-emerald-400' : 'text-[#087A2A]'}>R$ {selectedService.price.toFixed(0)} ({selectedService.duration})</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep('service')}
-                    className={`px-2 py-1 text-[10px] font-bold rounded transition cursor-pointer shrink-0 ${
-                      isDark
-                        ? 'bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700'
-                        : 'bg-slate-200 hover:bg-slate-300 text-[#087A2A] border border-slate-300'
-                    }`}
-                  >
-                    Trocar
-                  </button>
-                </div>
-              ) : (
-                <div className={`p-2.5 rounded text-center text-xs font-bold border transition ${
-                  isDark ? 'bg-amber-950/40 text-amber-400 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
-                }`}>
-                  <p className="mb-1">Nenhum serviço selecionado.</p>
-                  <button
-                    onClick={() => setCurrentStep('service')}
-                    className="underline text-amber-400 hover:text-white cursor-pointer"
-                  >
-                    Clique para selecionar um serviço
-                  </button>
-                </div>
-              )}
-
               {/* Conteúdo do Calendário (Totalmente bloqueado se selectedService for null) */}
               <div className={`space-y-3 transition-all ${
                 !selectedService ? 'pointer-events-none opacity-40 select-none grayscale-[50%]' : ''
               }`}>
-                {/* Header do Mês com Controles */}
-                <div className={`flex items-center justify-between p-2.5 px-3 rounded border transition-colors ${
-                  isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-                }`}>
+                {/* Header do Mês com Controles (sem caixa/borda) */}
+                <div className="flex items-center justify-between px-1 py-1">
                   <button
                     disabled={!selectedService}
                     onClick={handlePrevMonth}
@@ -651,7 +595,8 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         disabled={isDayDisabled}
                         onClick={() => {
                           if (item.isoString && selectedService) {
-                            handleSelectDateAndAdvance(item.isoString);
+                            setSelectedDateIso(item.isoString);
+                            setSelectedTimeSlot(null);
                           }
                         }}
                         className={`h-11 rounded font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
@@ -680,14 +625,14 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   })}
                 </div>
 
-                {/* Botão de Avanço da Fase 1 */}
+                {/* Botão de Avanço da Fase 2 (Data -> Horários) */}
                 <button
-                  disabled={!selectedService}
+                  disabled={!selectedService || !selectedDateIso}
                   onClick={() => {
-                    if (selectedService) setCurrentStep('professionals_and_time');
+                    if (selectedService && selectedDateIso) setCurrentStep('professionals_and_time');
                   }}
                   className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
-                    selectedService
+                    selectedService && selectedDateIso
                       ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
                       : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
                   }`}
@@ -700,33 +645,11 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           )}
 
           {/* ============================================================ */}
-          {/* FASE 2: OS PROFISSIONAIS E ABAIXO A TABELA DE HORÁRIOS */}
+          {/* FASE 3: OS PROFISSIONAIS E ABAIXO A TABELA DE HORÁRIOS */}
           {/* ============================================================ */}
           {currentStep === 'professionals_and_time' && (
             <div className="space-y-3 animate-in fade-in duration-200">
-              {/* Banner da Data Selecionada (Síntese Mobile: DD/MM às HH:MM) */}
-              <div className={`p-1.5 px-2.5 border rounded flex items-center justify-between text-xs transition-colors ${
-                isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#20C933]" />
-                  <span className={`font-bold text-xs ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    {shortDateFormatted}{selectedTimeSlot ? ` às ${selectedTimeSlot}` : ''}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setCurrentStep('date')}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded border cursor-pointer transition ${
-                    isDark
-                      ? 'text-emerald-400 hover:text-white bg-slate-950 border-slate-800'
-                      : 'text-[#087A2A] hover:text-emerald-800 bg-white border-slate-200'
-                  }`}
-                >
-                  Alterar
-                </button>
-              </div>
-
-              {/* BLOCO 1 DA FASE 2: SELEÇÃO DE PROFISSIONAIS */}
+              {/* BLOCO 1 DA FASE 3: SELEÇÃO DE PROFISSIONAIS */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider ${
@@ -858,8 +781,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         key={slot.time}
                         disabled={!isAvailable}
                         onClick={() => {
-                          setSelectedTimeSlot(slot.time);
-                          setCurrentStep('confirmation'); // Advance to final confirmation screen on click
+                          setSelectedTimeSlot((prev) => (prev === slot.time ? null : slot.time));
                         }}
                         className={`py-1.5 px-1 rounded text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
                           isSelected
@@ -881,6 +803,21 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 </div>
               </div>
 
+              {/* Botão de Avanço da Fase 3 (Horários -> Confirmação) */}
+              <button
+                disabled={!selectedTimeSlot}
+                onClick={() => {
+                  if (selectedTimeSlot) setCurrentStep('confirmation');
+                }}
+                className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
+                  selectedTimeSlot
+                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
+                    : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                }`}
+              >
+                <span>Avançar para Confirmação</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
 
@@ -941,44 +878,19 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-        </div>
-
-        {/* Footer do Modal com Botão de Ação Final (Fases 2 e 3) */}
-        {currentStep !== 'date' && (
-          <div className={`p-4 border-t flex flex-col gap-2 sticky bottom-0 z-10 transition-colors ${
-            isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
-          }`}>
-            {currentStep === 'professionals_and_time' && (
-              <button
-                disabled={!selectedTimeSlot}
-                onClick={() => setCurrentStep('confirmation')}
-                className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
-                  selectedTimeSlot
-                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white drop-shadow-xs cursor-pointer shadow-emerald-500/20'
-                    : isDark
-                    ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
-                    : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed'
-                }`}
-              >
-                <span>{selectedTimeSlot ? `Avançar para Confirmação` : 'Selecione um Horário Acima'}</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-
-            {currentStep === 'confirmation' && (
+              {/* Botão de Ação Final da Confirmação */}
               <button
                 onClick={handleConfirmFinal}
-                className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+                className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
               >
                 <CheckCircle2 className="w-4 h-4 text-white" />
                 <span>Confirmar Agendamento</span>
               </button>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+
+        </div>
     </div>
   );
 

@@ -15,6 +15,50 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Remoção de Botões Duplicados e Contêiner Redundante (Focus Mode)
+- **Tipo:** `[UI / Refactor / Fix]`
+- **Motivo:** Eliminação de botões duplicados ("Avançar para Confirmação") e do contêiner redundante de data/alterar na etapa de horários.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o contêiner superior redundante de resumo da data e o botão "Alterar" da etapa `professionals_and_time`.
+  - Eliminado o footer externo sticky que gerava um segundo botão "Avançar para Confirmação" em paralelo ao botão interno da etapa.
+  - Unificados os botões de ação final ao rodapé individual de cada etapa (Step 1 -> Avançar para Data, Step 2 -> Avançar para Horários, Step 3 -> Avançar para Confirmação, Step 4 -> Confirmar Agendamento).
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção de Caixa/Borda no Cabeçalho do Mês (Focus Mode)
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Remoção da caixa com borda e fundo do seletor de mês na etapa de calendário, tornando o cabeçalho totalmente limpo e integrado.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removidas as classes `p-2.5 px-3 rounded border bg-slate-900 border-slate-800` do cabeçalho do mês em `SalonBookingModal.tsx`, substituindo por um contêiner limpo `flex items-center justify-between px-1 py-1`.
+  - Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção de Card Redundante na Etapa de Data (Focus Mode)
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Remoção da caixa/card extra de resumo do serviço selecionado no topo da etapa de data para eliminar o aninhamento redundante de caixas ("box dentro de box").
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o contêiner `p-2.5 px-3 border rounded` da etapa `date`, permitindo que a visualização do calendário mensal inicie de forma direta e limpa sem acúmulo visual de contêineres sobrepostos.
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Remoção Total de Avanço Automático ao Clicar em Data e Horário
+- **Tipo:** `[UX / Refactor]`
+- **Motivo:** Solicitação do usuário para remover completamente o avanço automático de etapas ao clicar em datas (calendário) ou horários da tabela. A transição de etapas agora ocorre estritamente quando o usuário clica no botão inferior de avanço ("Avançar").
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - **Calendário de Datas**: Removida a chamada `setCurrentStep('professionals_and_time')` ao clicar nos dias do calendário. O toque seleciona/destaca a data e o avanço ocorre exclusivamente pelo botão "Avançar para Horários".
+  - **Tabela de Horários**: Removida a chamada `setCurrentStep('confirmation')` ao clicar nos chips de horário. O toque alterna a seleção (toggle de 1º toque seleciona, 2º toque desativa). Adicionado o botão de ação inferior "Avançar para Confirmação".
+  - Removida a função legada `handleSelectDateAndAdvance`.
+  - Validado via `lint_applet` e `compile_applet`.
+
 ### [2026-09-14] — Seleção Multi-Serviço com Toggle e Avanço Exclusivo via Botão
 - **Tipo:** `[UX / Refactor]`
 - **Motivo:** Solicitação do usuário para desativar o avanço automático ao clicar no serviço, permitindo selecionar 1 ou mais serviços via toque/toggle (1º toque seleciona, 2º desativa) e avançar para a data exclusivamente através do botão inferior.
