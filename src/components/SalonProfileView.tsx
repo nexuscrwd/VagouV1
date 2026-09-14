@@ -790,24 +790,49 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     setEspacoSlideIndex((prev) => (prev - 1 + 3) % 3);
   };
 
-  // Cabeçalho de Seção Padronizado para todas as seções da Landing Page
+  // Cabeçalho de Seção Padronizado com Animação, Gradiente Temático e Indicador Esmeralda
   const SectionHeader: React.FC<{
     title: string;
     action?: React.ReactNode;
     className?: string;
   }> = ({ title, action, className = '' }) => (
-    <div className={`flex items-center justify-between gap-2 px-4 py-1.5 ${className}`}>
-      <h2 className={`text-xs font-bold uppercase tracking-wider font-['Poppins'] truncate ${
-        isDark ? 'text-white' : 'text-slate-900'
-      }`}>
-        {title}
-      </h2>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45, ease: 'easeOut' }}
+      className={`w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs ${
+        isDark
+          ? 'bg-gradient-to-r from-emerald-950/80 via-emerald-900/40 to-slate-950 border-emerald-500/30'
+          : 'bg-gradient-to-r from-emerald-500/15 via-emerald-500/10 to-emerald-50/80 border-emerald-500/25'
+      } ${className}`}
+    >
+      <div className="flex items-center gap-2.5 min-w-0">
+        <motion.div
+          initial={{ scaleY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.35, delay: 0.15 }}
+          className="w-1 h-3.5 sm:h-4 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0 origin-top"
+        />
+        <motion.h2
+          initial={{ opacity: 0, x: -8 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className={`text-[12px] font-bold uppercase tracking-wider font-['Poppins'] truncate ${
+            isDark ? 'text-white' : 'text-slate-900'
+          }`}
+        >
+          {title}
+        </motion.h2>
+      </div>
       {action && (
         <div className="flex items-center gap-2 shrink-0">
           {action}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 
   return (
@@ -1046,44 +1071,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           </div>
         </section>
 
-        {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP */}
-        <section id="salon-section-servicos" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
-          <SectionHeader
-            title="Serviços & Procedimentos"
-            className="px-0"
-            action={
-              totalServicePages > 1 ? (
-                <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
-                  <button
-                    type="button"
-                    onClick={handlePrevServicePage}
-                    className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
-                      isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
-                    }`}
-                    aria-label="Página anterior de serviços"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                  <span className="text-[10px] font-bold text-emerald-400 min-w-[28px] text-center">
-                    {servicePage + 1}/{totalServicePages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleNextServicePage}
-                    className={`p-1 rounded-md transition cursor-pointer active:scale-90 ${
-                      isDark ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'
-                    }`}
-                    aria-label="Próxima página de serviços"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ) : undefined
-            }
-          />
+        {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
+        <section id="salon-section-servicos" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start -mt-8 sm:-mt-10 p-0 m-0 border-b border-slate-800/40">
+          <SectionHeader title="Serviços & Procedimentos" />
 
-          {/* Grid Enquadrado de Serviços (4 por página, cards do mesmo tamanho, com suporte a Swap/Arrasto) */}
-          <div className="relative overflow-hidden select-none flex-1 flex flex-col justify-between">
+          {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
+          <div className="relative overflow-hidden select-none w-full">
             <AnimatePresence mode="wait" custom={swapDirection}>
               <motion.div
                 key={servicePage}
@@ -1102,70 +1095,64 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     handlePrevServicePage();
                   }
                 }}
-                className="grid grid-cols-2 gap-3 cursor-grab active:cursor-grabbing touch-pan-y"
+                className={`grid grid-cols-2 gap-0 w-full cursor-grab active:cursor-grabbing touch-pan-y ${
+                  isDark ? 'bg-slate-950' : 'bg-slate-100'
+                }`}
               >
                 {currentServices.map((srv) => (
                   <div
                     key={srv.id}
                     onClick={() => handleOpenBooking(srv)}
-                    className={`group rounded-xl overflow-hidden border flex flex-col justify-between transition-all duration-200 cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md ${
-                      isDark
-                        ? 'bg-slate-900 border-slate-800 hover:border-emerald-500/60'
-                        : 'bg-white border-slate-200 hover:border-emerald-500/60'
-                    }`}
+                    className="group relative overflow-hidden transition-all duration-300 cursor-pointer bg-slate-950"
                     title={`${srv.title} - R$ ${srv.price}`}
                   >
-                    {/* Imagem Enquadrada Fixa com mesma proporção */}
-                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-950/50">
+                    {/* Imagem com Aspect Ratio Enquadrado e Zoom no Hover */}
+                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-950">
                       <img
                         src={srv.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=800&q=80'}
                         alt={srv.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                         referrerPolicy="no-referrer"
                         loading="lazy"
                       />
-                      {/* Badge de Categoria */}
-                      <div className="absolute top-2 left-2 z-10">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-950/80 backdrop-blur-md text-[9px] font-bold text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+
+                      {/* Gradiente Cinematográfico Escuro para Máximo Contraste */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-black/25 group-hover:via-slate-950/65 transition-colors duration-300 pointer-events-none" />
+
+                      {/* Topo do Card: Badge de Categoria com Frosted Glass & Ponto Esmeralda */}
+                      <div className="absolute top-2 left-2 z-10 pointer-events-none">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-emerald-500/30 text-emerald-400 text-[9px] font-black uppercase tracking-wider shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
                           {srv.category}
                         </span>
                       </div>
-                    </div>
 
-                    {/* Informações Enquadradas do Serviço */}
-                    <div className="p-2.5 flex flex-col flex-1 justify-between space-y-2">
-                      <div>
-                        <h3 className={`text-xs font-bold leading-snug line-clamp-2 min-h-[2rem] font-['Poppins'] ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}>
-                          {srv.title}
-                        </h3>
-                        <div className="flex items-center gap-1 mt-1 text-[10px] text-slate-400">
-                          <Clock className="w-2.5 h-2.5 text-slate-400 shrink-0" />
-                          <span>{srv.duration}</span>
-                        </div>
-                      </div>
+                      {/* Base do Card: Título + Preço + Indicador Interativo de Agendamento */}
+                      <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 z-10 flex flex-col justify-end pointer-events-none">
+                        <div className="flex items-end justify-between gap-1.5">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight line-clamp-1 font-['Poppins'] drop-shadow-sm group-hover:text-emerald-300 transition-colors">
+                              {srv.title}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-emerald-400 font-black text-xs sm:text-sm tracking-tight drop-shadow-xs">
+                                R$ {srv.price}
+                              </span>
+                              {srv.duration && (
+                                <span className="text-[10px] text-slate-300/80 font-medium">
+                                  • {srv.duration}
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                      {/* Preço e Ação de Agendamento */}
-                      <div className={`pt-2 border-t flex items-center justify-between gap-1.5 ${
-                        isDark ? 'border-slate-800/80' : 'border-slate-100'
-                      }`}>
-                        <div>
-                          <span className="text-[9px] uppercase tracking-wide text-slate-400 block -mb-0.5">Valor</span>
-                          <span className="text-xs sm:text-sm font-black text-emerald-400 font-['Poppins'] whitespace-nowrap">
-                            R$ {srv.price}
-                          </span>
+                          {/* Botão de Agendamento Rápido em Destaque */}
+                          <div className="shrink-0">
+                            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.4)] group-hover:scale-110 group-hover:bg-emerald-400 transition-all duration-200">
+                              <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
+                            </span>
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenBooking(srv);
-                          }}
-                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 font-bold text-[10px] uppercase tracking-wider transition-colors cursor-pointer whitespace-nowrap"
-                        >
-                          Agendar
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -1175,7 +1162,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
             {/* Paginação em Pontos e Dica de Swap para a direita/esquerda */}
             {totalServicePages > 1 && (
-              <div className="mt-3 flex items-center justify-between px-1">
+              <div className="py-2.5 flex items-center justify-between px-4 bg-slate-950/40 backdrop-blur-xs">
                 <span className="text-[10px] text-slate-400">
                   Deslize para ver mais serviços
                 </span>
@@ -1202,18 +1189,19 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
+        <section id="salon-section-agenda" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
           <SectionHeader
             title="Agenda & Disponibilidade"
-            className="px-0"
           />
 
-          {/* Ferramenta Agenda Completa do Estabelecimento */}
-          {renderAgendaTool()}
+          <div className="px-3.5 sm:px-4 pt-3 space-y-3.5">
+            {/* Ferramenta Agenda Completa do Estabelecimento */}
+            {renderAgendaTool()}
+          </div>
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="space-y-3 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
+        <section id="salon-section-espaco" className="w-full relative scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
           <SectionHeader
             title={
               espacoSlideIndex === 0
@@ -1222,10 +1210,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 ? (salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço')
                 : 'Endereço & Localização'
             }
-            className="px-0"
           />
 
-          {/* Barra de Abas Minimalista sem container de fundo (Botões uniformes em tom cinza claro com cantos de 5px) */}
+          <div className="px-3.5 sm:px-4 pt-3 space-y-3">
           <div className="grid grid-cols-3 gap-1.5 w-full">
             {/* Aba 1: Equipe */}
             <button
@@ -1543,7 +1530,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
       </div>
 
       {/* Modal de Agendamento da Agenda do Salão (Até 60 dias) */}

@@ -15,6 +15,125 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Redesign Global de Cabeçalhos de Seções e Cards de Serviços Cinemáticos
+- **Tipo:** `[UI Redesign / Global Architecture]`
+- **Motivo:** Solicitação do usuário ("minha ideia sobre o design e estilo dos titulos dos serviços é inviavel e sem criatividade. Criae pra mim uma ideias mais genial, envolvente de estilo e design para este elemento. Aplique o estilo de cabeçalho para todas as seções"):
+  - **Cabeçalho de Seção Unificado & Envolvente (`SectionHeader`):**
+    - Padronizado para todas as seções da Landing Page (`Serviços & Procedimentos`, `Agenda & Disponibilidade`, `Espaço / Equipe / Localização`).
+    - Estrutura fullwidth com gradiente temático sutil (`from-emerald-950/80 via-emerald-900/40 to-slate-950` em dark mode / `from-emerald-500/15 via-emerald-500/10 to-emerald-50/80` em light mode).
+    - Indicador vertical esmeralda (`w-1 h-3.5 sm:h-4`) com animação de expansão `scaleY` e brilho esmeralda.
+    - Animação de entrada fluida com Framer Motion (`motion.div`, `motion.h2` com deslize e fade-in suave).
+    - Tipografia padronizada em `text-[12px] font-bold uppercase tracking-wider font-['Poppins']`.
+  - **Design Cinemático para os Cards de Serviços:**
+    - Micro-badge de categoria no topo com frosted glass e ponto luminoso esmeralda.
+    - Gradiente escuro fotográfico inferior garantindo legibilidade e contraste absoluto.
+    - Título do serviço em alta definição + valor em destaque esmeralda + duração.
+    - Botão de agendamento rápido com micro-interação de escala no hover.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualização do `SectionHeader`, reorganização das seções para padrão fullwidth com paddings internos uniformes e modernização dos cards de serviços.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado com `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Ajuste Tipográfico do Cabeçalho (12px) e Texto do Serviço em Esmeralda com Blur Mínimo
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação do usuário ("o blur deve ser o minimo possivel e visivel possivel, e a fonte deve ser da cor do tema do estabelecimento"):
+  - **Cabeçalho (Focus Mode):** Aplicado `font-size: 12px` (`text-[12px]`) no título `h2` da seção de serviços conforme seletor CSS focado.
+  - **Texto do Serviço:** Alterada a cor da fonte para a cor do tema do estabelecimento (`text-emerald-400`).
+  - **Blur Mínimo e Visível:** Substituída a difusão ampla por um contorno luminoso fino e nítido de 2px a 3.5px (`drop-shadow-[0_0_2px_rgba(255,255,255,0.95)] drop-shadow-[0_0_3.5px_rgba(255,255,255,0.85)]` e `textShadow: 0 0 2px #ffffff, 0 0 3.5px rgba(255,255,255,0.9)`), proporcionando contraste e legibilidade com acabamento minimalista.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Atualização do `h2` para `text-[12px]` e estilização do texto dos cards de serviço.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Seção de Serviços Fullwidth Total e Texto Ampliado com Destaque Blur Branco
+- **Tipo:** `[UI Refinement / Layout]`
+- **Motivo:** Solicitação do usuário ("ficou otimo, porem deve ser fulwidth de forma que não haja espaçamento nem nas laterais nem topo e nem rodape. O texto do servio deve ser aumentado em 100%, deve ser removido o fundo e para um destaque aplique um blurbranco"):
+  - **Fullwidth Total (Laterais, Topo e Rodapé zerados):** A seção `salon-section-servicos` agora expande de ponta a ponta (`w-full p-0 m-0`) com `-mt-8 sm:-mt-10` para anular o espaçamento superior herdado do contêiner pai. As imagens do grid tocam as bordas laterais sem qualquer padding ou raio de canto residual.
+  - **Texto do Serviço Ampliado em 100%:** A tipografia foi aumentada de `text-[9px]` para `text-[18px] sm:text-[20px] font-black uppercase`.
+  - **Fundo Removido & Efeito Blur Branco de Destaque:** Eliminado o fundo escuro e bordas, aplicando um efeito de brilho e blur branco luminoso (`drop-shadow-[0_0_8px_rgba(255,255,255,0.95)] drop-shadow-[0_0_16px_rgba(255,255,255,0.75)]` + `textShadow`) garantindo contraste e legibilidade impecável sobre qualquer imagem.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajustes de classes na section, grid e tipografia dos cards de serviços.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Grid Sem Espaçamento para Imagens de Serviços e Ajustes de Posicionamento
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação direta via seleção e foco ("alem de aplicar as configurações da sections e divs, preciso que esses elementos de imagens seja reconfigurado para remover os espaço entre si. desejo um grid sem espaçamentos"):
+  - **Ajustes de Posicionamento (Focus Mode):** Aplicados os offsets exatos no cabeçalho fullwidth da seção de serviços (`-ml-[12px] pl-[15px] pt-[9px] -mt-[23px] mb-[5px]`).
+  - **Grid Sem Espaçamentos (Gap 0):** Reconfigurado o mosaico de serviços para `gap-0`, eliminando as margens e bordas individuais dos cards e unificando as imagens adjacentes de ponta a ponta dentro de um contêiner enquadrado e arredondado (`rounded-2xl overflow-hidden border`).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Aplicação das classes de espaçamento e conversão para grid `gap-0` contíguo.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Animação de Entrada e Foco Exclusivo no Título da Seção de Serviços
+- **Tipo:** `[UI Refinement / Animation]`
+- **Motivo:** Solicitação do usuário ("esse cabeçalho na primeira entrada poderia ser animado? Pode remover o catálogo, quero destaque dedicado ao título da seção apenas"):
+  - **Animação na Entrada:** Convertido o cabeçalho para `motion.div` com transição suave de opacidade e translação vertical (`opacity: 0, y: -10` -> `1, 0`) com `viewport={{ once: true }}`.
+  - **Detalhes Animados:** O indicador vertical esmeralda se expande com `scaleY` de 0 para 1 com delay sutil, e o título entra deslizando suavemente.
+  - **Foco Dedicado no Título:** Removida a tag secundária "Catálogo", garantindo que a faixa fullwidth destaque unicamente o título *Serviços & Procedimentos*.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Aplicação de animações de entrada com Framer Motion (`motion.div`, `motion.h2`) e remoção da pill de catálogo.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Cabeçalho Fullwidth Elegante na Cor do Tema na Seção de Serviços
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação de cabeçalho com fundo na cor do tema, fullwidth horizontal e visual elegante na div selecionada da seção de serviços:
+  - **Ajuste de Design:**
+    - Criado contêiner horizontal fullwidth (`-mx-3.5 sm:-mx-4 px-4 sm:px-5`) com bordas suaves superior e inferior (`border-y border-emerald-500/30`).
+    - Fundo degradê sofisticado no tom esmeralda do tema (`from-emerald-950/80 via-emerald-900/40 to-slate-950` no tema escuro e esmeralda sutil no tema claro).
+    - Tipografia apurada em caixa alta (`Serviços & Procedimentos`), acompanhada de indicador vertical esmeralda e selo de distinção em formato pill (*Catálogo*).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Substituição do cabeçalho simples pelo cabeçalho fullwidth temático.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Remoção das Informações Enquadradas dos Cards de Serviços
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação direta via seleção e foco ("REMOVER DE TODOS OS CARDS"):
+  - **Ajuste:** Removida de todos os cards de serviços a `div` de informações (`p-2.5` que continha o título, duração, preço e botão "Agendar"), deixando os cards de serviços puramente com suas imagens enquadradas e badges de categoria.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do contêiner de informações dentro do mapeamento de `currentServices`.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Remoção Apenas da Div de Ação Selecionada no Cabeçalho de Serviços
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Solicitação precisa via foco ("remova essa div, Preste atenção 'SOMENTE A DIV SELECIONADA'"):
+  - **Ajuste:** Removida exclusivamente a `div` de ação/paginação do cabeçalho da seção de serviços (`SectionHeader`), preservando o título principal (*Serviços & Procedimentos*).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção da prop `action` contendo a div de paginação em `#salon-section-servicos`.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e compilado com sucesso via `compile_applet`.
+
+---
+
+### [2026-09-14] — Remoção Apenas do Indicador de Página Selecionado na Seção de Serviços
+- **Tipo:** `[UI Refinement / Focus Mode]`
+- **Motivo:** Correção baseada na seleção exata do usuário ("não pedi pra remover o cabeçalho inteiro. Era so oq eue selecionei!!!"):
+  - **Ajuste:** Restaurado o cabeçalho da seção de serviços (*Serviços & Procedimentos*), removendo exclusivamente o elemento de contagem de páginas (`{servicePage + 1}/{totalServicePages}`) que havia sido selecionado, mantendo o título e os botões de navegação.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Remoção do span contador de páginas no cabeçalho de serviços.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Validado via `lint_applet` e `compile_applet`.
+
+---
+
 ### [2026-09-14] — Remoção de Ícones, Contadores e Badges dos Cabeçalhos de Seções
 - **Tipo:** `[UI Refinement / Minimalist Design]`
 - **Motivo:** Solicitação do usuário ("Remover o ícone de todos os cabeçalhos de todas as sessões. Deixar somente o título da sessão. Se houver contador ou quaisquer outros elementos que compõem cada cabeçalho de cada sessão, remover, por favor."):
