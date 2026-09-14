@@ -1255,7 +1255,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 setEspacoSwipeDirection(0 < espacoSlideIndex ? -1 : 1);
                 setEspacoSlideIndex(0);
               }}
-              className={`py-2 px-1 rounded-[5px] text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-1 rounded text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
                 espacoSlideIndex === 0
                   ? 'bg-slate-100 text-slate-950 font-bold border border-slate-300 shadow-xs'
                   : 'bg-slate-200/80 text-slate-700 hover:bg-slate-200 hover:text-slate-950 font-medium border border-slate-300/60'
@@ -1267,7 +1267,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <span className="text-[11px] sm:text-xs tracking-tight truncate">
                 Equipe
               </span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-[4px] font-bold leading-none ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold leading-none ${
                 espacoSlideIndex === 0
                   ? 'bg-slate-200 text-slate-900'
                   : 'bg-slate-300/80 text-slate-700'
@@ -1283,7 +1283,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 setEspacoSwipeDirection(1 < espacoSlideIndex ? -1 : 1);
                 setEspacoSlideIndex(1);
               }}
-              className={`py-2 px-1 rounded-[5px] text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-1 rounded text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
                 espacoSlideIndex === 1
                   ? 'bg-slate-100 text-slate-950 font-bold border border-slate-300 shadow-xs'
                   : 'bg-slate-200/80 text-slate-700 hover:bg-slate-200 hover:text-slate-950 font-medium border border-slate-300/60'
@@ -1304,7 +1304,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                 setEspacoSwipeDirection(2 < espacoSlideIndex ? -1 : 1);
                 setEspacoSlideIndex(2);
               }}
-              className={`py-2 px-1 rounded-[5px] text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-1 rounded text-center transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 ${
                 espacoSlideIndex === 2
                   ? 'bg-slate-100 text-slate-950 font-bold border border-slate-300 shadow-xs'
                   : 'bg-slate-200/80 text-slate-700 hover:bg-slate-200 hover:text-slate-950 font-medium border border-slate-300/60'

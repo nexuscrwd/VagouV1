@@ -56,7 +56,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => salonContext.onSelectTab(tab.id as any)}
               className="flex flex-col items-center justify-center gap-1 py-1 px-3 transition active:scale-95 cursor-pointer group"
             >
-              <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
+              <div className={`w-[34px] h-[34px] rounded flex items-center justify-center transition-all ${
                 isActive
                   ? isDark
                     ? 'bg-emerald-950/80 border border-[#20C933]/60 text-[#20C933] scale-105 shadow-[0_0_12px_rgba(32,201,51,0.25)]'
@@ -130,7 +130,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             onClick={() => handleTabClick(tab.id, tab.isAction, tab.isFlash)}
             className="flex flex-col items-center justify-center gap-1 py-1 px-2.5 transition active:scale-95 cursor-pointer group"
           >
-            <div className={`w-[34px] h-[34px] rounded-[10px] flex items-center justify-center transition-all ${
+            <div className={`w-[34px] h-[34px] rounded flex items-center justify-center transition-all ${
               isActive
                 ? isDark
                   ? 'bg-emerald-950/80 border border-[#20C933]/60 text-[#20C933] scale-105 shadow-[0_0_12px_rgba(32,201,51,0.25)]'

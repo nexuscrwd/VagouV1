@@ -307,7 +307,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           : 'bg-gradient-to-tr from-emerald-500/60 via-[#20C933] to-emerald-300 hover:scale-105'
                       }`}
                     >
-                      <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-900 border border-slate-800">
+                      <div className="w-full h-full rounded overflow-hidden bg-slate-900 border border-slate-800">
                         <img
                           src={salonOffer?.imageUrl || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80'}
                           alt={salonName}

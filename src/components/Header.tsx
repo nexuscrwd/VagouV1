@@ -25,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Brand */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-emerald-400 p-0.5 shadow-lg">
-            <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
+            <div className="w-full h-full bg-slate-900 rounded flex items-center justify-center">
               <HardDrive className="w-5 h-5 text-emerald-400" />
             </div>
           </div>

@@ -15,6 +15,23 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Padronização Global de Bordas Arredondadas em 4px (`rounded: 4px`)
+- **Tipo:** `[Refactor / Design System / Clean Code]`
+- **Motivo:** Solicitação do usuário para aplicar uniformemente o raio de curvatura de 4px em todas as caixas, divs, cards, botões, modais e superfícies existentes no app completo:
+  - **Configuração Global via `@theme` no Tailwind CSS v4:** Declaradas as variáveis de raio de borda (`--radius`, `--radius-xs`, `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl`, `--radius-2xl`, `--radius-3xl`, `--radius-4xl`) fixadas exatamente em `4px` em `src/index.css`.
+  - **Substituição de Classes Arbitrárias:** Convertidas todas as classes manuais arbitrárias (`rounded-[10px]`, `rounded-[5px]`, `rounded-[4px]`) nos componentes (`BottomNav`, `HomeScreen`, `Header`, `AgendaScreen`, `SalonProfileView`) para a classe unificada `rounded`.
+  - **Atualização da Base de Conhecimento:** Registrada a regra de 4px na Seção de Execução Visual do `KNOWLEDGE_BASE.md`.
+- **Arquivos Impactados:**
+  - `src/index.css`
+  - `src/components/BottomNav.tsx`
+  - `src/components/HomeScreen.tsx`
+  - `src/components/Header.tsx`
+  - `src/components/AgendaScreen.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `KNOWLEDGE_BASE.md`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Verificado e aprovado com sucesso no `lint_applet` e `compile_applet`.
+
 ### [2026-09-14] — Arquitetura de Exibição 100% Isolada por Aba (Zero Vazamento & Cabeçalho Perfeito)
 - **Tipo:** `[Fix / Architecture / Mobile UX]`
 - **Motivo:** Resolução definitiva para enquadramento 100% responsivo e isolamento estrito de seções solicitado pelo usuário ("Nenhuma seção ou seus elementos pode ou deverá aparecer nas seções ativas ou que não lhe pertença"):

@@ -114,9 +114,10 @@ Para oferecer uma experiência visual refinada e adaptável sem perder a elegân
 | **Abas Ativas** | `bg-gradient-to-b from-emerald-500/20 to-slate-900 text-emerald-400 border-emerald-500/60` | `bg-emerald-50 text-emerald-700 border-emerald-500/50 shadow-xs` | Indicação imediata da seção em foco. |
 
 ### B. Regras de Ouro de Execução Visual (Anti-Slop):
-1. **Sombras Finas e Sutis:** Uso exclusivo de sombras delicadas (`shadow-xs`, `shadow-sm`, `shadow-emerald-500/15`). Nunca usar sombras pretas opacas ou bordas grossas desnecessárias.
-2. **Sem Preto sobre Verde:** Textos sobre botões esmeralda ou verde Vagou devem utilizar **branco puro com leve micro-sombra (`text-white drop-shadow-xs`)** ou grafite ultra-escuro com tipografia pesada, evitando sensações de peso visual ou baixa nobreza.
-3. **Transições de Tela Suaves:** Todas as trocas de seção no micro-app do salão e na navegação utilizam `motion/react` com `AnimatePresence`, transições de opacidade (`fade`) e translação vertical sutil (`y: 4 -> 0`), garantindo fluidez premium.
+1. **Arredondamento Global Unificado de 4px (`rounded: 4px`):** Todos os contêineres, caixas, cards, botões, modais, inputs e superfícies da aplicação adotam estritamente o raio de curvatura de **4px** configurado centralmente no `@theme` (`--radius-*: 4px`). Isso garante coerência geométrica cirúrgica e elegância técnica em todas as telas.
+2. **Sombras Finas e Sutis:** Uso exclusivo de sombras delicadas (`shadow-xs`, `shadow-sm`, `shadow-emerald-500/15`). Nunca usar sombras pretas opacas ou bordas grossas desnecessárias.
+3. **Sem Preto sobre Verde:** Textos sobre botões esmeralda ou verde Vagou devem utilizar **branco puro com leve micro-sombra (`text-white drop-shadow-xs`)** ou grafite ultra-escuro com tipografia pesada, evitando sensações de peso visual ou baixa nobreza.
+4. **Transições de Tela Suaves:** Todas as trocas de seção no micro-app do salão e na navegação utilizam `motion/react` com `AnimatePresence`, transições de opacidade (`fade`) e translação vertical sutil (`y: 4 -> 0`), garantindo fluidez premium.
 
 ---
 
