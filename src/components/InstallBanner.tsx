@@ -25,9 +25,9 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({
   };
 
   return (
-    <div className="mx-4 my-2 p-3 bg-gradient-to-r from-[#151A1E] to-slate-900 text-white rounded-lg shadow-md flex items-center justify-between gap-3 border border-slate-800">
+    <div className="mx-4 my-2 p-3 bg-gradient-to-r from-[#151A1E] to-slate-900 text-white rounded shadow-md flex items-center justify-between gap-3 border border-slate-800">
       <div className="flex items-center gap-2.5 min-w-0">
-        <div className="w-8 h-8 rounded-md bg-[#20C933] flex items-center justify-center shrink-0 shadow-sm text-white font-black text-sm">
+        <div className="w-8 h-8 rounded bg-[#20C933] flex items-center justify-center shrink-0 shadow-sm text-white font-black text-sm">
           V
         </div>
         <div className="min-w-0">
@@ -43,14 +43,14 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({
       <div className="flex items-center gap-1.5 shrink-0">
         <button
           onClick={onOpenInstallModal}
-          className="px-3 py-1.5 bg-[#20C933] hover:bg-[#087A2A] active:scale-95 text-white font-bold text-[11px] rounded-lg shadow transition flex items-center gap-1"
+          className="px-3 py-1.5 bg-[#20C933] hover:bg-[#087A2A] active:scale-95 text-white font-bold text-[11px] rounded shadow transition flex items-center gap-1"
         >
           <Download className="w-3 h-3" />
           <span>Instalar</span>
         </button>
         <button
           onClick={handleDismiss}
-          className="p-1 text-slate-400 hover:text-slate-200 rounded-md transition"
+          className="p-1 text-slate-400 hover:text-slate-200 rounded transition"
           aria-label="Fechar"
         >
           <X className="w-3.5 h-3.5" />

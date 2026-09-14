@@ -121,7 +121,7 @@ export const MediaFallbackCard: React.FC<MediaFallbackCardProps> = ({ offer }) =
       {/* Top Header */}
       <div className="relative z-10 w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-bold text-xs text-white">
+          <div className="w-8 h-8 rounded bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-bold text-xs text-white">
             {offer.salonName.charAt(0)}
           </div>
           <div>
@@ -134,7 +134,7 @@ export const MediaFallbackCard: React.FC<MediaFallbackCardProps> = ({ offer }) =
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 text-[11px] font-bold text-amber-300">
+        <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded border border-white/10 text-[11px] font-bold text-amber-300">
           <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
           <span>{offer.rating.toFixed(1)}</span>
         </div>
@@ -156,7 +156,7 @@ export const MediaFallbackCard: React.FC<MediaFallbackCardProps> = ({ offer }) =
           {offer.description || `Com ${offer.professionalName} no ${offer.salonName}`}
         </p>
 
-        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-medium text-slate-200">
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-medium text-slate-200">
           <MapPin className="w-3 h-3 text-emerald-400" />
           <span>{offer.neighborhood} • {offer.distance}</span>
         </div>

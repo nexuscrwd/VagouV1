@@ -214,7 +214,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Layout Mode Toggle, Filter & Profile */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Botão de Filtro (Ordenação) */}
-            <div className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] transition-colors shadow-sm group">
+            <div className="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-[#20C933] transition-colors shadow-sm group">
               <Filter className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-300 group-hover:text-[#20C933] transition-colors" />
               <select
                 value={sortBy}
@@ -232,12 +232,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               )}
             </div>
 
-            <div className="flex items-center bg-slate-900 p-0.5 md:p-1 rounded-xl border border-slate-800 shadow-inner">
+            <div className="flex items-center bg-slate-900 p-0.5 md:p-1 rounded border border-slate-800 shadow-inner">
               {/* Botão Reels / Insta / TikTok (Tela Cheia) */}
               <button
                 type="button"
                 onClick={() => setFeedLayoutMode('fullscreen')}
-                className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
+                className={`px-2 py-1 rounded text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
                   feedLayoutMode === 'fullscreen'
                     ? 'bg-[#20C933] text-white font-bold drop-shadow-xs shadow-sm'
                     : 'text-slate-400 hover:text-white'
@@ -253,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setFeedLayoutMode('pinterest')}
-                className={`px-2 py-1 rounded-lg text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
+                className={`px-2 py-1 rounded text-xs transition cursor-pointer flex items-center gap-1 font-bold ${
                   feedLayoutMode === 'pinterest' || feedLayoutMode === 'cards'
                     ? 'bg-[#20C933] text-white font-bold drop-shadow-xs shadow-sm'
                     : 'text-slate-400 hover:text-white'
@@ -269,13 +269,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {/* Profile Avatar Button */}
             <button
               onClick={onOpenProfileDrawer}
-              className="relative w-9 h-9 rounded-xl overflow-hidden ring-2 ring-[#20C933]/50 hover:ring-[#20C933] transition-all cursor-pointer flex-shrink-0 flex items-center justify-center"
+              className="relative w-9 h-9 rounded overflow-hidden ring-2 ring-[#20C933]/50 hover:ring-[#20C933] transition-all cursor-pointer flex-shrink-0 flex items-center justify-center"
               title="Meu Perfil & Configurações"
             >
               <img
                 src={userAvatarUrl}
                 alt={userName}
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded"
                 referrerPolicy="no-referrer"
               />
               <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-[#20C933] border-2 border-[#151A1E]" />

@@ -27,7 +27,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-voltar-topo-confirmacao"
           onClick={onNavigateToHome}
-          className={`flex items-center gap-1.5 text-xs font-bold transition p-1.5 -ml-1.5 rounded-lg cursor-pointer ${
+          className={`flex items-center gap-1.5 text-xs font-bold transition p-1.5 -ml-1.5 rounded cursor-pointer ${
             isDark ? 'text-slate-300 hover:text-white hover:bg-slate-900' : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
           }`}
           title="Voltar à tela inicial"
@@ -38,7 +38,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
 
         <button
           onClick={onNavigateToHome}
-          className={`p-2 rounded-xl transition cursor-pointer border ${
+          className={`p-2 rounded transition cursor-pointer border ${
             isDark ? 'bg-slate-900 hover:bg-slate-850 text-slate-300 border-slate-800' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
           }`}
           title="Página Inicial"
@@ -50,7 +50,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
       <div className="space-y-6 pt-4">
         {/* Check Success Icon */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#20C933] text-white flex items-center justify-center shadow-lg shadow-emerald-900/40 animate-in zoom-in-75 duration-300 drop-shadow-xs">
+          <div className="w-16 h-16 rounded bg-[#20C933] text-white flex items-center justify-center shadow-lg shadow-emerald-900/40 animate-in zoom-in-75 duration-300 drop-shadow-xs">
             <Check className="w-9 h-9 stroke-[3] text-white" />
           </div>
           <h1 className={`text-xl font-bold mt-4 font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>Agendamento confirmado!</h1>
@@ -60,14 +60,14 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         </div>
 
         {/* Summary Card */}
-        <div className={`rounded-2xl p-4.5 space-y-3.5 shadow-sm border ${
+        <div className={`rounded p-4.5 space-y-3.5 shadow-sm border ${
           isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200/80'
         }`}>
           <div className={`flex items-center justify-between pb-3 border-b ${
             isDark ? 'border-slate-800' : 'border-slate-200'
           }`}>
             <span className="text-xs font-bold text-slate-400">Código Protocolo</span>
-            <span className="text-xs font-mono font-black text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/30">
+            <span className="text-xs font-mono font-black text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded border border-emerald-500/30">
               {booking.protocolCode}
             </span>
           </div>
@@ -110,7 +110,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-ver-agenda-confirmacao"
           onClick={onNavigateToAgenda}
-          className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white font-bold text-xs drop-shadow-xs rounded-xl transition shadow-lg shadow-emerald-900/30 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white font-bold text-xs drop-shadow-xs rounded transition shadow-lg shadow-emerald-900/30 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>VER MINHA AGENDA</span>
           <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -119,7 +119,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         <button
           id="btn-voltar-inicio-confirmacao"
           onClick={onNavigateToHome}
-          className={`w-full py-3 active:scale-[0.99] font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer border ${
+          className={`w-full py-3 active:scale-[0.99] font-bold text-xs rounded transition flex items-center justify-center gap-2 cursor-pointer border ${
             isDark ? 'bg-slate-900 hover:bg-slate-850 text-slate-200 border-slate-800' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200'
           }`}
         >

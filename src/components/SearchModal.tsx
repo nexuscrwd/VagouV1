@@ -79,12 +79,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       <div className="w-full max-w-lg flex flex-col transition-all duration-200 animate-in zoom-in-95">
         
         {/* Floating Search Bar */}
-        <div className="relative bg-[#151A1E] border-2 border-slate-700/80 focus-within:border-[#20C933] rounded-3xl p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-1">
+        <div className="relative bg-[#151A1E] border-2 border-slate-700/80 focus-within:border-[#20C933] rounded p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-1">
           {/* Action Button: Search */}
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
-            className="p-2.5 rounded-full text-[#20C933] hover:bg-slate-800/80 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+            className="p-2.5 rounded text-[#20C933] hover:bg-slate-800/80 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
             aria-label="Buscar"
             title="Buscar"
           >
@@ -108,7 +108,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 setQuery('');
                 inputRef.current?.focus();
               }}
-              className="p-2.5 rounded-full bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              className="p-2.5 rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
               aria-label="Limpar campo de busca"
               title="Limpar campo"
             >
@@ -118,7 +118,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-2.5 rounded-full bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer border border-slate-700/60"
+              className="p-2.5 rounded bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center cursor-pointer border border-slate-700/60"
               aria-label="Fechar busca"
               title="Fechar"
             >
@@ -134,7 +134,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
               <button
                 key={tag}
                 onClick={() => setQuery(tag)}
-                className="px-3.5 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition active:scale-95 shadow-sm"
+                className="px-3.5 py-1.5 rounded bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition active:scale-95 shadow-sm"
               >
                 {tag}
               </button>
@@ -142,7 +142,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </div>
         ) : (
           /* State 2: Results revealed directly under the central search bar */
-          <div className="mt-3 bg-[#151A1E]/95 border border-slate-800 rounded-3xl p-3 shadow-2xl max-h-[60vh] overflow-y-auto space-y-3 no-scrollbar">
+          <div className="mt-3 bg-[#151A1E]/95 border border-slate-800 rounded p-3 shadow-2xl max-h-[60vh] overflow-y-auto space-y-3 no-scrollbar">
             <div className="flex items-center justify-between px-2 pt-1 pb-2 border-b border-slate-800/80 text-xs">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#20C933]" />

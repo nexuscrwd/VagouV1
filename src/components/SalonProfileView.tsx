@@ -794,7 +794,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           {/* Favoritar Rápido */}
           <button
             onClick={() => onToggleFavorite?.(salonInfo.name)}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
+            className={`w-10 h-10 rounded flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
                 ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800'
                 : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 shadow-xs'
@@ -807,7 +807,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
           {/* Notificações */}
           <button
-            className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition active:scale-95 cursor-pointer ${
+            className={`relative w-10 h-10 rounded flex items-center justify-center transition active:scale-95 cursor-pointer ${
               isDark
                 ? 'bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
                 : 'bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
@@ -822,7 +822,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           {/* Foto do Usuário (No cabeçalho principal após as notificações) */}
           <button
             onClick={onOpenProfileDrawer}
-            className="relative group flex items-center justify-center shrink-0 w-10 h-10 rounded-xl overflow-hidden ring-1.5 ring-emerald-500 hover:ring-emerald-400 transition shadow-xs cursor-pointer bg-slate-800"
+            className="relative group flex items-center justify-center shrink-0 w-10 h-10 rounded overflow-hidden ring-1.5 ring-emerald-500 hover:ring-emerald-400 transition shadow-xs cursor-pointer bg-slate-800"
             title="Ver Perfil do Usuário e Opções"
             aria-label="Perfil do Usuário e Opções"
           >
@@ -856,7 +856,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <div className="flex items-center gap-2.5 min-w-0 py-1">
               <button
                 onClick={onBack}
-                className={`w-7 h-7 rounded-lg flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0 ${
+                className={`w-7 h-7 rounded flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0 ${
                   isDark
                     ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white'
                     : 'bg-white hover:bg-slate-200 border border-slate-200 text-slate-700 hover:text-slate-950 shadow-xs'
@@ -969,7 +969,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                               e.stopPropagation();
                               slide.ctaAction();
                             }}
-                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-95 text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer whitespace-nowrap z-20 pointer-events-auto"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 active:scale-95 text-white font-bold text-xs uppercase tracking-wider shadow-[0_4px_16px_rgba(32,201,51,0.4)] transition-all cursor-pointer whitespace-nowrap z-20 pointer-events-auto"
                           >
                             <IconComponent className="w-4 h-4 text-white drop-shadow-xs shrink-0" />
                             <span>{slide.ctaText}</span>
@@ -998,17 +998,17 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               })}
             </AnimatePresence>
 
-            {/* Setas Sutis de Navegação Lateral */}
+            {/* Setas Sutis de Navegação Lateral em moldura quadrada com borda arredondada de 4px */}
             <button
               onClick={() => setActiveSlideIndex((prev) => (prev - 1 + portfolioSlides.length) % portfolioSlides.length)}
-              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
               aria-label="Slide anterior"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveSlideIndex((prev) => (prev + 1) % portfolioSlides.length)}
-              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded bg-slate-950/70 hover:bg-slate-900 text-white/90 hover:text-white flex items-center justify-center transition border border-white/15 cursor-pointer backdrop-blur-xs active:scale-90"
               aria-label="Próximo slide"
             >
               <ChevronRight className="w-4 h-4" />
@@ -1344,7 +1344,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
                   {/* ABA 1: EQUIPE & ESPECIALISTAS INTEGRADA */}
-                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
+                  <div className={`border rounded p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
                     <div className="space-y-2">
@@ -1366,13 +1366,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       {/* Cards dos Especialistas */}
                       <div className="grid grid-cols-2 gap-2.5 pt-1">
                         {salonInfo.professionals.map((prof, idx) => (
-                          <div key={idx} className={`flex flex-col items-center p-3 rounded-xl border text-center shadow-xs ${
+                          <div key={idx} className={`flex flex-col items-center p-3 rounded border text-center shadow-xs ${
                             isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
                           }`}>
                             <img
                               src={prof.avatar}
                               alt={prof.name}
-                              className="w-13 h-13 rounded-full object-cover ring-2 ring-emerald-500/40 mb-2"
+                              className="w-13 h-13 rounded object-cover ring-2 ring-emerald-500/40 mb-2"
                               referrerPolicy="no-referrer"
                             />
                             <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
@@ -1418,7 +1418,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
                   {/* ABA 2: CARD DE ESTRUTURA DO ESPAÇO & COMODIDADES */}
-                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
+                  <div className={`border rounded p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
                     <div className="space-y-2">
@@ -1431,7 +1431,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       </p>
                       <div className="grid grid-cols-2 gap-2 pt-1">
                         {salonInfo.amenities.map((amenity, idx) => (
-                          <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg border text-xs ${
+                          <div key={idx} className={`flex items-center gap-2 p-2 rounded border text-xs ${
                             isDark
                               ? 'bg-slate-950 border-slate-800 text-slate-300'
                               : 'bg-slate-50 border-slate-200 text-slate-700'
@@ -1475,7 +1475,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
                   {/* ABA 3: CARD DE ENDEREÇO, COMO CHEGAR & MAPA EMBED */}
-                  <div className={`border rounded-xl p-3.5 space-y-3.5 shadow-sm min-h-[380px] flex flex-col justify-between ${
+                  <div className={`border rounded p-3.5 space-y-3.5 shadow-sm min-h-[380px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
                     {/* Endereço e Horário */}
@@ -1504,7 +1504,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
+                      className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded text-xs font-bold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
                     >
                       <MapPin className="w-3.5 h-3.5" />
                       <span>COMO CHEGAR (GOOGLE MAPS)</span>
@@ -1512,7 +1512,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
                     {/* Abaixo: Mapa Embed */}
                     <div className="space-y-1.5 pt-0.5">
-                      <div className={`relative w-full h-48 sm:h-56 rounded-xl overflow-hidden border shadow-xs ${
+                      <div className={`relative w-full h-48 sm:h-56 rounded overflow-hidden border shadow-xs ${
                         isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-slate-100'
                       }`}>
                         <iframe
@@ -1528,7 +1528,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="absolute bottom-2 right-2 px-2.5 py-1.5 bg-slate-950/90 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-lg text-[10px] font-bold shadow-md backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 uppercase tracking-wider"
+                          className="absolute bottom-2 right-2 px-2.5 py-1.5 bg-slate-950/90 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 rounded text-[10px] font-bold shadow-md backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 uppercase tracking-wider"
                         >
                           <MapPin className="w-3 h-3 text-emerald-400" />
                           <span>Rota no Maps</span>
@@ -1590,12 +1590,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       {confirmedBookingData && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
           <div 
-            className={`w-full max-w-md border rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col items-center text-center space-y-4 transition-colors ${
+            className={`w-full max-w-md border rounded p-5 sm:p-6 shadow-2xl flex flex-col items-center text-center space-y-4 transition-colors ${
               isDark ? 'bg-slate-950 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
             }`}
           >
             {/* Ícone de Sucesso */}
-            <div className="w-16 h-16 rounded-2xl bg-[#20C933] text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
+            <div className="w-16 h-16 rounded bg-[#20C933] text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 animate-in zoom-in-75 duration-300">
               <Check className="w-9 h-9 stroke-[3] text-white" />
             </div>
 
@@ -1609,12 +1609,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </div>
 
             {/* Card com Detalhes do Voucher */}
-            <div className={`w-full rounded-2xl p-4 border text-left space-y-3 ${
+            <div className={`w-full rounded p-4 border text-left space-y-3 ${
               isDark ? 'bg-slate-900/80 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center justify-between pb-2.5 border-b border-slate-800/80">
                 <span className="text-xs font-bold text-slate-400">Código Protocolo</span>
-                <span className="text-xs font-mono font-bold text-[#20C933] bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-500/30">
+                <span className="text-xs font-mono font-bold text-[#20C933] bg-emerald-950/60 px-2.5 py-1 rounded border border-emerald-500/30">
                   {confirmedBookingData.protocolCode}
                 </span>
               </div>
@@ -1668,7 +1668,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     setConfirmedBookingData(null);
                   }
                 }}
-                className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white font-bold text-xs rounded-xl transition shadow-md shadow-emerald-900/30 uppercase tracking-wider font-['Poppins'] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 bg-[#20C933] hover:bg-[#1bb32d] active:scale-[0.99] text-white font-bold text-xs rounded transition shadow-md shadow-emerald-900/30 uppercase tracking-wider font-['Poppins'] flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>VER MINHA AGENDA</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1677,7 +1677,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <button
                 type="button"
                 onClick={() => setConfirmedBookingData(null)}
-                className={`w-full py-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                className={`w-full py-3 rounded border text-xs font-bold transition cursor-pointer ${
                   isDark
                     ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-300 hover:text-white'
                     : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-slate-900'

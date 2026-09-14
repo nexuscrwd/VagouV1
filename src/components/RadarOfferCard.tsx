@@ -140,7 +140,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
         if (isSwiping.current) return;
         onSelectOffer(offer);
       }}
-      className="relative z-0 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-lg group hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
+      className="relative z-0 w-full rounded overflow-hidden bg-slate-900 border border-slate-800 shadow-lg group hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
     >
       {/* Media Canvas Container */}
       <div className="relative w-full h-[390px] sm:h-[440px] bg-slate-950 overflow-hidden">
@@ -158,7 +158,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
             />
             {!isPlaying && (
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
-                <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white">
+                <div className="w-14 h-14 rounded bg-black/60 backdrop-blur-md flex items-center justify-center text-white">
                   <Play className="w-7 h-7 fill-white translate-x-0.5" />
                 </div>
               </div>
@@ -168,7 +168,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                 e.stopPropagation();
                 setIsMuted(!isMuted);
               }}
-              className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/80 transition shadow-md cursor-pointer"
+              className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/80 transition shadow-md cursor-pointer"
               aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -206,14 +206,14 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               <>
                 <button
                   onClick={prevCarouselImage}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
                   aria-label="Foto anterior"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={nextCarouselImage}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition cursor-pointer"
                   aria-label="Próxima foto"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -247,7 +247,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                     onFilterBySalon(offer.salonName);
                   }
                 }}
-                className="h-7 px-1.5 rounded-lg overflow-hidden bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-emerald-500 transition cursor-pointer shadow-md flex items-center justify-center shrink-0"
+                className="h-7 px-1.5 rounded overflow-hidden bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-emerald-500 transition cursor-pointer shadow-md flex items-center justify-center shrink-0"
                 title={`Ver perfil de ${offer.salonName}`}
               >
                 <img
@@ -283,7 +283,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                     e.stopPropagation();
                     onToggleFavorite(offer.id);
                   }}
-                  className="p-1 -ml-0.5 rounded-full hover:bg-white/10 active:scale-90 transition cursor-pointer shrink-0"
+                  className="p-1 -ml-0.5 rounded hover:bg-white/10 active:scale-90 transition cursor-pointer shrink-0"
                   title={isFavorite ? "Remover dos favoritos" : "Salvar nos favoritos"}
                   aria-label="Favoritar"
                 >
@@ -309,11 +309,11 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
 
           {/* Right Actions: Gallery Dots */}
           {gallery.length > 1 && (
-            <div className="flex items-center gap-1 bg-slate-900/80 backdrop-blur-md border border-white/20 px-2 py-1 rounded-full shadow-sm shrink-0 pt-0.5">
+            <div className="flex items-center gap-1 bg-slate-900/80 backdrop-blur-md border border-white/20 px-2 py-1 rounded shadow-sm shrink-0 pt-0.5">
               {gallery.map((_, idx) => (
                 <span
                   key={idx}
-                  className={`h-1 rounded-full transition-all duration-300 ${
+                  className={`h-1 rounded transition-all duration-300 ${
                     idx === carouselIndex ? 'w-2.5 bg-emerald-400' : 'w-1 bg-white/60'
                   }`}
                 />
@@ -337,7 +337,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
               e.stopPropagation();
               onDirectBook(offer);
             }}
-            className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-white drop-shadow-xs text-xs font-black rounded-lg transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"
+            className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-white drop-shadow-xs text-xs font-black rounded transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"
           >
             <Zap className="w-3.5 h-3.5 fill-white text-white shrink-0" />
             <span>AGENDAR • R${offer.price.toFixed(0)}</span>

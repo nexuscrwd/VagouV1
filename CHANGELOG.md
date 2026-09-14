@@ -15,6 +15,27 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Padronização Integral de Bordas Arredondadas (4px `rounded`) em Todos os Componentes
+- **Tipo:** `[Refactor / Design System / Clean Code]`
+- **Motivo:** Solicitação do usuário para garantir que todas as bordas e molduras do aplicativo Vagou utilizem o padrão de raio de curvatura de 4px (`rounded`).
+- **Arquivos Impactados:**
+  - `src/components/ConfirmationScreen.tsx`
+  - `src/components/Header.tsx`
+  - `src/components/InstallModal.tsx`
+  - `src/components/InstallBanner.tsx`
+  - `src/components/MapScreen.tsx`
+  - `src/components/PartnerProfileScreen.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Substituídas todas as utilidades de raio arbitrário ou circular (`rounded-xl`, `rounded-lg`, `rounded-2xl`, `rounded-md`, `rounded-t-xl`) por `rounded` (4px). Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-14] — Moldura Quadrada com Borda Arredondada de 4px nos Controles do Slide
+- **Tipo:** `[Fix / Design System / Focus Mode]`
+- **Motivo:** Solicitação do usuário para aplicar a moldura quadrada com cantos arredondados padrão de 4px (`rounded`) nos elementos de navegação (setas de transição lateral do slide e botão CTA de ação) do carrossel do estabelecimento em `SalonProfileView.tsx`.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:** Substituída a classe circular `rounded-full` dos botões de setas de slide por moldura quadrada `rounded` (4px), e o botão de CTA por `rounded`, preservando todas as interações e validado via `lint_applet` e `compile_applet`.
+
 ### [2026-09-14] — Padronização Global de Bordas Arredondadas em 4px (`rounded: 4px`)
 - **Tipo:** `[Refactor / Design System / Clean Code]`
 - **Motivo:** Solicitação do usuário para aplicar uniformemente o raio de curvatura de 4px em todas as caixas, divs, cards, botões, modais e superfícies existentes no app completo:

@@ -57,7 +57,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
         <button
           id="btn-voltar-painel-parceiro"
           onClick={onSwitchToClientMode}
-          className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 transition p-1.5 -ml-1.5 rounded-lg hover:bg-slate-200 cursor-pointer active:scale-95"
+          className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 transition p-1.5 -ml-1.5 rounded hover:bg-slate-200 cursor-pointer active:scale-95"
           aria-label="Voltar para Modo Cliente"
           title="Voltar para o Modo Cliente"
         >
@@ -67,7 +67,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
         {onNavigateToHome && (
           <button
             onClick={onNavigateToHome}
-            className="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer active:scale-95"
+            className="p-2 rounded bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition cursor-pointer active:scale-95"
             title="Ir para a Tela Inicial (Radar)"
             aria-label="Tela Inicial"
           >
@@ -77,9 +77,9 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
       </div>
 
       {/* Establishment Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+      <div className="bg-white border border-slate-200 rounded p-4 shadow-sm space-y-3">
         <div className="flex items-center gap-3.5">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-emerald-600/20">
+          <div className="w-14 h-14 rounded bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-md shadow-emerald-600/20">
             SX
           </div>
           <div className="flex-1 min-w-0">
@@ -92,7 +92,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
               Rua Itaquera, 340 - São Paulo, SP
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
                 ⚡ Parceiro Verificado
               </span>
               <span className="text-[10px] font-bold text-slate-500">
@@ -105,7 +105,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
         {/* Switch Mode Button */}
         <button
           onClick={onSwitchToClientMode}
-          className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
+          className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white rounded text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm"
         >
           <ArrowRightLeft className="w-4 h-4 text-emerald-400" />
           <span>Alternar para Modo Cliente (Agendar Vaga)</span>
@@ -113,7 +113,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
       </div>
 
       {/* Performance & Revenue Dashboard */}
-      <div className="bg-emerald-950 text-white rounded-2xl p-4 shadow-md space-y-3">
+      <div className="bg-emerald-950 text-white rounded p-4 shadow-md space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
@@ -127,7 +127,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
         </div>
 
         <div className="grid grid-cols-2 gap-3 pt-1">
-          <div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+          <div className="bg-white/10 rounded p-3 backdrop-blur-sm border border-white/5">
             <span className="text-[10px] text-emerald-300 block">Faturamento Salvo</span>
             <span className="text-lg font-black text-emerald-400 mt-0.5 block">
               R$ 2.480,00
@@ -137,7 +137,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
             </span>
           </div>
 
-          <div className="bg-white/10 rounded-xl p-3 backdrop-blur-sm border border-white/5">
+          <div className="bg-white/10 rounded p-3 backdrop-blur-sm border border-white/5">
             <span className="text-[10px] text-emerald-300 block">Taxa de Ocupação</span>
             <span className="text-lg font-black text-white mt-0.5 block">
               91.4%
@@ -150,7 +150,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
 
         <button
           onClick={onOpenPublishModal}
-          className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white drop-shadow-xs font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+          className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-white drop-shadow-xs font-black text-xs rounded transition flex items-center justify-center gap-1.5 shadow-sm"
         >
           <Zap className="w-3.5 h-3.5 fill-white text-white" />
           <span>Criar Nova Vaga Relâmpago</span>
@@ -163,14 +163,14 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
           Configurações da Empresa
         </h3>
 
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden divide-y divide-slate-100 shadow-sm">
+        <div className="bg-white rounded border border-slate-200 overflow-hidden divide-y divide-slate-100 shadow-sm">
           {/* Horários & Equipe */}
           <div
             onClick={onNavigateToScheduleConfig}
             className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <div className="w-9 h-9 rounded bg-emerald-50 text-emerald-700 flex items-center justify-center">
                 <Clock className="w-4 h-4" />
               </div>
               <div>
@@ -191,7 +191,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
             className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+              <div className="w-9 h-9 rounded bg-blue-50 text-blue-700 flex items-center justify-center">
                 <Share2 className="w-4 h-4" />
               </div>
               <div>
@@ -209,7 +209,7 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
           {/* Formas de pagamento */}
           <div className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+              <div className="w-9 h-9 rounded bg-purple-50 text-purple-700 flex items-center justify-center">
                 <CreditCard className="w-4 h-4" />
               </div>
               <div>
@@ -244,10 +244,10 @@ export const PartnerProfileScreen: React.FC<PartnerProfileScreenProps> = ({
           {professionals.map((prof) => (
             <div
               key={prof.id}
-              className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex items-center gap-2.5"
+              className="bg-white border border-slate-200 rounded p-3 shadow-sm flex items-center gap-2.5"
             >
               <div
-                className="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-xs shrink-0"
+                className="w-8 h-8 rounded text-white flex items-center justify-center font-bold text-xs shrink-0"
                 style={{ backgroundColor: prof.color }}
               >
                 {prof.name.charAt(0)}

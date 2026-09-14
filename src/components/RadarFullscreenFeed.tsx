@@ -100,7 +100,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
                     e.stopPropagation();
                     onOpenSalonProfile(offer.salonName);
                   }}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15 hover:bg-black/75 transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-black/50 backdrop-blur-md px-2.5 py-1 rounded border border-white/15 hover:bg-black/75 transition cursor-pointer"
                 >
                   <span className="truncate max-w-[190px]">{offer.salonName}</span>
                   <ChevronRight className="w-3 h-3 text-[#20C933] shrink-0" />
@@ -120,7 +120,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
                   e.stopPropagation();
                   onToggleFavorite(offer.id);
                 }}
-                className="p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/15 hover:bg-white/20 active:scale-90 transition cursor-pointer shrink-0 shadow-lg"
+                className="p-2 rounded bg-black/50 backdrop-blur-md border border-white/15 hover:bg-white/20 active:scale-90 transition cursor-pointer shrink-0 shadow-lg"
                 aria-label="Favoritar"
               >
                 <Heart
@@ -136,7 +136,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
               {/* Canto Inferior Esquerdo (Polegar) */}
               <div className="flex flex-col items-start gap-1.5">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#20C933]/50 shadow-[0_4px_16px_rgba(32,201,51,0.3)]">
+                  <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded border border-[#20C933]/50 shadow-[0_4px_16px_rgba(32,201,51,0.3)]">
                     <span className="w-2 h-2 rounded-full bg-[#20C933] animate-pulse"></span>
                     <span className="text-sm font-black text-white font-mono tracking-wide">
                       {formatSlotDateTime(offer.timeSlot)}
@@ -144,7 +144,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
                   </div>
 
                   {offer.expiresInMinutes && offer.expiresInMinutes <= 60 && (
-                    <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-rose-500/50 shadow-[0_4px_16px_rgba(244,63,94,0.3)]">
+                    <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded border border-rose-500/50 shadow-[0_4px_16px_rgba(244,63,94,0.3)]">
                       <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
                       <span className="text-sm font-black text-rose-400 font-mono tracking-wide">
                         {offer.expiresInMinutes}m
@@ -159,7 +159,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
                     e.stopPropagation();
                     onDirectBook(offer);
                   }}
-                  className="h-9 px-3 bg-[#20C933] hover:bg-[#1bb52d] active:scale-95 border border-[#20C933]/40 text-white text-[11px] font-black rounded-xl transition shadow-[0_4px_16px_rgba(32,201,51,0.3)] uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer whitespace-nowrap"
+                  className="h-9 px-3 bg-[#20C933] hover:bg-[#1bb52d] active:scale-95 border border-[#20C933]/40 text-white text-[11px] font-black rounded transition shadow-[0_4px_16px_rgba(32,201,51,0.3)] uppercase tracking-wider flex items-center gap-1 font-['Poppins'] cursor-pointer whitespace-nowrap"
                 >
                   <Zap className="w-3.5 h-3.5 fill-white text-white shrink-0" />
                   <span className="text-white font-['Arial'] font-black">AGENDAR • R${offer.price.toFixed(0)}</span>
@@ -172,7 +172,7 @@ export const RadarFullscreenFeed: React.FC<RadarFullscreenFeedProps> = ({
                   <button
                     type="button"
                     onClick={(e) => toggleMute(offer.id, e)}
-                    className="w-9 h-9 rounded-full bg-black/70 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/90 active:scale-90 transition shadow-lg cursor-pointer"
+                    className="w-9 h-9 rounded bg-black/70 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/90 active:scale-90 transition shadow-lg cursor-pointer"
                     aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
                   >
                     {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}

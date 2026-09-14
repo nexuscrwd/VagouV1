@@ -270,7 +270,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className={`w-full max-w-lg border rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden transition-colors ${
+        className={`w-full max-w-lg border rounded max-h-[92vh] flex flex-col shadow-2xl overflow-hidden transition-colors ${
           isDark
             ? 'bg-slate-950 border-slate-800'
             : 'bg-white border-slate-200'
@@ -290,7 +290,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     if (currentStep === 'professionals_and_time') setCurrentStep('date');
                     else if (currentStep === 'confirmation') setCurrentStep('professionals_and_time');
                   }}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-lg transition cursor-pointer ${
+                  className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
                       : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
@@ -303,7 +303,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               ) : (
                 <button
                   onClick={onClose}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-lg transition cursor-pointer ${
+                  className={`flex items-center gap-1 px-2 py-1 rounded transition cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white'
                       : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900'
@@ -326,7 +326,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
             <button
               onClick={onClose}
-              className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
+              className={`w-7 h-7 rounded flex items-center justify-center transition cursor-pointer ${
                 isDark
                   ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
                   : 'bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900'
@@ -353,7 +353,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               return (
                 <div key={st.key} className="flex flex-col gap-0.5">
                   <div
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 rounded transition-all duration-300 ${
                       isCurrent
                         ? 'bg-[#20C933] shadow-sm shadow-emerald-500/50'
                         : isPassed
@@ -381,7 +381,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         {/* Scrollable Content Body */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
           {/* Banner Compacto do Serviço Selecionado com Data/Horário Solicitados */}
-          <div className={`flex items-center justify-between px-3 py-2 border rounded-xl transition-colors ${
+          <div className={`flex items-center justify-between px-3 py-2 border rounded transition-colors ${
             isDark
               ? 'bg-slate-900 border-slate-800'
               : 'bg-slate-50 border-slate-200'
@@ -411,12 +411,12 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           {currentStep === 'date' && (
             <div className="space-y-3 animate-in fade-in duration-200">
               {/* Header do Mês com Controles */}
-              <div className={`flex items-center justify-between p-2.5 px-3 rounded-2xl border transition-colors ${
+              <div className={`flex items-center justify-between p-2.5 px-3 rounded border transition-colors ${
                 isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <button
                   onClick={handlePrevMonth}
-                  className={`p-2 rounded-xl transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                  className={`p-2 rounded transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                       : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
@@ -435,7 +435,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
 
                 <button
                   onClick={handleNextMonth}
-                  className={`p-2 rounded-xl transition cursor-pointer ${
+                  className={`p-2 rounded transition cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
                       : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
@@ -472,7 +472,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                           handleSelectDateAndAdvance(item.isoString);
                         }
                       }}
-                      className={`h-11 rounded-xl font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                      className={`h-11 rounded font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
                         isSelected
                           ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-lg shadow-emerald-500/30 scale-105 z-10'
                           : item.isDisabled
@@ -501,7 +501,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               {/* Botão de Avanço da Fase 1 */}
               <button
                 onClick={() => setCurrentStep('professionals_and_time')}
-                className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-white font-black text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs"
+                className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] text-white font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs"
               >
                 <span>Avançar para Horários</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -515,7 +515,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           {currentStep === 'professionals_and_time' && (
             <div className="space-y-3 animate-in fade-in duration-200">
               {/* Banner da Data Selecionada (Síntese Mobile: DD/MM às HH:MM) */}
-              <div className={`p-1.5 px-2.5 border rounded-xl flex items-center justify-between text-xs transition-colors ${
+              <div className={`p-1.5 px-2.5 border rounded flex items-center justify-between text-xs transition-colors ${
                 isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center gap-1.5">
@@ -526,7 +526,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 </div>
                 <button
                   onClick={() => setCurrentStep('date')}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border cursor-pointer transition ${
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded border cursor-pointer transition ${
                     isDark
                       ? 'text-emerald-400 hover:text-white bg-slate-950 border-slate-800'
                       : 'text-[#087A2A] hover:text-emerald-800 bg-white border-slate-200'
@@ -556,7 +556,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                       setSelectedProfessional('any');
                       setSelectedTimeSlot(null);
                     }}
-                    className={`min-w-[110px] max-w-[120px] flex-shrink-0 p-1.5 px-2 rounded-xl border text-left flex items-center gap-2 transition cursor-pointer ${
+                    className={`min-w-[110px] max-w-[120px] flex-shrink-0 p-1.5 px-2 rounded border text-left flex items-center gap-2 transition cursor-pointer ${
                       selectedProfessional === 'any'
                         ? isDark
                           ? 'bg-emerald-950/90 border-[#20C933] text-white shadow-sm shadow-emerald-500/20'
@@ -566,7 +566,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <div className={`w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 ${
+                    <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
                       selectedProfessional === 'any'
                         ? 'bg-[#20C933] text-white font-bold drop-shadow-xs'
                         : isDark
@@ -589,7 +589,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                           setSelectedProfessional(prof.name);
                           setSelectedTimeSlot(null);
                         }}
-                        className={`min-w-[110px] max-w-[125px] flex-shrink-0 p-1.5 px-2 rounded-xl border text-left flex items-center gap-2 transition cursor-pointer ${
+                        className={`min-w-[110px] max-w-[125px] flex-shrink-0 p-1.5 px-2 rounded border text-left flex items-center gap-2 transition cursor-pointer ${
                           isSelected
                             ? isDark
                               ? 'bg-emerald-950/90 border-[#20C933] text-white shadow-sm shadow-emerald-500/20'
@@ -602,7 +602,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         <img
                           src={prof.avatar}
                           alt={prof.name}
-                          className="w-6 h-6 rounded-md object-cover ring-1 ring-emerald-500/30 flex-shrink-0"
+                          className="w-6 h-6 rounded object-cover ring-1 ring-emerald-500/30 flex-shrink-0"
                           referrerPolicy="no-referrer"
                         />
                         <div className="min-w-0">
@@ -635,7 +635,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   </h4>
                   
                   {/* Filtro de Turnos */}
-                  <div className={`flex items-center gap-0.5 p-0.5 rounded-lg border flex-shrink-0 ${
+                  <div className={`flex items-center gap-0.5 p-0.5 rounded border flex-shrink-0 ${
                     isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
                   }`}>
                     {(['todos', 'manha', 'tarde', 'noite'] as const).map((period) => (
@@ -671,7 +671,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                           setSelectedTimeSlot(slot.time);
                           setCurrentStep('confirmation'); // Advance to final confirmation screen on click
                         }}
-                        className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
+                        className={`py-1.5 px-1 rounded text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
                           isSelected
                             ? 'bg-[#20C933] border-[#20C933] text-white font-black drop-shadow-xs shadow-sm shadow-emerald-500/30'
                             : !isAvailable
@@ -700,7 +700,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
           {currentStep === 'confirmation' && (
             <div className="space-y-3 animate-in fade-in duration-200">
               {/* Card Único e Limpo de Resumo do Atendimento */}
-              <div className={`p-4 border rounded-2xl space-y-3 shadow-sm transition-colors ${
+              <div className={`p-4 border rounded space-y-3 shadow-sm transition-colors ${
                 isDark ? 'bg-slate-900 border-emerald-500/40' : 'bg-slate-50 border-emerald-500/30'
               }`}>
                 <div className={`flex items-center justify-between pb-2.5 border-b ${
@@ -765,7 +765,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               <button
                 disabled={!selectedTimeSlot}
                 onClick={() => setCurrentStep('confirmation')}
-                className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
+                className={`w-full py-3 px-4 font-black text-xs uppercase tracking-wider rounded transition shadow-lg flex items-center justify-center gap-2 font-['Poppins'] ${
                   selectedTimeSlot
                     ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white drop-shadow-xs cursor-pointer shadow-emerald-500/20'
                     : isDark
@@ -781,7 +781,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
             {currentStep === 'confirmation' && (
               <button
                 onClick={handleConfirmFinal}
-                className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded-xl transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+                className="w-full py-3 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded transition shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
               >
                 <CheckCircle2 className="w-4 h-4 text-white" />
                 <span>Confirmar Agendamento</span>

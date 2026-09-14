@@ -59,11 +59,11 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white rounded-t-xl sm:rounded-xl p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-md bg-white rounded-t sm:rounded p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-[#20C933] to-[#087A2A] flex items-center justify-center text-white font-black text-lg shadow-md">
+            <div className="w-10 h-10 rounded bg-gradient-to-tr from-[#20C933] to-[#087A2A] flex items-center justify-center text-white font-black text-lg shadow-md">
               V
             </div>
             <div>
@@ -73,7 +73,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 rounded-md hover:bg-slate-100 transition"
+            className="p-2 text-slate-400 hover:text-slate-600 rounded hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -81,7 +81,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
         {/* Native 1-Click Install Button if supported */}
         {hasNativePrompt && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3.5 space-y-2">
+          <div className="bg-emerald-50 border border-emerald-200 rounded p-3.5 space-y-2">
             <div className="flex items-center gap-2 text-emerald-800 text-xs font-bold">
               <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Instalação instantânea detectada!</span>
@@ -90,7 +90,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
               onClick={() => {
                 if (onNativeInstall) onNativeInstall();
               }}
-              className="w-full py-2.5 bg-[#20C933] hover:bg-[#087A2A] text-white font-bold text-xs rounded-lg shadow transition flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-[#20C933] hover:bg-[#087A2A] text-white font-bold text-xs rounded shadow transition flex items-center justify-center gap-2"
             >
               <Download className="w-4 h-4" />
               <span>Instalar em 1 Clique</span>
@@ -103,10 +103,10 @@ export const InstallModal: React.FC<InstallModalProps> = ({
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
             Escolha seu Navegador:
           </span>
-          <div className="grid grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded-lg text-[11px] font-bold">
+          <div className="grid grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded text-[11px] font-bold">
             <button
               onClick={() => setActiveTab('opera')}
-              className={`py-2 px-1 rounded-md transition flex flex-col items-center gap-1 ${
+              className={`py-2 px-1 rounded transition flex flex-col items-center gap-1 ${
                 activeTab === 'opera'
                   ? 'bg-white text-rose-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -118,7 +118,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
             <button
               onClick={() => setActiveTab('chrome')}
-              className={`py-2 px-1 rounded-md transition flex flex-col items-center gap-1 ${
+              className={`py-2 px-1 rounded transition flex flex-col items-center gap-1 ${
                 activeTab === 'chrome'
                   ? 'bg-white text-emerald-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -130,7 +130,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
             <button
               onClick={() => setActiveTab('safari')}
-              className={`py-2 px-1 rounded-md transition flex flex-col items-center gap-1 ${
+              className={`py-2 px-1 rounded transition flex flex-col items-center gap-1 ${
                 activeTab === 'safari'
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -142,7 +142,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
             <button
               onClick={() => setActiveTab('samsung')}
-              className={`py-2 px-1 rounded-md transition flex flex-col items-center gap-1 ${
+              className={`py-2 px-1 rounded transition flex flex-col items-center gap-1 ${
                 activeTab === 'samsung'
                   ? 'bg-white text-purple-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -154,7 +154,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
             <button
               onClick={() => setActiveTab('firefox')}
-              className={`py-2 px-1 rounded-md transition flex flex-col items-center gap-1 ${
+              className={`py-2 px-1 rounded transition flex flex-col items-center gap-1 ${
                 activeTab === 'firefox'
                   ? 'bg-white text-orange-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -167,11 +167,11 @@ export const InstallModal: React.FC<InstallModalProps> = ({
         </div>
 
         {/* Step-by-Step Instructions Per Browser */}
-        <div className="bg-slate-50 border border-slate-200/90 rounded-lg p-4 text-xs space-y-3">
+        <div className="bg-slate-50 border border-slate-200/90 rounded p-4 text-xs space-y-3">
           {activeTab === 'opera' && (
             <div className="space-y-2.5 text-slate-700">
               <div className="flex items-center gap-2 text-slate-900 font-bold">
-                <span className="w-5 h-5 rounded-full bg-rose-100 text-slate-950 flex items-center justify-center text-[10px] font-black border border-rose-200">O</span>
+                <span className="w-5 h-5 rounded bg-rose-100 text-slate-950 flex items-center justify-center text-[10px] font-black border border-rose-200">O</span>
                 <span>Como instalar no Opera / Opera GX:</span>
               </div>
               <ol className="space-y-2.5 list-decimal list-inside text-slate-600 leading-relaxed font-medium">
@@ -268,11 +268,11 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
         {/* Benefits list */}
         <div className="grid grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600 pt-1">
-          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-100">
+          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded border border-slate-100">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span>Tela cheia sem barras</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-100">
+          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded border border-slate-100">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span>Carregamento instantâneo</span>
           </div>
@@ -280,7 +280,7 @@ export const InstallModal: React.FC<InstallModalProps> = ({
 
         <button
           onClick={onClose}
-          className="w-full py-3 bg-[#151A1E] hover:bg-slate-800 text-white font-bold text-xs rounded-lg shadow transition"
+          className="w-full py-3 bg-[#151A1E] hover:bg-slate-800 text-white font-bold text-xs rounded shadow transition"
         >
           Fechar
         </button>

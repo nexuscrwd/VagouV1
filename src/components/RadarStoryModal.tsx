@@ -135,7 +135,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
           {/* Top Bar Header */}
           <div className="absolute top-8 inset-x-0 z-40 px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 px-2 rounded-lg ring-1 ring-emerald-500/80 bg-slate-900/90 backdrop-blur-md overflow-hidden flex items-center justify-center text-white font-bold shadow-lg">
+              <div className="h-9 px-2 rounded ring-1 ring-emerald-500/80 bg-slate-900/90 backdrop-blur-md overflow-hidden flex items-center justify-center text-white font-bold shadow-lg">
                 <img
                   src={getSalonLogo(activeOffer.salonName, activeOffer.salonLogo)}
                   alt={activeOffer.salonName}
@@ -168,7 +168,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                     e.stopPropagation();
                     setIsMuted(!isMuted);
                   }}
-                  className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                  className="w-8 h-8 rounded bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
                   aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -180,7 +180,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                   e.stopPropagation();
                   onClose();
                 }}
-                className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
+                className="w-8 h-8 rounded bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition"
                 aria-label="Fechar Story"
               >
                 <X className="w-5 h-5" />
@@ -220,20 +220,20 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
           {/* Bottom Card Content & 1-Tap CTA */}
           <div className="absolute inset-x-0 bottom-0 z-40 p-5 space-y-3.5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-md">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-md">
                 <Clock className="w-3.5 h-3.5 text-emerald-400" />
                 <span>{formatSlotDateTime(activeOffer.timeSlot)}</span>
               </div>
 
               {activeOffer.activeViewers && (
-                <div className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-slate-300 flex items-center gap-1.5">
+                <div className="px-2.5 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-medium text-slate-300 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-rose-500 inline-block" />
                   <span>{activeOffer.activeViewers} pessoas vendo</span>
                 </div>
               )}
             </div>
 
-            <div className="bg-slate-900/90 backdrop-blur-lg border border-white/15 rounded-xl p-4 shadow-xl">
+            <div className="bg-slate-900/90 backdrop-blur-lg border border-white/15 rounded p-4 shadow-xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-white leading-snug">
@@ -263,7 +263,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                     onConfirmBooking(activeOffer);
                     onClose();
                   }}
-                  className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white drop-shadow-xs font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wide"
+                  className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white drop-shadow-xs font-black text-sm rounded transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 uppercase tracking-wide"
                 >
                   <Zap className="w-4 h-4 fill-white text-white" />
                   <span>RESERVAR ESTE HORÁRIO</span>
@@ -275,7 +275,7 @@ export const RadarStoryModal: React.FC<RadarStoryModalProps> = ({
                     onNavigateToDetail(activeOffer);
                     onClose();
                   }}
-                  className="px-3.5 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition border border-white/10"
+                  className="px-3.5 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded transition border border-white/10"
                 >
                   Detalhes
                 </button>
