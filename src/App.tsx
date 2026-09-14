@@ -363,7 +363,7 @@ export const App: React.FC = () => {
           <div className="flex flex-col h-full w-full overflow-hidden">
             {/* Scrollable Screen Content Container */}
             <div className={`flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden relative scroll-smooth ${
-              currentScreen === 'salon_profile' ? 'snap-y snap-mandatory' : ''
+              currentScreen === 'salon_profile' || salonNavContext !== null ? 'snap-y snap-mandatory' : ''
             } ${isDark ? 'bg-slate-950' : 'bg-slate-50'}`}>
               {currentScreen === 'home' && (
                 <HomeScreen

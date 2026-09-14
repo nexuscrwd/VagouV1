@@ -45,31 +45,21 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = React.memo(({ title, action, className = '', isDark = true }) => (
   <div
-    className={`sticky top-14 sm:top-16 z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md ${
+    className={`sticky top-[104px] sm:top-[112px] z-30 w-full px-4 sm:px-5 py-2.5 sm:py-3 border-y flex items-center justify-between transition-colors shadow-xs backdrop-blur-md shrink-0 ${
       isDark
         ? 'bg-gradient-to-r from-emerald-950/95 via-emerald-900/70 to-slate-950/95 border-emerald-500/30'
         : 'bg-gradient-to-r from-emerald-500/20 via-emerald-500/15 to-emerald-50/95 border-emerald-500/30'
     } ${className}`}
   >
     <div className="flex items-center gap-2.5 min-w-0">
-      <motion.div
-        initial={{ scaleY: 0 }}
-        whileInView={{ scaleY: 1 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.35 }}
-        className="w-1 h-3.5 sm:h-4 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0 origin-top"
-      />
-      <motion.h2
-        initial={{ opacity: 0, x: -8 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{ duration: 0.4 }}
+      <div className="w-1 h-3.5 sm:h-4 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] shrink-0" />
+      <h2
         className={`text-[12px] font-bold uppercase tracking-wider font-['Poppins'] truncate ${
           isDark ? 'text-white' : 'text-slate-900'
         }`}
       >
         {title}
-      </motion.h2>
+      </h2>
     </div>
     {action && (
       <div className="flex items-center gap-2 shrink-0">
@@ -930,7 +920,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
       <div className="pt-0 space-y-0 p-0 m-0">
         {/* 1. SEÇÃO: INÍCIO - SLIDE HERO RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative snap-start h-[calc(100dvh-104px-64px)] sm:h-[calc(100dvh-112px-64px)] min-h-[440px] overflow-hidden flex flex-col border-b border-slate-800/40">
+        <section id="salon-section-home" className="w-full relative snap-start snap-always h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col border-b border-slate-800/40">
           {/* SLIDER / CARROSSEL PUBLICITÁRIO TOTALMENTE RESPONSIVO */}
           <div className={`relative w-full h-full flex-1 min-h-0 overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
@@ -1071,7 +1061,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP TOTALMENTE FULLWIDTH */}
-        <section id="salon-section-servicos" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-between">
+        <section id="salon-section-servicos" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always p-0 m-0 border-b border-slate-800/40 h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-between">
           <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
           {/* Grid de Serviços Fullwidth sem Espaçamentos (Laterais, Topo e Rodapé zerados) */}
@@ -1248,7 +1238,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start border-b border-slate-800/40 h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-start p-0 m-0">
+        <section id="salon-section-agenda" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always border-b border-slate-800/40 h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title="Agenda & Disponibilidade"
             isDark={isDark}
@@ -1261,7 +1251,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-        <section id="salon-section-espaco" className="w-full relative scroll-mt-14 sm:scroll-mt-16 snap-start h-[calc(100dvh-56px-64px)] sm:h-[calc(100dvh-64px-64px)] min-h-[480px] overflow-hidden flex flex-col justify-start p-0 m-0">
+        <section id="salon-section-espaco" className="w-full relative scroll-mt-[104px] sm:scroll-mt-[112px] snap-start snap-always h-[calc(100dvh-174px)] sm:h-[calc(100dvh-182px)] min-h-[440px] max-h-[calc(100dvh-174px)] overflow-hidden flex flex-col justify-start p-0 m-0">
           <SectionHeader
             title={
               espacoSlideIndex === 0

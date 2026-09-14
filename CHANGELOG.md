@@ -15,6 +15,19 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Correção Definitiva de Deslocamento de Rolagem (Scroll Offset) e Snap Magnético Mandatório
+- **Tipo:** `[Fix / Architecture / Mobile UX]`
+- **Motivo:** Solicitação de re-análise do usuário ("Tente novamente"):
+  - **Correção Matemática de Deslocamento (Scroll Offset):** Identificado que os cabeçalhos fixos somam 104px (56px do topo + 48px do subcabeçalho de boas-vindas). Ajustado o `scroll-mt` de todas as seções para `scroll-mt-[104px] sm:scroll-mt-[112px]`, eliminando a falha que encobria 48px da seção no topo e expunha 48px da seção seguinte no rodapé.
+  - **Recálculo da Altura Líquida por Seção (`calc(100dvh - 174px)`):** A altura útil exata entre o subcabeçalho e o rodapé (`h-[70px]`) foi calibrada para `h-[calc(100dvh-174px)]` (ou 182px no sm). Cada seção ocupa rigorosamente 100% da viewport visível sem vazamentos.
+  - **Snap Mandatório Permanente no App:** Atualizado `App.tsx` para garantir que `snap-y snap-mandatory` permaneça ativo sempre que `salonNavContext` estiver registrado (`viewingSalonProfile`), garantindo o efeito ímã instantâneo.
+  - **Cabeçalho de Seção Fixo e Estável:** Ajustada a posição de `SectionHeader` para `top-[104px] sm:top-[112px]`, colando-o sem qualquer folga na borda do subcabeçalho e removendo gatilhos de animação contínua no scroll.
+- **Arquivos Impactados:**
+  - `src/App.tsx`: Ativação de `snap-mandatory` sempre que `salonNavContext !== null`.
+  - `src/components/SalonProfileView.tsx`: Correção de `scroll-mt`, alturas relativas e `SectionHeader`.
+  - `CHANGELOG.md`: Registro da alteração.
+- **Resumo Técnico:** Verificado via `lint_applet` e validado via `compile_applet`.
+
 ### [2026-09-14] — Enquadramento 100% Fullscreen por Seção e Isolamento Visual Estrito
 - **Tipo:** `[Fix / Architecture / Mobile UX]`
 - **Motivo:** Solicitação do usuário ("estamos com problema de seção, Uma seção não deve aparecer na outra e isto esta ocorrendo. Ao rolar a seção pra cima ou seleciona-la pelo botão do menu, a seção deve aparcer preenchendo totlmente a tela entre o cabeçalho e o menu rodapé. não deve elementos de seção de baixo aparecer na de cima e vice versa"):
