@@ -602,8 +602,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
   // Renderização da Ferramenta Agenda Completa com Calendário Mensal e Grade de Horários
   const renderAgendaTool = () => (
-    <div className="px-3.5 space-y-3">
-      {/* BOTÃO COM BORDAS EM 5px: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
+    <div className={`border rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-sm ${
+      isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+    }`}>
+      {/* BOTÃO DE DESTAQUE: "HORÁRIOS HOJE" (Gradiente Linear & Texto Branco Puro) */}
       <div>
         <button
           type="button"
@@ -611,7 +613,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             setSelectedCalendarDateIso(todayIso);
             handleOpenBooking(undefined, true, undefined, todayIso);
           }}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-[5px] text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
+          className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 via-[#20C933] to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase transition-all shadow-[0_2px_10px_-2px_rgba(32,201,51,0.35)] border border-emerald-400/30 cursor-pointer active:scale-[0.99]"
         >
           <Calendar className="w-4 h-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]" />
           <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">HORÁRIOS HOJE</span>
@@ -619,17 +621,17 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* CALENDÁRIO MENSAL INTERATIVO VISÍVEL NA TELA */}
-      <div className="space-y-2.5">
+      <div className="space-y-2">
         {/* Header do Mês com Controles */}
-        <div className={`flex items-center justify-between p-2 px-3 rounded-xl border transition-colors ${
-          isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+        <div className={`flex items-center justify-between p-1.5 px-3 rounded-xl border transition-colors ${
+          isDark ? 'bg-slate-950 border-slate-800/80' : 'bg-slate-50 border-slate-200'
         }`}>
           <button
             type="button"
             onClick={handlePrevInlineMonth}
             className={`p-1.5 rounded-lg transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
               isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                ? 'bg-slate-900 hover:bg-slate-800 text-slate-200'
                 : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
             }`}
             aria-label="Mês anterior"
@@ -651,7 +653,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             onClick={handleNextInlineMonth}
             className={`p-1.5 rounded-lg transition cursor-pointer ${
               isDark
-                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                ? 'bg-slate-900 hover:bg-slate-800 text-slate-200'
                 : 'bg-white hover:bg-slate-200 text-slate-700 shadow-xs'
             }`}
             aria-label="Próximo mês"
@@ -673,7 +675,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           {/* Dias do Mês em Grade */}
           {inlineMonthData.daysGrid.map((item, index) => {
             if (item.dayNumber === null) {
-              return <div key={`empty-${index}`} className="h-8 sm:h-9" />;
+              return <div key={`empty-${index}`} className="h-7 sm:h-8" />;
             }
 
             return (
@@ -686,7 +688,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     setSelectedCalendarDateIso(item.isoString);
                   }
                 }}
-                className={`h-8 sm:h-9 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
+                className={`h-7 sm:h-8 rounded-lg font-bold text-xs transition-all relative flex flex-col items-center justify-center cursor-pointer ${
                   item.isSelected
                     ? 'bg-[#20C933] text-white font-black drop-shadow-xs shadow-md shadow-emerald-500/30 scale-105 z-10'
                     : item.isDisabled
@@ -694,13 +696,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       ? 'bg-slate-950/40 text-slate-700 cursor-not-allowed border border-slate-900/50'
                       : 'bg-slate-100/50 text-slate-300 cursor-not-allowed border border-slate-200/40'
                     : isDark
-                    ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
+                    ? 'bg-slate-950 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-emerald-500/40'
                     : 'bg-white hover:bg-emerald-50/50 text-slate-800 border border-slate-200 hover:border-emerald-500/40'
                 }`}
               >
                 <span>{item.dayNumber}</span>
                 {item.isToday && !item.isSelected && (
-                  <span className="w-1 h-1 rounded-full bg-[#20C933] absolute bottom-1" />
+                  <span className="w-1 h-1 rounded-full bg-[#20C933] absolute bottom-0.5" />
                 )}
               </button>
             );
@@ -709,7 +711,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* 3. SEÇÃO: TABELA DE HORÁRIOS PARA A DATA SELECIONADA */}
-      <div className={`pt-2 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+      <div className={`pt-2.5 border-t space-y-2 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
         <div className="flex items-center justify-between gap-1">
           <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider truncate ${
             isDark ? 'text-white' : 'text-slate-900'
@@ -717,10 +719,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             <Clock className="w-3.5 h-3.5 text-[#20C933] flex-shrink-0" />
             <span>Horários • {selectedDateFormattedLabel}</span>
           </h4>
+          <span className="text-[10px] text-emerald-400 font-semibold">
+            {agendaSlots.filter(s => s.available).length} disponíveis
+          </span>
         </div>
 
-        {/* Grade da Tabela de Horários - 4 Colunas Ultra Enxutas */}
-        <div className="grid grid-cols-4 gap-1.5 py-[5px]">
+        {/* Grade da Tabela de Horários - 4 Colunas compactas com rolagem suave */}
+        <div className="grid grid-cols-4 gap-1.5 py-1 max-h-40 overflow-y-auto pr-0.5">
           {agendaSlots.map((slot) => {
             const isAvailable = slot.available;
 
@@ -733,13 +738,13 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   const matchedSrv = catalogServices[0];
                   handleOpenBooking(matchedSrv, true, slot.time, selectedCalendarDateIso);
                 }}
-                className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
+                className={`py-1.5 px-1 rounded-lg text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
                   !isAvailable
                     ? isDark
-                      ? 'bg-slate-900/30 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
+                      ? 'bg-slate-950/40 border-slate-900 text-slate-600 line-through opacity-40 cursor-not-allowed'
                       : 'bg-slate-100/50 border-slate-200 text-slate-300 line-through opacity-40 cursor-not-allowed'
                     : isDark
-                    ? 'bg-slate-900 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
+                    ? 'bg-slate-950 border-slate-800 text-slate-200 hover:border-emerald-500 hover:text-white'
                     : 'bg-white border-slate-200 text-slate-800 hover:border-emerald-500 hover:text-emerald-700 shadow-2xs'
                 }`}
               >
@@ -774,15 +779,15 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return catalogServices.slice(start, start + SERVICES_PER_PAGE);
   }, [catalogServices, servicePage]);
 
-  // Controles de swipe/swap para os dois blocos da Seção Espaço (0: Espaço & Mapa, 1: Equipe & Especialistas)
+  // Controles de swipe/swap para os três blocos da Seção Espaço (0: Estrutura, 1: Endereço & Mapa, 2: Equipe)
   const handleNextEspacoSlide = () => {
     setEspacoSwipeDirection(1);
-    setEspacoSlideIndex((prev) => (prev === 0 ? 1 : 0));
+    setEspacoSlideIndex((prev) => (prev + 1) % 3);
   };
 
   const handlePrevEspacoSlide = () => {
     setEspacoSwipeDirection(-1);
-    setEspacoSlideIndex((prev) => (prev === 0 ? 1 : 0));
+    setEspacoSlideIndex((prev) => (prev - 1 + 3) % 3);
   };
 
   // Cabeçalho de Seção Padronizado para todas as seções da Landing Page
@@ -917,11 +922,11 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       </div>
 
       {/* 5. LANDING PAGE DO ESTABELECIMENTO (1. Início / Slide, 2. Serviços, 3. Agenda, 4. Espaço + Equipe) */}
-      <div className="pt-0 space-y-6 pb-12">
+      <div className="pt-0 space-y-8 sm:space-y-10 pb-28">
         {/* 1. SEÇÃO: INÍCIO - SLIDE HERO FULLSCREEN RESPONSIVO PUBLICITÁRIO */}
-        <section id="salon-section-home" className="w-full relative scroll-mt-0">
+        <section id="salon-section-home" className="w-full relative scroll-mt-0 snap-start">
           {/* SLIDER / CARROSSEL FULLSCREEN QUE COMPLETA TODA A TELA DO DISPOSITIVO MÓVEL */}
-          <div className={`relative w-full h-[calc(100vh-174px)] h-[calc(100dvh-174px)] min-h-[480px] overflow-hidden select-none touch-pan-y ${
+          <div className={`relative w-full h-[calc(100vh-104px)] h-[calc(100dvh-104px)] min-h-[500px] max-h-[720px] overflow-hidden select-none touch-pan-y ${
             isDark ? 'bg-slate-900 border-b border-slate-800' : 'bg-slate-200 border-b border-slate-300'
           }`}>
             <AnimatePresence mode="wait">
@@ -1046,11 +1051,12 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 2. SEÇÃO: SERVIÇOS -> GRID ENQUADRADO COM EFEITO SWAP */}
-        <section id="salon-section-servicos" className="space-y-3 pt-2 scroll-mt-14">
+        <section id="salon-section-servicos" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
           <SectionHeader
             icon={Scissors}
             title="Serviços & Procedimentos"
             badge={`${catalogServices.length} opções`}
+            className="px-0"
             action={
               totalServicePages > 1 ? (
                 <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
@@ -1083,7 +1089,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
           />
 
           {/* Grid Enquadrado de Serviços (4 por página, cards do mesmo tamanho, com suporte a Swap/Arrasto) */}
-          <div className="px-4 relative overflow-hidden select-none">
+          <div className="relative overflow-hidden select-none flex-1 flex flex-col justify-between">
             <AnimatePresence mode="wait" custom={swapDirection}>
               <motion.div
                 key={servicePage}
@@ -1152,7 +1158,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       }`}>
                         <div>
                           <span className="text-[9px] uppercase tracking-wide text-slate-400 block -mb-0.5">Valor</span>
-                          <span className="text-xs sm:text-sm font-black text-emerald-400 font-['Poppins']">
+                          <span className="text-xs sm:text-sm font-black text-emerald-400 font-['Poppins'] whitespace-nowrap">
                             R$ {srv.price}
                           </span>
                         </div>
@@ -1162,7 +1168,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                             e.stopPropagation();
                             handleOpenBooking(srv);
                           }}
-                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 font-bold text-[10px] uppercase tracking-wider transition-colors cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/30 font-bold text-[10px] uppercase tracking-wider transition-colors cursor-pointer whitespace-nowrap"
                         >
                           Agendar
                         </button>
@@ -1202,22 +1208,35 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </section>
 
         {/* 3. SEÇÃO: AGENDA & DISPONIBILIDADE */}
-        <section id="salon-section-agenda" className="space-y-3 pt-2 scroll-mt-14">
+        <section id="salon-section-agenda" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start border-b border-slate-800/40 pb-8">
           <SectionHeader
             icon={Calendar}
             title="Agenda & Disponibilidade"
+            className="px-0"
           />
 
           {/* Ferramenta Agenda Completa do Estabelecimento */}
           {renderAgendaTool()}
         </section>
 
-        {/* 4. SEÇÃO: ESPAÇO & ESTRUTURA (COM SWIPE ENTRE ESPAÇO E EQUIPE) */}
-        <section id="salon-section-espaco" className="space-y-3 px-3.5 pt-2 scroll-mt-14">
+        {/* 4. SEÇÃO: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
+        <section id="salon-section-espaco" className="space-y-3.5 px-3.5 sm:px-4 py-4 min-h-[calc(100dvh-130px)] flex flex-col justify-start scroll-mt-16 sm:scroll-mt-20 snap-start pb-28">
           <SectionHeader
-            icon={espacoSlideIndex === 0 ? Store : Users}
-            title={espacoSlideIndex === 0 ? (salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Espaço & Estrutura') : (hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional')}
-            badge={espacoSlideIndex === 0 ? salonInfo.city : `${salonInfo.professionals.length} prof.`}
+            icon={espacoSlideIndex === 0 ? Store : espacoSlideIndex === 1 ? MapPin : Users}
+            title={
+              espacoSlideIndex === 0
+                ? (salonInfo.isHomeCare ? 'Modalidade de Atendimento' : 'Estrutura do Espaço')
+                : espacoSlideIndex === 1
+                ? 'Endereço & Localização'
+                : (hasMultipleProfessionals ? 'Equipe & Especialistas' : 'Perfil do Profissional')
+            }
+            badge={
+              espacoSlideIndex === 0
+                ? 'Espaço'
+                : espacoSlideIndex === 1
+                ? salonInfo.city
+                : `${salonInfo.professionals.length} prof.`
+            }
             action={
               <div className="flex items-center gap-1 bg-slate-900/80 px-2 py-1 rounded-lg border border-slate-800">
                 <button
@@ -1231,7 +1250,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
                 <span className="text-[10px] font-bold text-emerald-400 min-w-[28px] text-center">
-                  {espacoSlideIndex + 1}/2
+                  {espacoSlideIndex + 1}/3
                 </span>
                 <button
                   type="button"
@@ -1248,46 +1267,61 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             className="px-0"
           />
 
-          {/* Abas Rápidas de Navegação (Pills Compactos para Celular) */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-900/80 border border-slate-800">
+          {/* Abas Rápidas de Navegação (3 Pills Compactos para Celular) */}
+          <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-900/80 border border-slate-800">
             <button
               type="button"
               onClick={() => {
-                setEspacoSwipeDirection(-1);
+                setEspacoSwipeDirection(0 < espacoSlideIndex ? -1 : 1);
                 setEspacoSlideIndex(0);
               }}
-              className={`py-1.5 px-2 rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition cursor-pointer ${
+              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
                 espacoSlideIndex === 0
                   ? 'bg-emerald-500 text-white shadow-xs'
                   : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Store className="w-3.5 h-3.5" />
-              <span>Espaço & Mapa</span>
+              <Store className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Estrutura</span>
             </button>
             <button
               type="button"
               onClick={() => {
-                setEspacoSwipeDirection(1);
+                setEspacoSwipeDirection(1 < espacoSlideIndex ? -1 : 1);
                 setEspacoSlideIndex(1);
               }}
-              className={`py-1.5 px-2 rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition cursor-pointer ${
+              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
                 espacoSlideIndex === 1
                   ? 'bg-emerald-500 text-white shadow-xs'
                   : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Users className="w-3.5 h-3.5" />
-              <span>Equipe ({salonInfo.professionals.length})</span>
+              <MapPin className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Endereço & Mapa</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEspacoSwipeDirection(2 < espacoSlideIndex ? -1 : 1);
+                setEspacoSlideIndex(2);
+              }}
+              className={`py-1.5 px-1 rounded-lg text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer whitespace-nowrap ${
+                espacoSlideIndex === 2
+                  ? 'bg-emerald-500 text-white shadow-xs'
+                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Equipe ({salonInfo.professionals.length})</span>
             </button>
           </div>
 
           {/* Container com Suporte a Gesto Swipe (Arrasto Horizontal para Esquerda e Direita) */}
           <div className="relative overflow-hidden select-none">
             <AnimatePresence mode="wait" custom={espacoSwipeDirection}>
-              {espacoSlideIndex === 0 ? (
+              {espacoSlideIndex === 0 && (
                 <motion.div
-                  key="slide-espaco-mapa"
+                  key="slide-espaco-estrutura"
                   custom={espacoSwipeDirection}
                   initial={{ opacity: 0, x: espacoSwipeDirection > 0 ? 40 : -40 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -1305,11 +1339,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   }}
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
-                  {/* CARD UNIFICADO: ESTRUTURA DO ESPAÇO, ENDEREÇO & MAPA */}
-                  <div className={`border rounded-xl p-3.5 space-y-3.5 shadow-sm ${
+                  {/* ABA 1: CARD DE ESTRUTURA DO ESPAÇO & COMODIDADES */}
+                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
-                    {/* 1. Estrutura do Espaço & Comodidades */}
                     <div className="space-y-2">
                       <h3 className={`text-xs font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         <Store className="w-4 h-4 text-emerald-500" />
@@ -1332,12 +1365,43 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Divisor */}
-                    <div className={`border-t ${isDark ? 'border-slate-800' : 'border-slate-100'}`} />
+                    <div className={`pt-2 border-t text-[11px] flex items-center justify-between ${
+                      isDark ? 'border-slate-800 text-slate-400' : 'border-slate-100 text-slate-500'
+                    }`}>
+                      <span>Ambiente climatizado e confortável</span>
+                      <span className="text-emerald-400 font-bold">100% Verificado</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
-                    {/* 2. Endereço e Horário */}
+              {espacoSlideIndex === 1 && (
+                <motion.div
+                  key="slide-espaco-mapa"
+                  custom={espacoSwipeDirection}
+                  initial={{ opacity: 0, x: espacoSwipeDirection > 0 ? 40 : -40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: espacoSwipeDirection > 0 ? -40 : 40 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -35 || info.velocity.x < -200) {
+                      handleNextEspacoSlide();
+                    } else if (info.offset.x > 35 || info.velocity.x > 200) {
+                      handlePrevEspacoSlide();
+                    }
+                  }}
+                  className="cursor-grab active:cursor-grabbing touch-pan-y"
+                >
+                  {/* ABA 2: CARD DE ENDEREÇO, COMO CHEGAR & MAPA EMBED */}
+                  <div className={`border rounded-xl p-3.5 space-y-3.5 shadow-sm min-h-[380px] flex flex-col justify-between ${
+                    isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    {/* Endereço e Horário */}
                     <div className="space-y-2">
-                      <div className="flex items-start gap-2 text-xs">
+                      <div className="flex items-start gap-2.5 text-xs">
                         <MapPin className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                         <div className="min-w-0 flex-1">
                           <span className={`font-semibold block truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -1356,9 +1420,20 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                       </div>
                     </div>
 
-                    {/* 3. Embed Interativo do Google Maps */}
-                    <div className="space-y-2 pt-0.5">
-                      <div className={`relative w-full h-44 sm:h-52 rounded-xl overflow-hidden border shadow-xs ${
+                    {/* Botão Como Chegar */}
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(salonInfo.name + ' ' + salonInfo.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 uppercase tracking-wider"
+                    >
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>COMO CHEGAR (GOOGLE MAPS)</span>
+                    </a>
+
+                    {/* Abaixo: Mapa Embed */}
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className={`relative w-full h-48 sm:h-56 rounded-xl overflow-hidden border shadow-xs ${
                         isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-slate-100'
                       }`}>
                         <iframe
@@ -1383,7 +1458,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                     </div>
                   </div>
                 </motion.div>
-              ) : (
+              )}
+
+              {espacoSlideIndex === 2 && (
                 <motion.div
                   key="slide-equipe"
                   custom={espacoSwipeDirection}
@@ -1403,8 +1480,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   }}
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
-                  {/* EQUIPE & ESPECIALISTAS INTEGRADA DIRETAMENTE DENTRO DE ESPAÇO */}
-                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm ${
+                  {/* ABA 3: EQUIPE & ESPECIALISTAS INTEGRADA */}
+                  <div className={`border rounded-xl p-3.5 space-y-3 shadow-sm min-h-[380px] flex flex-col justify-between ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
                     <SectionHeader
@@ -1447,10 +1524,10 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             {/* Dica de Swipe e Indicador de Pontos */}
             <div className="mt-3 flex items-center justify-between px-1">
               <span className="text-[10px] text-slate-400">
-                Deslize para navegar entre espaço e equipe
+                Deslize para navegar entre as 3 abas
               </span>
               <div className="flex items-center gap-1.5">
-                {[0, 1].map((dotIdx) => (
+                {[0, 1, 2].map((dotIdx) => (
                   <button
                     key={dotIdx}
                     onClick={() => {
@@ -1462,7 +1539,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                         ? 'w-5 h-1.5 bg-emerald-500'
                         : 'w-1.5 h-1.5 bg-slate-700 hover:bg-slate-500'
                     }`}
-                    aria-label={`Slide ${dotIdx + 1}`}
+                    aria-label={`Aba ${dotIdx + 1}`}
                   />
                 ))}
               </div>

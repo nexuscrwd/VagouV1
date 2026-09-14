@@ -15,6 +15,36 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-14] — Enquadramento e Isolamento Responsivo das Seções da Landing Page
+- **Tipo:** `[Refactor / Layout & Mobile Architecture]`
+- **Motivo:** Solicitação do usuário ("Ele é uma landing page, pois cada seção não deve tomar espaço da outra. Por exemplo, ajuste os elementos de cada seção de modo que caiba responsivamente e de forma que elementos da seção abaixo não venham a interferir na seção atual."):
+  - **Isolamento de Seções (`min-h-[calc(100dvh-130px)]` & `snap-start`):** Cada seção (Início, Serviços, Agenda, Espaço) agora funciona como um módulo contido e independente da landing page, com espaçamento e divisores elegantes, sem que os elementos da seção inferior invadam a visão atual.
+  - **Seção 1 (Início - Hero):** Proporção calibrada (`h-[calc(100dvh-104px)]` com limites `min-h-[500px]` e `max-h-[720px]`), preenchendo a tela do dispositivo móvel com perfeição ótica.
+  - **Seção 2 (Serviços):** Enquadramento 2x2 com flex containment e rolagem por swap horizontal sem expansão desordenada da tela.
+  - **Seção 3 (Agenda):** Calendário mensal contido e tabela de horários com limite e scroll interno (`max-h-40 overflow-y-auto`), impedindo que a seleção de datas empurre as seções inferiores.
+  - **Seção 4 (Espaço, Endereço & Equipe):** Min-height unificado de 380px nas 3 abas deslizáveis com `pb-28`, eliminando saltos de layout e garantindo que o `BottomNav` nunca sobreponha os elementos ou dots.
+  - **Alinhamento do Scroll (`scroll-mt-16 sm:scroll-mt-20`):** Ao tocar nos atalhos superiores, a seção rola com enquadramento cirúrgico abaixo do cabeçalho fixo unificado.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Ajuste arquitetural dos contêineres de seção, ferramentas e paddings responsivos.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Clean code rigoroso, sem resíduos ou dependências extras, validado via `lint_applet` e `compile_applet`.
+
+---
+
+### [2026-09-14] — Reorganização da Seção em 3 Abas Deslizáveis (Estrutura, Endereço & Mapa, Equipe)
+- **Tipo:** `[Feat / UX & Layout Refactor]`
+- **Motivo:** Conforme solicitação do usuário: "O embed ficou muito bom, porém eu gostaria que fosse três abas: - Uma aba vai conter o endereço do espaço, como chegar e abaixo o mapa embed."
+  - **Aba 1 (Estrutura):** Detalhamento do espaço/modalidade de atendimento, descrição e grid de comodidades (Wi-Fi, Estacionamento, etc.).
+  - **Aba 2 (Endereço & Mapa):** Endereço completo com cidade e horário de atendimento, botão de destaque "COMO CHEGAR (GOOGLE MAPS)" e o iframe de mapa embed interativo logo abaixo.
+  - **Aba 3 (Equipe):** Lista de especialistas e visagistas do estabelecimento com avaliações e fotos.
+  - Atualizada a barra de navegação com 3 pills compactos, contador no cabeçalho `X/3`, pontos de paginação e suporte contínuo ao gesto de swipe tátil (arrasto para esquerda/direita).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`: Divisão modular em 3 slides com transições e `handleNextEspacoSlide`/`handlePrevEspacoSlide` ajustados para módulo 3.
+  - `CHANGELOG.md`: Registro da alteração para rastreabilidade e governança.
+- **Resumo Técnico:** Código limpo, testado e validado com sucesso via linter e compilação de produção.
+
+---
+
 ### [2026-09-14] — Integração de Embed Interativo do Google Maps no Card de Espaço
 - **Tipo:** `[Feat / GIS & UI Focus Mode]`
 - **Motivo:** Conforme solicitação do usuário em modo focus ("aqui vai uma embed do maps"):
