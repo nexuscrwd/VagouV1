@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import {
   X,
   Calendar,
-  Building2,
   SlidersHorizontal,
   HelpCircle,
-  ShieldCheck,
   ChevronRight,
   UserCheck,
   Heart,
@@ -19,8 +17,8 @@ import {
   Check,
   Shield,
 } from 'lucide-react';
-import { VagouLogo } from './VagouLogo';
 import { useTheme } from '../context/ThemeContext';
+import { hapticLight } from '../utils/haptics';
 
 interface UserPrivateProfile {
   fullName: string;
@@ -50,7 +48,7 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
   onNavigateToAgenda,
   onNavigateToFavorites,
   favoriteCount,
-  onSwitchToPartnerMode,
+  onSwitchToPartnerMode: _onSwitchToPartnerMode,
   onOpenInterestConfig,
   onOpenHelpModal,
   userName = 'Anderson Silva',
@@ -116,44 +114,46 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
       <div className={`w-full max-w-xs h-full border-l flex flex-col justify-between shadow-2xl p-5 overflow-y-auto transition-colors duration-200 ${
         isDark ? 'bg-[#151A1E] border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
       }`}>
-        {/* Top Header */}
+        {/* Top Content */}
         <div>
-          <div className={`flex items-center justify-between pb-4 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-            <VagouLogo variant="header" size="xs" theme={isDark ? "dark" : "light"} />
+          {/* User Profile Card com botão fechar integrado */}
+          <div className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 ${
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
+          }`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="relative shrink-0">
+                <img
+                  src={userAvatarUrl}
+                  alt={profile.fullName}
+                  className="w-12 h-12 rounded-full object-cover border-2 border-[#20C933]"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#20C933] flex items-center justify-center text-white">
+                  <UserCheck className="w-2.5 h-2.5 stroke-[3]" />
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h3 className={`text-sm font-black truncate font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {profile.fullName}
+                </h3>
+              </div>
+            </div>
+
             <button
-              onClick={onClose}
-              className={`p-1.5 rounded-full border transition cursor-pointer ${
+              onClick={() => {
+                hapticLight();
+                onClose();
+              }}
+              className={`p-1.5 rounded-full border transition cursor-pointer shrink-0 ${
                 isDark
-                  ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                  : 'bg-white border-slate-200 text-slate-500 hover:text-slate-900 shadow-xs'
+                  ? 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
+                  : 'bg-slate-100 border-slate-200 text-slate-500 hover:text-slate-900 shadow-xs'
               }`}
               aria-label="Fechar menu"
             >
               <X className="w-4 h-4" />
             </button>
-          </div>
-
-          {/* User Profile Card */}
-          <div className={`mt-4 p-3.5 rounded-2xl border flex items-center gap-3 ${
-            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
-          }`}>
-            <div className="relative">
-              <img
-                src={userAvatarUrl}
-                alt={profile.fullName}
-                className="w-12 h-12 rounded-full object-cover border-2 border-[#20C933]"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#20C933] flex items-center justify-center text-white">
-                <UserCheck className="w-2.5 h-2.5 stroke-[3]" />
-              </div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h3 className={`text-sm font-black truncate font-['Poppins'] ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                {profile.fullName}
-              </h3>
-            </div>
           </div>
 
           {/* Perfil Privado do Usuário (Nome Completo, E-mail, Telefone, Endereço) */}
@@ -355,37 +355,38 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
 
           {/* Navigation Links */}
           <div className="mt-5 space-y-2">
-            {/* Botão de Alternar Tema (Claro / Escuro) */}
+            {/* Botão de Alternar Tema (Claro / Escuro) - Simplificado */}
             <button
-              onClick={toggleTheme}
-              className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer ${
+              id="btn-drawer-toggle-theme"
+              onClick={() => {
+                hapticLight();
+                toggleTheme();
+              }}
+              className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition group cursor-pointer active:scale-[0.99] ${
                 isDark
                   ? 'bg-slate-900/60 hover:bg-slate-800 border-slate-800/80 text-white'
                   : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-900 shadow-xs'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border transition ${
                   isDark
-                    ? 'bg-amber-950/60 text-amber-400 border-amber-500/20'
+                    ? 'bg-slate-800 text-amber-400 border-slate-700'
                     : 'bg-amber-50 text-amber-600 border-amber-200'
                 }`}>
-                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
                 </div>
-                <div>
-                  <span className={`text-xs font-bold block ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    {isDark ? 'Tema Claro' : 'Tema Escuro'}
-                  </span>
-                  <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {isDark ? 'Alternar para visual claro perolado' : 'Alternar para tema escuro slate'}
-                  </span>
-                </div>
+                <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Modo Escuro
+                </span>
               </div>
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
-                isDark ? 'bg-slate-800 text-amber-300' : 'bg-slate-100 text-slate-700'
+              <div className={`w-9 h-5 rounded-full transition-colors flex items-center px-0.5 ${
+                isDark ? 'bg-[#20C933]' : 'bg-slate-300'
               }`}>
-                {isDark ? 'Ativar Claro' : 'Ativar Escuro'}
-              </span>
+                <div className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform transform ${
+                  isDark ? 'translate-x-4' : 'translate-x-0'
+                }`} />
+              </div>
             </button>
 
             <button
@@ -467,30 +468,11 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
               </div>
               <ChevronRight className={`w-4 h-4 transition ${isDark ? 'text-slate-500 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-900'}`} />
             </button>
-
-            <button
-              onClick={() => {
-                onClose();
-                onSwitchToPartnerMode();
-              }}
-              className="w-full p-3 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-[#20C933]/30 text-left flex items-center justify-between transition group cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#20C933] text-white flex items-center justify-center font-bold drop-shadow-xs">
-                  <Building2 className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <span className="text-xs font-black text-white block">Painel do Estabelecimento</span>
-                  <span className="text-[10px] text-[#20C933] font-medium">Sou Salão / Barbeiro</span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#20C933]" />
-            </button>
           </div>
 
           {/* Quick Help & Info */}
-          <div className={`mt-4 pt-4 border-t space-y-1 ${isDark ? 'border-slate-800/80' : 'border-slate-200'}`}>
-            {onOpenHelpModal && (
+          {onOpenHelpModal && (
+            <div className={`mt-4 pt-4 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-200'}`}>
               <button
                 onClick={() => {
                   onClose();
@@ -503,21 +485,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
                 <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
                 <span>Como funciona o Vagou?</span>
               </button>
-            )}
-
-            <div className={`py-2 px-3 text-[11px] flex items-center gap-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-              <ShieldCheck className="w-3.5 h-3.5 text-[#20C933]" />
-              <span>Agendamento Imediato Garantido</span>
             </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className={`pt-4 border-t flex flex-col items-center text-center gap-1 ${isDark ? 'border-slate-800/80' : 'border-slate-200'}`}>
-          <VagouLogo variant="header" size="xs" theme={isDark ? "dark" : "light"} showTagline={false} />
-          <span className={`text-[10px] font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-            Vagou v1.2.0 • PWA Mobile
-          </span>
+          )}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Home, MapPin, Calendar, Search, Zap, Sparkles, Store } from 'lucide-react';
 import { ScreenId } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { hapticLight } from '../utils/haptics';
 
 export interface SalonNavContext {
   activeTab: 'home' | 'servicos' | 'vagas' | 'espaco';
@@ -53,7 +54,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             <button
               key={tab.id}
               id={`nav-salon-${tab.id}`}
-              onClick={() => salonContext.onSelectTab(tab.id as any)}
+              onClick={() => {
+                hapticLight();
+                salonContext.onSelectTab(tab.id as any);
+              }}
               className="flex flex-col items-center justify-center gap-1 py-1 px-3 transition active:scale-95 cursor-pointer group"
             >
               <div className={`w-[34px] h-[34px] rounded flex items-center justify-center transition-all ${
@@ -90,6 +94,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   const handleTabClick = (tabId: string, isAction?: boolean, isFlash?: boolean) => {
+    hapticLight();
     if (isFlash) {
       if (onSelectFlashCategory) {
         onSelectFlashCategory();

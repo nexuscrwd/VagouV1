@@ -15,6 +15,62 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-15] — Limpeza e Remoção de Elementos Secundários no Drawer de Perfil
+- **Tipo:** `[UI / Cleanup / Mobile UX]`
+- **Motivo:** Remoção de três elementos selecionados no `ProfileDrawer`: o botão do modo parceiro ("Painel do Estabelecimento"), o selo estático de garantia ("Agendamento Imediato Garantido") e o rodapé com versão/logo, simplificando o menu do cliente.
+- **Arquivos Impactados:**
+  - `src/components/ProfileDrawer.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o botão de transição para modo parceiro (`button:nth-of-type(5)` em `div:nth-of-type(3)`).
+  - Removido o selo estático com ícone `ShieldCheck` em `div:nth-of-type(4)`.
+  - Removido o rodapé redundante (`div:nth-of-type(2)` do painel do drawer) contendo a logo Vagou e a tag de versão.
+  - Efetuado o protocolo de limpeza pós-obra: remoção dos imports não utilizados (`Building2`, `ShieldCheck`, `VagouLogo`).
+  - Validado com aprovação integral em `lint_applet` e build de produção `compile_applet`.
+
+### [2026-09-15] — Remoção do Cabeçalho Superior no Drawer de Perfil
+- **Tipo:** `[UI / Cleanup / Mobile UX]`
+- **Motivo:** Remoção da barra superior redundante (contendo o logo Vagou e borda divisória) no `ProfileDrawer`, conforme solicitação de remoção do elemento selecionado, otimizando o aproveitamento vertical e a síntese visual.
+- **Arquivos Impactados:**
+  - `src/components/ProfileDrawer.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o contêiner `div:nth-of-type(1)` do cabeçalho superior que continha o logo e a divisória horizontal inferior.
+  - Integrado o botão de fechar (`X` com feedback háptico `hapticLight`) de forma compacta e elegante diretamente no card de perfil do usuário, preservando 100% da usabilidade e acessibilidade de navegação.
+  - Validado com aprovação no `lint_applet` e build de produção `compile_applet`.
+
+### [2026-09-15] — Simplificação do Controle de Modo Escuro no Drawer de Perfil
+- **Tipo:** `[UI / Refactor / Mobile UX]`
+- **Motivo:** Simplificação do botão selecionado de alternância de tema no `ProfileDrawer`, removendo subtítulos redundantes e badges repetitivas para máxima síntese visual e padrão mobile intuitivo.
+- **Arquivos Impactados:**
+  - `src/components/ProfileDrawer.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Substituído o layout sobrecarregado (títulos duplos "Tema Claro / Tema Escuro", descrições longas "Alternar para visual claro perolado / tema escuro slate" e badges textuais "Ativar Claro / Ativar Escuro") por um controle minimalista no padrão mobile.
+  - Exibição direta do rótulo "Modo Escuro", ícone contextual (Sol/Lua) e switch toggle suave (`#20C933` quando ativo, `slate-300` quando inativo).
+  - Integrado feedback háptico sutil (`hapticLight`) no acionamento do switch.
+  - Validado com `lint_applet` e `compile_applet`.
+
+### [2026-09-15] — Feedback Tátil Háptico (Vibration API) para Mobile
+- **Tipo:** `[Feat / UX / Mobile]`
+- **Motivo:** Implementação de feedback háptico (vibração tátil) ao interagir com botões, abas, seletores de serviços e confirmação de agendamentos para proporcionar experiência tátil e responsiva em dispositivos móveis.
+- **Arquivos Impactados:**
+  - `src/utils/haptics.ts`
+  - `src/components/BottomNav.tsx`
+  - `src/components/SalonBookingModal.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `src/components/RadarOfferCard.tsx`
+  - `src/components/CancelModal.tsx`
+  - `src/App.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Criado módulo utilitário `src/utils/haptics.ts` com suporte à Web Vibration API (`navigator.vibrate`) com degradação silenciosa em dispositivos não compatíveis: `hapticLight` (toque sutil de 12ms), `hapticMedium` (toque moderado de 25ms), `hapticSuccess` (padrão de sucesso duplo [30ms, 40ms, 50ms]) e `hapticWarning` (alerta tríplice [40ms, 50ms, 40ms, 50ms, 60ms]).
+  - Integrado `hapticLight` nas abas da `BottomNav`, na seleção/deseleção de serviços, seleção de datas, seleção de horários e seleção de profissionais em `SalonBookingModal`, bem como no botão de favoritar em `RadarOfferCard`.
+  - Integrado `hapticMedium` nos botões de avanço de etapas ("Avançar para Data", "Avançar para Horários", "Avançar para Confirmação", "Voltar") e no botão "AGENDAR" do card do Radar.
+  - Integrado `hapticSuccess` na finalização de agendamentos (`handleConfirmFinal` em `SalonBookingModal`, `handleConfirmSchedule` em `SalonProfileView` e `handleConfirmBooking` em `App.tsx`).
+  - Integrado `hapticWarning` na confirmação de cancelamento em `CancelModal`.
+  - Validado com aprovação em `lint_applet` e compilação em `compile_applet`.
+
 ### [2026-09-15] — Trava Inegociável de Contraste: Fundo Verde = Texto/Ícone Branco & Teoria dos Opostos
 - **Tipo:** `[Design System / Governança / UI]`
 - **Motivo:** Estabelecimento de diretriz mandatória no projeto para impedir uso de texto ou ícones escuros sobre superfícies verdes vibrantes, assegurando oposição de luminosidade e temperatura entre fonte e fundo.

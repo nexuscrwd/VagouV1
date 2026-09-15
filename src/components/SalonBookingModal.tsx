@@ -7,6 +7,7 @@ import {
 import { ServiceOffer } from '../types';
 import { useTheme } from '../context/ThemeContext';
 import { getAvailableSlotsForDate } from '../utils/bookingSlots';
+import { hapticLight, hapticMedium, hapticSuccess } from '../utils/haptics';
 
 export interface CatalogServiceItem {
   id: string;
@@ -78,6 +79,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   });
 
   const toggleServiceSelection = (srv: CatalogServiceItem) => {
+    hapticLight();
     setSelectedServices((prev) => {
       const exists = prev.some((s) => s.id === srv.id);
       if (exists) {
@@ -273,6 +275,8 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
   const handleConfirmFinal = () => {
     if (!selectedTimeSlot) return;
 
+    hapticSuccess();
+
     onConfirmAppointment({
       service: selectedService,
       professional: selectedProfessional === 'any' ? `${resolvedProfessionalName} (Designado)` : selectedProfessional,
@@ -308,6 +312,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
             {currentStep !== 'service' ? (
               <button
                 onClick={() => {
+                  hapticMedium();
                   if (currentStep === 'date') setCurrentStep('service');
                   else if (currentStep === 'professionals_and_time') setCurrentStep('date');
                   else if (currentStep === 'confirmation') setCurrentStep('professionals_and_time');
@@ -493,7 +498,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               <button
                 disabled={selectedServices.length === 0}
                 onClick={() => {
-                  if (selectedServices.length > 0) setCurrentStep('date');
+                  if (selectedServices.length > 0) {
+                    hapticMedium();
+                    setCurrentStep('date');
+                  }
                 }}
                 className={`w-full py-2.5 px-4 font-bold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm ${
                   selectedServices.length > 0
@@ -582,6 +590,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         disabled={isDayDisabled}
                         onClick={() => {
                           if (item.isoString && selectedService) {
+                            hapticLight();
                             setSelectedDateIso(item.isoString);
                             setSelectedTimeSlot(null);
                           }
@@ -616,7 +625,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                 <button
                   disabled={!selectedService || !selectedDateIso}
                   onClick={() => {
-                    if (selectedService && selectedDateIso) setCurrentStep('professionals_and_time');
+                    if (selectedService && selectedDateIso) {
+                      hapticMedium();
+                      setCurrentStep('professionals_and_time');
+                    }
                   }}
                   className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
                     selectedService && selectedDateIso
@@ -644,6 +656,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   <button
                     type="button"
                     onClick={() => {
+                      hapticLight();
                       setSelectedProfessional('any');
                       setSelectedTimeSlot(null);
                     }}
@@ -677,6 +690,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         key={idx}
                         type="button"
                         onClick={() => {
+                          hapticLight();
                           setSelectedProfessional(prof.name);
                           setSelectedTimeSlot(null);
                         }}
@@ -759,6 +773,7 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                         key={slot.time}
                         disabled={!isAvailable}
                         onClick={() => {
+                          hapticLight();
                           setSelectedTimeSlot((prev) => (prev === slot.time ? null : slot.time));
                         }}
                         className={`py-1.5 px-1 rounded text-xs font-bold border transition flex items-center justify-center gap-1 cursor-pointer ${
@@ -785,7 +800,10 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
               <button
                 disabled={!selectedTimeSlot}
                 onClick={() => {
-                  if (selectedTimeSlot) setCurrentStep('confirmation');
+                  if (selectedTimeSlot) {
+                    hapticMedium();
+                    setCurrentStep('confirmation');
+                  }
                 }}
                 className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
                   selectedTimeSlot

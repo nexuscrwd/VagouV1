@@ -4,6 +4,7 @@ import { ServiceOffer } from '../types';
 import { MediaFallbackCard } from './MediaFallbackCard';
 import { formatSlotDateTime } from '../utils/dateFormatter';
 import { getSalonLogo } from '../utils/salonLogos';
+import { hapticLight, hapticMedium } from '../utils/haptics';
 
 interface RadarOfferCardProps {
   offer: ServiceOffer;
@@ -281,6 +282,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
+                    hapticLight();
                     onToggleFavorite(offer.id);
                   }}
                   className="p-1 -ml-0.5 rounded hover:bg-white/10 active:scale-90 transition cursor-pointer shrink-0"
@@ -335,6 +337,7 @@ export const RadarOfferCard: React.FC<RadarOfferCardProps> = ({
             id={`btn-radar-agendar-${offer.id}`}
             onClick={(e) => {
               e.stopPropagation();
+              hapticMedium();
               onDirectBook(offer);
             }}
             className="h-8 px-3 bg-[#20C933] hover:bg-[#1bb32d] active:scale-95 text-white drop-shadow-xs text-xs font-black rounded transition shadow-lg shadow-emerald-500/30 uppercase tracking-wider flex items-center gap-1.5 font-['Poppins'] cursor-pointer whitespace-nowrap"

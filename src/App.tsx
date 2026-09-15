@@ -38,6 +38,7 @@ import { SplashScreen } from './components/SplashScreen';
 import { scheduleAppointmentReminder } from './utils/notifications';
 import { formatSlotDateTime } from './utils/dateFormatter';
 import { useTheme } from './context/ThemeContext';
+import { hapticSuccess } from './utils/haptics';
 
 export const App: React.FC = () => {
   const { isDark } = useTheme();
@@ -179,6 +180,7 @@ export const App: React.FC = () => {
 
   // Handle Client Booking creation
   const handleConfirmBooking = (offer: ServiceOffer, skipScreenChange = false) => {
+    hapticSuccess();
     const newProtocol = `#VGA-${Math.floor(10000 + Math.random() * 90000)}`;
     const newBooking: BookingAppointment = {
       protocolCode: newProtocol,

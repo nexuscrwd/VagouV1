@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, X, Clock, MapPin } from 'lucide-react';
 import { BookingAppointment } from '../types';
+import { hapticWarning, hapticLight } from '../utils/haptics';
 
 interface CancelModalProps {
   isOpen: boolean;
@@ -68,13 +69,19 @@ export const CancelModal: React.FC<CancelModalProps> = ({
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-2.5 pt-1">
           <button
-            onClick={onClose}
+            onClick={() => {
+              hapticLight();
+              onClose();
+            }}
             className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition"
           >
             Voltar
           </button>
           <button
-            onClick={() => onConfirmCancel(booking)}
+            onClick={() => {
+              hapticWarning();
+              onConfirmCancel(booking);
+            }}
             className="py-2.5 px-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg shadow-sm transition"
           >
             Sim, Cancelar

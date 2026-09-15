@@ -16,6 +16,7 @@ import { useTheme } from '../context/ThemeContext';
 import { getSalonLogo } from '../utils/salonLogos';
 import { SalonNavContext } from './BottomNav';
 import { getAvailableSlotsForDate } from '../utils/bookingSlots';
+import { hapticSuccess, hapticLight } from '../utils/haptics';
 
 export interface SalonProfileViewProps {
   salonName: string;
@@ -615,6 +616,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     salonAddress: string;
     price: number;
   }) => {
+    hapticSuccess();
     if (primaryOffer) {
       onDirectBook({
         ...primaryOffer,
