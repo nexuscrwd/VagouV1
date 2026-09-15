@@ -15,6 +15,133 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-15] — Trava Inegociável de Contraste: Fundo Verde = Texto/Ícone Branco & Teoria dos Opostos
+- **Tipo:** `[Design System / Governança / UI]`
+- **Motivo:** Estabelecimento de diretriz mandatória no projeto para impedir uso de texto ou ícones escuros sobre superfícies verdes vibrantes, assegurando oposição de luminosidade e temperatura entre fonte e fundo.
+- **Arquivos Impactados:**
+  - `AGENTS.md`
+  - `GEMINI.md`
+  - `KNOWLEDGE_BASE.md`
+  - `src/components/SalonBookingModal.tsx`
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Registrada trava obrigatória e inegociável nos documentos mestres (`AGENTS.md`, `GEMINI.md`, `KNOWLEDGE_BASE.md`): qualquer elemento com fundo verde sólido/vibrante (`bg-emerald-500`, `bg-emerald-600`, `bg-[#20C933]`, botões, tags ou checkboxes) deve conter texto e ícones 100% brancos (`text-white`). É expressamente proibido texto escuro sobre fundo verde.
+  - Formalizada a regra de divergência e oposição entre fundo e fonte (frio vs quente / claro vs escuro) garantindo máxima legibilidade.
+  - Corrigidos no código: checkbox ativo de serviço em `SalonBookingModal.tsx` (`bg-emerald-500 text-white`) e ícone de ação rápida em `SalonProfileView.tsx` (`bg-emerald-500 text-white`).
+  - Verificado e validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-15] — Redesign Moderno da Lista de Serviços na Etapa de Agendamento
+- **Tipo:** `[UI / UX / Mobile]`
+- **Motivo:** Substituição da tabela rígida de 3 colunas (estilo planilha de software antigo) por cards independentes, arejados e acolhedores de serviços.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o cabeçalho frio de planilha com colunas fixas ("SERVIÇO | DURAÇÃO | VALOR") e o contêiner engessado com linhas divisórias de formulário antigo.
+  - Criados cards independentes e fluidos com raio padronizado de 4px (`rounded`), espaçamento generoso e feedback tátil refinado.
+  - Integrados: checkbox discreto com ícone de verificação esmeralda, título do serviço em destaque com categoria e duração formatada com ícone de relógio (`Clock`), e preço nítido alinhado à direita.
+  - Efeito de seleção modernizado com realce sutil de superfície (`bg-emerald-500/10` e borda `border-emerald-500/50`), eliminando a barra lateral grossa (`border-l-4`).
+  - Atualizado o botão de avanço para exibir o total acumulado em reais dos serviços selecionados.
+  - Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-15] — Padronização Geométrica das Fotos da Equipe (Cards Quadrados 4px)
+- **Tipo:** `[UI / Design System]`
+- **Motivo:** Alinhamento das fotos dos profissionais ao design system documentado em `KNOWLEDGE_BASE.md` e `ARCHITECTURE.md` (formato quadrado com raio estrito de 4px e bordas padronizadas).
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Substituído o formato circular (`rounded-full`) por formato quadrado proporcional (`aspect-square`, `w-20 h-20 sm:w-24 sm:h-24`).
+  - Aplicado o arredondamento padrão do sistema de 4px (`rounded`) com borda sutil (`border border-slate-800` no tema escuro e `border-slate-200` no tema claro).
+  - Mantida a estrutura de layout plano (*flat open grid*), sem aninhamento de caixas (*box dentro de box*), sem estrelas ou botões individuais.
+  - Verificado com `lint_applet` e `compile_applet`.
+
+
+### [2026-09-15] — Layout Plano da Equipe & Diretriz Anti-Nesting ("Zero Box dentro de Box")
+- **Tipo:** `[UI / UX / Diretrizes]`
+- **Motivo:** Remoção de sobrecarga visual, caixas aninhadas, botões redundantes e notas competitivas na seção "Equipe", consolidando apresentação nobre, humana e igualitária de time.
+- **Arquivos Impactados:**
+  - `AGENTS.md`
+  - `KNOWLEDGE_BASE.md`
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Registrada diretriz obrigatória de design no `AGENTS.md` e `KNOWLEDGE_BASE.md`: proibição absoluta de caixas com borda aninhadas dentro de outras caixas com borda (*box dentro de box*).
+  - Eliminados todos os cartões retangulares individuais com borda ao redor de cada profissional, tags de especialidade, selos dinâmicos e botões repetidos de agendamento.
+  - Removidas estrelas, notas e contadores de atendimento, eliminando qualquer exposição de ranking ou competição entre os membros do time.
+  - Implementada vitrine em grade aberta (*open flat grid*) com retratos circulares amplos e nítidos (`w-20 h-20` / `w-22 h-22`), nome em destaque e cargo/especialidade sutil logo abaixo.
+  - Limpeza completa pós-obra: remoção de imports mortos (`CheckCircle2`, `ShieldCheck`, `Star`).
+  - Validado com `lint_applet` e `compile_applet`.
+
+
+### [2026-09-15] — Redesign Premium & Vitalidade da Apresentação de Especialistas (Focus Mode)
+- **Tipo:** `[UI / Design / Refactor]`
+- **Motivo:** Refatoração da apresentação de especialistas na aba "Espaço", substituindo o layout simples e estático por um design moderno, dinâmico e de alta conversão.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Substituído o parágrafo descritivo monótono por chips dinâmicos de especialidades ("Visagismo Avançado", "Cortes & Barboterapia", "Colorimetria & Mechas") em conformidade com a diretriz de síntese mobile.
+  - Transformados os cartões estáticos em cards horizontais de alto impacto visual com acabamento Studio VIP.
+  - Adicionados: anel de destaque esmeralda nos avatares, selo de verificado oficial (`CheckCircle2`), selo dinâmico de status com pulso verde ("Vagas Hoje"), classificação por estrelas douradas com contagem de atendimentos.
+  - Integrado botão interativo direto de ação "Agendar" com ícone em cada card de especialista, redirecionando o usuário diretamente à etapa de agendamento (`#section-vagas`).
+  - Adicionado rodapé elegante com selo de garantia de atendimento com hora marcada.
+  - Validado via `lint_applet` e `compile_applet`.
+
+
+### [2026-09-15] — Implementação do Efeito Landing Page com Scroll Snap Contínuo
+- **Tipo:** `[UX / UI / Refactor]`
+- **Motivo:** Aplicação do efeito landing page com rolagem contínua vertical e encaixe magnético perfeito (`scroll-snap`), garantindo que nenhuma seção fique parada pela metade na tela durante o deslize com o dedo.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `src/App.tsx`
+  - `src/index.css`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Convertida a alternância rígida de abas por `AnimatePresence` em um fluxo contínuo de landing page com 4 seções (`#section-home`, `#section-servicos`, `#section-vagas`, `#section-espaco`).
+  - Implementado contêiner com `snap-y snap-mandatory`, `snap-always`, `scroll-smooth` e classes de suporte tátil em dispositivos móveis (`touch-pan-y` e `overscroll-y-contain`).
+  - Cada seção ocupa `w-full h-full min-h-full shrink-0 snap-start snap-always`, alinhando-se com precisão milimétrica nas bordas da viewport ao término do gesto de arraste para cima ou para baixo.
+  - Integrado `IntersectionObserver` nas 4 seções para sincronizar automaticamente a barra de navegação superior (`activeTab`) com a seção visível.
+  - Ajustado o clique nos botões da barra para executar `scrollTo` suave diretamente no contêiner da página.
+  - Ajustado o contêiner principal no `App.tsx` para permitir que o scroll interno de snap opere sem conflitos de overflow externo.
+  - Validado via `lint_applet` e `compile_applet` sem erros.
+
+
+### [2026-09-15] — Remoção de Indicadores de Paginação e Título no Topo do Slide
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Remoção do indicador de paginação (pontos) do slide no perfil do salão e movimentação do título principal e descrição para a parte superior do slide.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removido o contêiner de paginação com pontos do canto superior direito do slide.
+  - Movidos o título principal (`slide.title`) e o subtítulo (`slide.tagline`) para o topo do contêiner do slide com degradação suave de contraste (`bg-gradient-to-b`).
+  - Mantidos o botão de ação principal (CTA) e o indicador de navegação na base do slide de forma limpa e desobstruída.
+  - Validado via `lint_applet` e `compile_applet`.
+
+### [2026-09-15] — Remoção de Tags e Selos dos Slides do Perfil (Focus Mode)
+- **Tipo:** `[UI / Clean Code]`
+- **Motivo:** Remoção das informações de categoria (`tag`) e selos (`badge`) dos slides do carrossel no perfil do salão, limpando a visualização e focando nas imagens e títulos.
+- **Arquivos Impactados:**
+  - `src/components/SalonProfileView.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removidos os elementos `<span>` de `slide.tag` e `slide.badge` que ficavam sobrepostos no topo de cada slide.
+  - Alinhada a paginação de bolinhas para a direita superior (`justify-end`).
+  - Removidas as propriedades não utilizadas de `portfolioSlides` no estado memoizado.
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
+### [2026-09-15] — Remoção de Rótulo Redundante de Profissionais (Focus Mode)
+- **Tipo:** `[UI / Refactor]`
+- **Motivo:** Remoção das informações de título/cabeçalho redundantes da seção de profissionais na etapa 3, otimizando o espaço vertical em dispositivos móveis.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removida a `div.flex.items-center.justify-between` contendo o rótulo `Profissional` e o ícone `User` da etapa `professionals_and_time`, exibindo o carrossel da equipe diretamente sob o cabeçalho da etapa.
+  - Validado com sucesso via `lint_applet` e `compile_applet`.
+
 ### [2026-09-14] — Remoção de Botões Duplicados e Contêiner Redundante (Focus Mode)
 - **Tipo:** `[UI / Refactor / Fix]`
 - **Motivo:** Eliminação de botões duplicados ("Avançar para Confirmação") e do contêiner redundante de data/alterar na etapa de horários.

@@ -139,6 +139,42 @@ Pilhas de rolagem contínua (`snap-y`) ou empilhamento vertical com scroll suave
 4. **Zero Vazamento & Responsividade Total:**
    - Ao trocar de aba pelo menu inferior (`BottomNav`), a transição ocorre instantaneamente com transição suave de opacidade (`opacity: 0 -> 1`), mantendo a altura exata entre o topo e o rodapé em 100% dos smartphones.
 
+---
+
+## 🚫 9. Diretriz Anti-Nesting: Proibição de "Box dentro de Box" e Bordas Sobrepostas
+
+### O Problema Identificado:
+A criação recursiva de divisores (`div > div > div`) onde um contêiner com borda contém outro contêiner com borda e, dentro dele, cada item possui sua própria caixinha com borda (`border rounded-xl` dentro de `border rounded`). Isso causa poluição visual extrema, claustrofobia de layout e perda desnecessária de espaço útil em telas de celulares.
+
+### A Regra e Solução Padronizada:
+1. **Layout Plano (Flat & Open Canvas):**
+   - Eliminar caixas intermediárias decorativas. A tela ou o contêiner de seção já serve como palco visual para os elementos.
+   - NUNCA colocar um elemento com `border` dentro de outro elemento que já possui `border` para agrupar o mesmo tipo de conteúdo.
+2. **Apresentação de Pessoas / Equipe / Nosso Time:**
+   - Dispor os membros da equipe diretamente em uma grade ou lista arejada, sem contornar cada membro com um card/borda retangular cinza.
+   - A separação entre os itens é feita exclusivamente através de respiro e espaço negativo (`gap-4`, `gap-6`), e não por linhas divisórias ou paredes de caixas.
+   - Apenas o rosto/foto (circular ou com borda sutil), nome e especialidade. Zero botões redundantes, zero badges de status e zero estrelas/rankings.
+
+---
+
+## 🎨 10. Diretriz de Contraste Obrigatório: Fundo Verde = Texto Branco & Teoria dos Opostos
+
+### O Problema Identificado:
+Uso incorreto de texto ou ícones escuros (`text-slate-950`, `text-slate-900`) sobre superfícies verdes vibrantes (`bg-emerald-500`, `bg-[#20C933]`, `bg-emerald-600`), causando perda de contraste visual, dificuldade de leitura e quebra dos princípios fundamentais de design.
+
+### A Regra Inegociável:
+1. **Fundo Verde Exige OBRIGATORIAMENTE Texto / Ícone Branco:**
+   - Sempre que um componente utilizar fundo verde sólido ou com alta saturação (`bg-emerald-500`, `bg-emerald-600`, `bg-emerald-700`, `bg-[#20C933]` ou qualquer tom esmeralda/verde vivo), a tipografia e os ícones internos **DEVEM ser estritamente brancos (`text-white`)**.
+   - ❌ **Proibido:** `<div className="bg-emerald-500 text-slate-950">` ou `<Check className="text-slate-950" />`
+   - ✅ **Obrigatório:** `<div className="bg-emerald-500 text-white">` e `<Check className="text-white" />`
+2. **Divergência e Oposição (Frio vs Quente / Claro vs Escuro):**
+   - A cor do texto e a cor do fundo devem sempre divergir e pertencer a polos opostos de luminosidade e temperatura.
+   - Fundo escuro e frio (`slate-950`, `slate-900`, `slate-800`) exige texto claro/branco (`text-white`, `text-slate-100`).
+   - Fundo claro/quente exige texto escuro de alto contraste (`text-slate-900`).
+   - Fundo com cor de destaque forte (Verde Esmeralda) exige texto branco puro (`text-white`).
+
+
+
 
 
 

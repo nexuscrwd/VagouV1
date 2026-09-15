@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   X, Calendar, Clock, User, CheckCircle2, ChevronLeft, ChevronRight, 
-  Sparkles, Star, Scissors, ArrowLeft, Building2, ChevronDown, AlertCircle
+  Sparkles, Star, Scissors, ArrowLeft, Building2, ChevronDown, AlertCircle,
+  Check
 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { useTheme } from '../context/ThemeContext';
@@ -406,119 +407,105 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
         {/* Scrollable Content Body */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
           {/* ============================================================ */}
-          {/* ETAPA 1: SELEÇÃO DE SERVIÇO (TABELA EM LINHAS DE 3 COLUNAS) */}
+          {/* ETAPA 1: SELEÇÃO DE SERVIÇO (CARDS MODERNOS & ACOLHEDORES) */}
           {/* ============================================================ */}
           {currentStep === 'service' && (
             <div className="space-y-3 animate-in fade-in duration-200">
-              {/* Tabela de Serviços em Linhas de 3 Colunas */}
-              <div className={`rounded overflow-hidden border ${
-                isDark ? 'border-slate-800 bg-slate-950' : 'border-slate-200 bg-white'
-              }`}>
-                {/* Cabeçalho da Tabela */}
-                <div className={`grid grid-cols-12 gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-wider border-b ${
-                  isDark ? 'bg-slate-900/40 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-500 border-slate-200'
-                }`}>
-                  <div className="col-span-6 flex items-center gap-1">
-                    <span>Serviço</span>
-                  </div>
-                  <div className="col-span-3 text-center">
-                    <span>Duração</span>
-                  </div>
-                  <div className="col-span-3 text-right">
-                    <span>Valor</span>
-                  </div>
-                </div>
-
-                {/* Linhas da Tabela */}
-                <div className="divide-y divide-slate-800/40">
-                  {services.map((srv) => {
-                    const isSelected = selectedServices.some((s) => s.id === srv.id);
-                    return (
-                      <button
-                        key={srv.id}
-                        type="button"
-                        onClick={() => {
-                          toggleServiceSelection(srv);
-                        }}
-                        className={`w-full grid grid-cols-12 gap-2 px-3 py-3 items-center text-left transition cursor-pointer ${
+              {/* Lista Moderna de Serviços (Cards Independentes & Acolhedores) */}
+              <div className="space-y-2">
+                {services.map((srv) => {
+                  const isSelected = selectedServices.some((s) => s.id === srv.id);
+                  return (
+                    <button
+                      key={srv.id}
+                      type="button"
+                      onClick={() => {
+                        toggleServiceSelection(srv);
+                      }}
+                      className={`w-full p-3 rounded transition-all flex items-center justify-between gap-3 text-left cursor-pointer border ${
+                        isSelected
+                          ? isDark
+                            ? 'bg-emerald-500/10 border-emerald-500/50 text-white shadow-xs'
+                            : 'bg-emerald-50/80 border-emerald-500/50 text-slate-900 shadow-xs'
+                          : isDark
+                          ? 'bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-200'
+                          : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800 shadow-xs'
+                      }`}
+                    >
+                      {/* Lado Esquerdo: Checkbox suave + Informações do Serviço */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all border ${
                           isSelected
-                            ? isDark
-                              ? 'bg-emerald-950/60 border-l-4 border-l-[#20C933] text-white'
-                              : 'bg-emerald-50 border-l-4 border-l-[#20C933] text-slate-900'
+                            ? 'bg-emerald-500 border-emerald-500 text-white'
                             : isDark
-                            ? 'hover:bg-slate-900/80 text-slate-200'
-                            : 'hover:bg-slate-50 text-slate-800'
-                        }`}
-                      >
-                        {/* Coluna 1: Serviço */}
-                        <div className="col-span-6 pr-1">
-                          <div className="flex items-center gap-1.5">
-                            <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition ${
-                              isSelected
-                                ? 'bg-[#20C933] border-[#20C933] text-white'
-                                : isDark
-                                ? 'border-slate-700 bg-slate-900'
-                                : 'border-slate-300 bg-white'
+                            ? 'border-slate-700 bg-slate-950'
+                            : 'border-slate-300 bg-white'
+                        }`}>
+                          {isSelected && <Check className="w-3.5 h-3.5 stroke-[3] text-white" />}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <h4 className={`text-xs font-bold leading-snug truncate ${
+                            isSelected 
+                              ? isDark ? 'text-emerald-400' : 'text-emerald-800'
+                              : isDark ? 'text-white' : 'text-slate-900'
+                          }`}>
+                            {srv.title}
+                          </h4>
+
+                          <div className="flex items-center gap-2 mt-1 text-[10px]">
+                            {srv.category && (
+                              <span className={`font-medium truncate ${
+                                isDark ? 'text-slate-400' : 'text-slate-500'
+                              }`}>
+                                {srv.category}
+                              </span>
+                            )}
+                            {srv.category && (
+                              <span className={isDark ? 'text-slate-600' : 'text-slate-300'}>•</span>
+                            )}
+                            <span className={`inline-flex items-center gap-1 font-medium ${
+                              isDark ? 'text-slate-400' : 'text-slate-500'
                             }`}>
-                              {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
-                            </div>
-                            <span className={`text-xs font-bold line-clamp-1 ${
-                              isSelected ? (isDark ? 'text-emerald-400' : 'text-[#087A2A]') : ''
-                            }`}>
-                              {srv.title}
+                              <Clock className="w-3 h-3 text-emerald-400" />
+                              <span>{srv.duration}</span>
                             </span>
                           </div>
-                          {srv.category && (
-                            <span className={`text-[9px] block mt-0.5 ml-5.5 ${
-                              isDark ? 'text-slate-500' : 'text-slate-400'
-                            }`}>
-                              {srv.category}
-                            </span>
-                          )}
                         </div>
+                      </div>
 
-                        {/* Coluna 2: Duração */}
-                        <div className="col-span-3 text-center">
-                          <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded ${
-                            isDark ? 'bg-slate-900 text-slate-300' : 'bg-slate-100 text-slate-700'
-                          }`}>
-                            {srv.duration}
-                          </span>
-                        </div>
-
-                        {/* Coluna 3: Valor */}
-                        <div className="col-span-3 text-right">
-                          <span className={`text-xs font-extrabold ${
-                            isSelected
-                              ? isDark ? 'text-emerald-400' : 'text-[#087A2A]'
-                              : isDark ? 'text-slate-200' : 'text-slate-900'
-                          }`}>
-                            R$ {srv.price.toFixed(0)}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      {/* Lado Direito: Valor em Destaque */}
+                      <div className="shrink-0 text-right">
+                        <span className={`text-sm font-extrabold ${
+                          isSelected
+                            ? isDark ? 'text-emerald-400' : 'text-emerald-700'
+                            : isDark ? 'text-slate-100' : 'text-slate-900'
+                        }`}>
+                          R$ {srv.price.toFixed(0)}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Botão de Avançar com Função Ativa */}
+              {/* Botão de Avançar com Resumo dos Serviços */}
               <button
                 disabled={selectedServices.length === 0}
                 onClick={() => {
                   if (selectedServices.length > 0) setCurrentStep('date');
                 }}
-                className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
+                className={`w-full py-2.5 px-4 font-bold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm ${
                   selectedServices.length > 0
-                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
                     : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
                 }`}
               >
                 <span>
                   {selectedServices.length > 1
-                    ? `Avançar para Data (${selectedServices.length} serviços)`
+                    ? `Avançar para Data (${selectedServices.length} serviços • R$ ${selectedServices.reduce((acc, s) => acc + s.price, 0)})`
                     : selectedServices.length === 1
-                    ? 'Avançar para Data (1 serviço)'
+                    ? `Avançar para Data (1 serviço • R$ ${selectedServices[0].price})`
                     : 'Selecione ao menos 1 serviço'}
                 </span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -651,15 +638,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
             <div className="space-y-3 animate-in fade-in duration-200">
               {/* BLOCO 1 DA FASE 3: SELEÇÃO DE PROFISSIONAIS */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <h4 className={`text-[11px] font-bold font-['Poppins'] flex items-center gap-1 uppercase tracking-wider ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>
-                    <User className="w-3.5 h-3.5 text-[#20C933]" />
-                    <span>Profissional</span>
-                  </h4>
-                </div>
-
                 {/* Opções de Profissionais em Carrossel Horizontal Enxuto */}
                 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
                   {/* Card Qualquer Profissional */}

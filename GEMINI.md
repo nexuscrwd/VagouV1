@@ -17,3 +17,4 @@ Consulte o arquivo principal completo em `AGENTS.md` e a documentação técnica
 5. **Limpeza Pós-Obra (Clean Code)**: Deixe o código 100% livre de imports mortos, variáveis sem uso ou estilos conflitantes.
 6. **Validação**: Execute `lint_applet` e `compile_applet` antes de dar o trabalho por encerrado.
 7. **📱 Síntese Mobile & Menos Texto**: O app é para celular — use textos curtos e resumidos, priorize ícones e botões objetivos, e elimine qualquer "blablabla", tutoriais ou explicações redundantes que poluam a tela.
+8. **⚡ Contraste Obrigatório & Trava do Fundo Verde**: Para QUALQUER fundo verde sólido (`bg-emerald-500`, `bg-emerald-600`, etc.), a cor do texto e dos ícones deve ser OBRIGATORIAMENTE BRANCA (`text-white`). Fonte e fundo devem sempre divergir e ser opostos em tom e temperatura (claro vs escuro, frio vs quente).

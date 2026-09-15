@@ -67,6 +67,13 @@
   - **Menos texto, máxima síntese:** O aplicativo é desenhado para uso ágil em celulares. Textos longos, parágrafos explicativos ou redundâncias atrapalham a navegação rápida.
   - **Mais ícones e botões objetivos:** Priorize ícones autoexplicativos (`lucide-react`), datas/horários compactos (ex: `02/09/26`) e ações diretas com o menor número de palavras possível.
   - **Zero "Blablabla" e poluição:** É proibido incluir instruções redundantes ou tutoriais óbvios dentro de cards e modais (ex: "Atualiza os horários abaixo", subtítulos redundantes). O design deve ser limpo, visual e ultra-resumido.
+- **🚫 Proibição Absoluta de "Box dentro de Box" (Zero Poluição de Bordas & Layout Plano):**
+  - **JAMAIS aninhe cards com bordas dentro de cards com bordas:** É expressamente proibido colocar `border rounded` dentro de outro contêiner que já possui `border rounded` (a infame "síndrome de caixa dentro de caixa").
+  - **Layout Plano (Flat & Clean):** Em listas, apresentações de equipe ou catálogos, os itens devem respirar sobre a própria superfície da tela, usando espaço negativo (`gap`, `padding`), alinhamento e tipografia para hierarquia, sem precisar confinar cada foto ou texto em uma caixinha fechada com borda.
+  - **Sem molduras ou badges redundantes:** Fotos de pessoas devem ser limpas e diretas (rosto em evidência, enquadramento uniforme), sem empilhamento de anéis pesados, múltiplos selos ou botões desnecessários.
+- **⚡ Contraste Obrigatório & Regra do Fundo Verde (Trava de Cores Opostas):**
+  - **FUNDO VERDE = TEXTO / ÍCONE BRANCO (REGRA INEGOCIÁVEL):** Em qualquer elemento com fundo verde sólido ou vibrante (`bg-emerald-500`, `bg-emerald-600`, `bg-[#20C933]`, botões, badges, tags ou checkboxes ativos), o texto e os ícones **DEVEM SER OBRIGATORIAMENTE BRANCOS (`text-white`)**. É expressamente proibido usar texto escuro (`text-slate-950`, `text-slate-900`, cinza ou preto) sobre fundo verde.
+  - **Divergência & Oposição (Frio vs Quente / Claro vs Escuro):** A cor da fonte e a cor do fundo devem sempre divergir e ser opostas. Fundo escuro/frio (`slate-950`, `slate-900`) exige tipografia clara/branca (`text-white`, `text-slate-100`); fundo claro exige tipografia escura de alto contraste (`text-slate-900`). Nunca coloque texto que se misture ou reduza a legibilidade do fundo.
 
 ---
 

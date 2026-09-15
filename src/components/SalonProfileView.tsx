@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ArrowLeft, MapPin, Clock, 
-  Heart, Zap, CheckCircle2, 
+  Heart, Zap, 
   Calendar, Coffee, Wifi, Car, Wind,
   Bell, Users, Store,
   ChevronLeft, ChevronRight, ChevronDown, ArrowRight,
-  Share2, ShieldCheck, Check, MessageCircle,
-  Scissors, Hand, Smile, Eye, Sparkles,
-  Star
+  Share2, Check, MessageCircle,
+  Scissors, Hand, Smile, Eye, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ServiceOffer } from '../types';
@@ -91,6 +90,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const [skipDateStep, setSkipDateStep] = useState<boolean>(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
+  // Refs para controle do scroll snap da landing page
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const homeSectionRef = useRef<HTMLElement>(null);
+  const servicosSectionRef = useRef<HTMLElement>(null);
+  const vagasSectionRef = useRef<HTMLElement>(null);
+  const espacoSectionRef = useRef<HTMLElement>(null);
+  const isProgrammaticScroll = useRef<boolean>(false);
+
   // Paginação e efeito swap para o catálogo enquadrado de serviços (4 por visualização)
   const [servicePage, setServicePage] = useState<number>(0);
   const [swapDirection, setSwapDirection] = useState<number>(1);
@@ -130,7 +137,9 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
       setSkipDateStep(true);
       const cleanSlot = initialBookingOffer.timeSlot.replace('Hoje • ', '').replace('Amanhã • ', '');
       setSelectedTimeSlotForBooking(cleanSlot);
-      setActiveTab('vagas');
+      setTimeout(() => {
+        handleSelectTab('vagas');
+      }, 150);
     }
   }, [autoOpenBooking, initialBookingOffer]);
 
@@ -376,10 +385,64 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     return Sparkles;
   }, [primaryOffer, salonName, salonOffers, offers]);
 
-  // Navegação direta e instantânea entre as abas do micro-app
+  // Navegação direta com scroll-snap para as seções da landing page
   const handleSelectTab = (tab: 'home' | 'servicos' | 'vagas' | 'espaco') => {
     setActiveTab(tab);
+    isProgrammaticScroll.current = true;
+    const targetMap: Record<'home' | 'servicos' | 'vagas' | 'espaco', HTMLElement | null> = {
+      home: homeSectionRef.current,
+      servicos: servicosSectionRef.current,
+      vagas: vagasSectionRef.current,
+      espaco: espacoSectionRef.current,
+    };
+    const target = targetMap[tab];
+    if (target && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: target.offsetTop,
+        behavior: 'smooth',
+      });
+    }
+    setTimeout(() => {
+      isProgrammaticScroll.current = false;
+    }, 600);
   };
+
+  // Observer para sincronizar a aba ativa do rodapé ao deslizar o dedo pelas seções da landing page
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const sections = [
+      { id: 'home' as const, el: homeSectionRef.current },
+      { id: 'servicos' as const, el: servicosSectionRef.current },
+      { id: 'vagas' as const, el: vagasSectionRef.current },
+      { id: 'espaco' as const, el: espacoSectionRef.current },
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isProgrammaticScroll.current) return;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            const tabId = entry.target.getAttribute('data-tab-id') as 'home' | 'servicos' | 'vagas' | 'espaco';
+            if (tabId) {
+              setActiveTab(tabId);
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.5,
+      }
+    );
+
+    sections.forEach(({ el }) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Registrar context do menu de navegação do rodapé (4 abas: Início, Serviços, Agenda, Espaço)
   useEffect(() => {
@@ -497,8 +560,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
   const portfolioSlides = useMemo(() => [
     {
       id: 'slide-servicos',
-      tag: 'Procedimentos & Estilo',
-      badge: 'Catálogo VIP',
       title: 'Nossos Serviços',
       tagline: 'Cortes modernos, barboterapia, visagismo e procedimentos com valores transparentes.',
       image: primaryOffer?.imageUrl || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200&q=80',
@@ -508,8 +569,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
     {
       id: 'slide-agendamento',
-      tag: 'Praticidade 100% Online',
-      badge: 'Sem Fila',
       title: 'Agende de Forma Rápida',
       tagline: 'Escolha seu procedimento e confirme seu atendimento em poucos toques, de forma rápida e segura.',
       image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80',
@@ -519,8 +578,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
     {
       id: 'slide-horarios',
-      tag: 'Disponibilidade Hoje',
-      badge: 'Tempo Real',
       title: 'Consulte os Horários',
       tagline: 'Consulte os horários de forma eficiente: vagas abertas para hoje ou agende para até 60 dias.',
       image: 'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80',
@@ -530,8 +587,6 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
     },
     {
       id: 'slide-espaco',
-      tag: 'Estrutura & Especialistas',
-      badge: 'Equipe VIP',
       title: 'Conheça a Nossa Equipe',
       tagline: 'Profissionais renomados e ambiente climatizado com café, Wi-Fi e estacionamento privativo.',
       image: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1200&q=80',
@@ -679,19 +734,18 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
         </div>
       </header>
 
-      {/* 2. ÁREA DE CONTEÚDO 100% ENQUADRADA E TOTALMENTE ISOLADA POR ABA */}
-      <div className="flex-1 min-h-0 w-full relative overflow-hidden flex flex-col">
-        <AnimatePresence mode="wait">
-          {/* ABA 1: INÍCIO */}
-          {activeTab === 'home' && (
-            <motion.div
-              key="tab-home"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="w-full h-full flex flex-col overflow-hidden"
-            >
+      {/* 2. ÁREA DE CONTEÚDO LANDING PAGE COM SCROLL SNAP NATIVO (ENCAIXE PERFEITO ENTRE SEÇÕES) */}
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 min-h-0 w-full relative overflow-y-auto snap-y snap-mandatory snap-y-mandatory scroll-smooth no-scrollbar overscroll-y-contain touch-pan-y"
+      >
+        {/* SEÇÃO 1: INÍCIO */}
+        <section
+          id="section-home"
+          ref={homeSectionRef}
+          data-tab-id="home"
+          className="w-full h-full min-h-full shrink-0 snap-start snap-always snap-section overflow-hidden flex flex-col justify-between"
+        >
           {/* SUBCABEÇALHO DE BOAS-VINDAS DENTRO DA SEÇÃO INÍCIO */}
           <div className={`px-3.5 border-b flex items-center justify-between gap-3 transition-colors h-11 shrink-0 ${
             isDark ? 'bg-slate-900/80 border-slate-800/80' : 'bg-slate-100/90 border-slate-200'
@@ -757,55 +811,24 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
                     {/* Degradês Publicitários de Alta Qualidade para Leitura Impecável */}
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/35" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/90" />
 
                     {/* Conteúdo Publicitário Integrado */}
                     <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-between z-10 max-w-[90%] sm:max-w-[78%]">
-                      {/* Topo do Slide: Tag de Categoria, Selo e Paginação */}
-                      <div className="flex items-center justify-between gap-2 pt-1 w-full">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-block px-2.5 py-1 rounded-md bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md">
-                            {slide.tag}
-                          </span>
-                          <span className="inline-block px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider backdrop-blur-md">
-                            {slide.badge}
-                          </span>
-                        </div>
-
-                        {/* Indicadores de Paginação no Topo (Não Sobrepõem os Botões) */}
-                        <div className="flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-slate-800 shadow-md">
-                          {portfolioSlides.map((_, dotIdx) => (
-                            <button
-                              key={dotIdx}
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveSlideIndex(dotIdx);
-                              }}
-                              className={`transition-all rounded-full cursor-pointer ${
-                                dotIdx === activeSlideIndex
-                                  ? 'w-4 h-1.5 bg-[#20C933]'
-                                  : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-                              }`}
-                              aria-label={`Slide ${dotIdx + 1}`}
-                            />
-                          ))}
-                        </div>
+                      {/* Topo do Slide: Título Principal e Tagline */}
+                      <div className="pt-1 sm:pt-2 space-y-1">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
+                          {slide.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-200/95 font-normal leading-relaxed line-clamp-2 sm:line-clamp-3 drop-shadow-xs max-w-md">
+                          {slide.tagline}
+                        </p>
                       </div>
 
-                      {/* Base do Slide: Título + Tagline + Botão CTA + Dica de Rolagem */}
-                      <div className="space-y-2.5 pb-2 sm:pb-3">
-                        <div>
-                          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md font-['Poppins']">
-                            {slide.title}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-slate-200/95 font-normal leading-relaxed line-clamp-2 sm:line-clamp-3 mt-1.5 drop-shadow-xs max-w-md">
-                            {slide.tagline}
-                          </p>
-                        </div>
-
+                      {/* Base do Slide: Botão CTA + Dica de Rolagem */}
+                      <div className="space-y-2 pb-2 sm:pb-3">
                         {/* Botão Chamativo de Ação (Com Z-Index Seguro e Touch Acessível) */}
-                        <div className="pt-1">
+                        <div>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -857,18 +880,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-        </motion.div>
-      )}
+        </section>
 
-      {/* ABA 2: SERVIÇOS */}
-      {activeTab === 'servicos' && (
-        <motion.div
-          key="tab-servicos"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="w-full h-full flex flex-col justify-between overflow-hidden"
+        {/* SEÇÃO 2: SERVIÇOS */}
+        <section
+          id="section-servicos"
+          ref={servicosSectionRef}
+          data-tab-id="servicos"
+          className="w-full h-full min-h-full shrink-0 snap-start snap-always snap-section overflow-hidden flex flex-col justify-between"
         >
           <SectionHeader title="Serviços & Procedimentos" isDark={isDark} />
 
@@ -945,7 +964,7 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
 
                           {/* Botão de Agendamento Rápido em Destaque */}
                           <div className="shrink-0">
-                            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.4)] group-hover:scale-110 group-hover:bg-emerald-400 transition-all duration-200">
+                            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-[0_0_10px_rgba(16,185,129,0.4)] group-hover:scale-110 group-hover:bg-emerald-400 transition-all duration-200">
                               <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
                             </span>
                           </div>
@@ -1043,18 +1062,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               </div>
             )}
           </div>
-        </motion.div>
-      )}
+        </section>
 
-      {/* ABA 3: AGENDA (INTEGRADA EM ETAPAS DIRETAMENTE NA SEÇÃO, SEM MODAL) */}
-      {activeTab === 'vagas' && (
-        <motion.div
-          key="tab-agenda"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="w-full h-full flex flex-col justify-start overflow-hidden"
+        {/* SEÇÃO 3: AGENDAR */}
+        <section
+          id="section-vagas"
+          ref={vagasSectionRef}
+          data-tab-id="vagas"
+          className="w-full h-full min-h-full shrink-0 snap-start snap-always snap-section overflow-hidden flex flex-col justify-start"
         >
           <SectionHeader
             title="Agendar"
@@ -1076,18 +1091,14 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
               onConfirmAppointment={handleConfirmSchedule}
             />
           </div>
-        </motion.div>
-      )}
+        </section>
 
-      {/* ABA 4: ESPAÇO, LOCALIZAÇÃO & EQUIPE (3 ABAS DESLIZÁVEIS COM SWIPE) */}
-      {activeTab === 'espaco' && (
-        <motion.div
-          key="tab-espaco"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="w-full h-full flex flex-col justify-start overflow-hidden"
+        {/* SEÇÃO 4: ESPAÇO, LOCALIZAÇÃO & EQUIPE */}
+        <section
+          id="section-espaco"
+          ref={espacoSectionRef}
+          data-tab-id="espaco"
+          className="w-full h-full min-h-full shrink-0 snap-start snap-always snap-section overflow-hidden flex flex-col justify-start"
         >
           <SectionHeader
             title={
@@ -1197,44 +1208,47 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
                   }}
                   className="cursor-grab active:cursor-grabbing touch-pan-y"
                 >
-                  {/* ABA 1: EQUIPE INTEGRADA */}
-                  <div className={`border rounded p-3.5 space-y-3 shadow-sm min-h-[380px] max-h-[440px] flex flex-col justify-between ${
+                  {/* ABA 1: EQUIPE / NOSSO TIME (LAYOUT PLANO, SEM BOX DENTRO DE BOX, IGUALITÁRIO) */}
+                  <div className={`border rounded p-4 min-h-[380px] flex flex-col justify-between transition-colors ${
                     isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
                   }`}>
-                    <div className="space-y-2 flex-1 min-h-0 flex flex-col">
-                      <div className="flex items-center justify-between shrink-0">
+                    <div className="flex-1 min-h-0 flex flex-col">
+                      {/* Título direto e discreto */}
+                      <div className={`flex items-center justify-between pb-3 border-b shrink-0 mb-3 ${
+                        isDark ? 'border-slate-800/80' : 'border-slate-200'
+                      }`}>
                         <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-emerald-500" />
-                          <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                            {hasMultipleProfessionals ? 'Equipe' : 'Perfil do Profissional'}
+                          <Users className="w-4 h-4 text-emerald-400" />
+                          <h4 className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            {hasMultipleProfessionals ? 'Nosso Time' : 'Profissional'}
                           </h4>
                         </div>
-                        <span className="text-[10px] font-bold text-emerald-400">
-                          {salonInfo.professionals.length} Visagistas
+                        <span className="text-[11px] font-medium text-slate-400">
+                          {salonInfo.professionals.length} {salonInfo.professionals.length === 1 ? 'especialista' : 'especialistas'}
                         </span>
                       </div>
-                      <p className={`text-xs leading-relaxed shrink-0 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                        Profissionais qualificados dedicados à estética de alto padrão, visagismo e atendimento personalizado.
-                      </p>
 
-                      {/* Cards dos Especialistas com Rolagem Limitada */}
-                      <div className="grid grid-cols-2 gap-2.5 pt-1 overflow-y-auto max-h-60 pr-1 flex-1 min-h-0">
+                      {/* Grade Aberta e Plana da Equipe (Sem caixas ou bordas individuais ao redor de cada um) */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-5 gap-x-4 py-3 overflow-y-auto pr-1 flex-1 min-h-0 no-scrollbar items-start">
                         {salonInfo.professionals.map((prof, idx) => (
-                          <div key={idx} className={`flex flex-col items-center p-3 rounded border text-center shadow-xs ${
-                            isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-                          }`}>
+                          <div 
+                            key={idx} 
+                            className="flex flex-col items-center text-center"
+                          >
                             <img
                               src={prof.avatar}
                               alt={prof.name}
-                              className="w-13 h-13 rounded object-cover ring-2 ring-emerald-500/40 mb-2"
+                              className={`w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded object-cover shadow-xs mb-2 border ${
+                                isDark ? 'border-slate-800' : 'border-slate-200'
+                              }`}
                               referrerPolicy="no-referrer"
                             />
-                            <h4 className={`text-xs font-bold truncate w-full ${isDark ? 'text-white' : 'text-slate-900'}`}>{prof.name}</h4>
-                            <p className={`text-[10px] line-clamp-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{prof.role}</p>
-                            <div className="flex items-center gap-1 mt-1 text-[10px] text-emerald-400 font-bold">
-                              <Star className="w-2.5 h-2.5 fill-emerald-400" />
-                              <span>{prof.rating}</span>
-                            </div>
+                            <h5 className={`text-xs font-bold leading-tight truncate w-full px-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                              {prof.name}
+                            </h5>
+                            <p className={`text-[11px] leading-snug mt-0.5 truncate w-full px-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                              {prof.role}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -1412,10 +1426,8 @@ export const SalonProfileView: React.FC<SalonProfileViewProps> = ({
             </div>
           </div>
         </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
+      </section>
+    </div>
 
       {/* 2. MODAL DE AGENDAMENTO CONFIRMADO (DENTRO DA SEÇÃO DO ESTABELECIMENTO) */}
       {confirmedBookingData && (
