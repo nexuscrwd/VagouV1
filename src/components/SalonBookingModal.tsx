@@ -493,31 +493,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   );
                 })}
               </div>
-
-              {/* Botão de Avançar com Resumo dos Serviços */}
-              <button
-                disabled={selectedServices.length === 0}
-                onClick={() => {
-                  if (selectedServices.length > 0) {
-                    hapticMedium();
-                    setCurrentStep('date');
-                  }
-                }}
-                className={`w-full py-2.5 px-4 font-bold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm ${
-                  selectedServices.length > 0
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                }`}
-              >
-                <span>
-                  {selectedServices.length > 1
-                    ? `Avançar para Data (${selectedServices.length} serviços • R$ ${selectedServices.reduce((acc, s) => acc + s.price, 0)})`
-                    : selectedServices.length === 1
-                    ? `Avançar para Data (1 serviço • R$ ${selectedServices[0].price})`
-                    : 'Selecione ao menos 1 serviço'}
-                </span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
             </div>
           )}
 
@@ -620,25 +595,6 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                     );
                   })}
                 </div>
-
-                {/* Botão de Avanço da Fase 2 (Data -> Horários) */}
-                <button
-                  disabled={!selectedService || !selectedDateIso}
-                  onClick={() => {
-                    if (selectedService && selectedDateIso) {
-                      hapticMedium();
-                      setCurrentStep('professionals_and_time');
-                    }
-                  }}
-                  className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
-                    selectedService && selectedDateIso
-                      ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
-                      : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                  }`}
-                >
-                  <span>Avançar para Horários</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
               </div>
             </div>
           )}
@@ -795,30 +751,11 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   })}
                 </div>
               </div>
-
-              {/* Botão de Avanço da Fase 3 (Horários -> Confirmação) */}
-              <button
-                disabled={!selectedTimeSlot}
-                onClick={() => {
-                  if (selectedTimeSlot) {
-                    hapticMedium();
-                    setCurrentStep('confirmation');
-                  }
-                }}
-                className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 cursor-pointer font-['Poppins'] shadow-md shadow-emerald-500/20 drop-shadow-xs ${
-                  selectedTimeSlot
-                    ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                }`}
-              >
-                <span>Avançar para Confirmação</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
             </div>
           )}
 
           {/* ============================================================ */}
-          {/* FASE 3: CONFIRMAÇÃO DO AGENDAMENTO (CARD ÚNICO E OBJETIVO) */}
+          {/* FASE 4: CONFIRMAÇÃO DO AGENDAMENTO (CARD ÚNICO E OBJETIVO) */}
           {/* ============================================================ */}
           {currentStep === 'confirmation' && (
             <div className="space-y-3 animate-in fade-in duration-200">
@@ -874,18 +811,108 @@ export const SalonBookingModal: React.FC<SalonBookingModalProps> = ({
                   </div>
                 </div>
               </div>
-
-              {/* Botão de Ação Final da Confirmação */}
-              <button
-                onClick={handleConfirmFinal}
-                className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
-              >
-                <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>Confirmar Agendamento</span>
-              </button>
             </div>
           )}
 
+        </div>
+
+        {/* ============================================================ */}
+        {/* RODAPÉ FIXO: BOTÃO DE AÇÃO / CONFIRMAÇÃO SEMPRE VISÍVEL */}
+        {/* ============================================================ */}
+        <div className={`px-3.5 py-2.5 border-t shrink-0 sticky bottom-0 z-20 transition-colors ${
+          isDark
+            ? 'bg-[#151A1E]/95 border-slate-800 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.4)]'
+            : 'bg-white/95 border-slate-200 backdrop-blur-md shadow-[0_-4px_16px_rgba(0,0,0,0.05)]'
+        }`}>
+          {currentStep === 'service' && (
+            <button
+              id="btn-avancar-data"
+              disabled={selectedServices.length === 0}
+              onClick={() => {
+                if (selectedServices.length > 0) {
+                  hapticMedium();
+                  setCurrentStep('date');
+                }
+              }}
+              className={`w-full py-2.5 px-4 font-bold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 shadow-sm ${
+                selectedServices.length > 0
+                  ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer shadow-emerald-500/20 active:scale-98'
+                  : isDark
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-50'
+              }`}
+            >
+              <span>
+                {selectedServices.length > 1
+                  ? `Avançar para Data (${selectedServices.length} serviços • R$ ${selectedServices.reduce((acc, s) => acc + s.price, 0)})`
+                  : selectedServices.length === 1
+                  ? `Avançar para Data (1 serviço • R$ ${selectedServices[0].price})`
+                  : 'Selecione ao menos 1 serviço'}
+              </span>
+              <ChevronRight className="w-3.5 h-3.5 text-white" />
+            </button>
+          )}
+
+          {currentStep === 'date' && (
+            <button
+              id="btn-avancar-horarios"
+              disabled={!selectedService || !selectedDateIso}
+              onClick={() => {
+                if (selectedService && selectedDateIso) {
+                  hapticMedium();
+                  setCurrentStep('professionals_and_time');
+                }
+              }}
+              className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 font-['Poppins'] shadow-md drop-shadow-xs ${
+                selectedService && selectedDateIso
+                  ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer shadow-emerald-500/20 active:scale-98'
+                  : isDark
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-50'
+              }`}
+            >
+              <span>Avançar para Horários ({shortDateFormatted})</span>
+              <ChevronRight className="w-3.5 h-3.5 text-white" />
+            </button>
+          )}
+
+          {currentStep === 'professionals_and_time' && (
+            <button
+              id="btn-avancar-confirmacao"
+              disabled={!selectedTimeSlot}
+              onClick={() => {
+                if (selectedTimeSlot) {
+                  hapticMedium();
+                  setCurrentStep('confirmation');
+                }
+              }}
+              className={`w-full py-2.5 px-4 font-black text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-1.5 font-['Poppins'] shadow-md drop-shadow-xs ${
+                selectedTimeSlot
+                  ? 'bg-[#20C933] hover:bg-[#1bb32d] text-white cursor-pointer shadow-emerald-500/20 active:scale-98'
+                  : isDark
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-50'
+              }`}
+            >
+              <span>
+                {selectedTimeSlot
+                  ? `Avançar para Confirmação (${selectedTimeSlot})`
+                  : 'Selecione um horário disponível'}
+              </span>
+              <ChevronRight className="w-3.5 h-3.5 text-white" />
+            </button>
+          )}
+
+          {currentStep === 'confirmation' && (
+            <button
+              id="btn-confirmar-agendamento-final"
+              onClick={handleConfirmFinal}
+              className="w-full py-2.5 px-4 bg-[#20C933] hover:bg-[#1bb32d] active:scale-98 text-white drop-shadow-xs font-black text-xs uppercase tracking-wider rounded transition shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer font-['Poppins']"
+            >
+              <CheckCircle2 className="w-4 h-4 text-white" />
+              <span>Confirmar Agendamento</span>
+            </button>
+          )}
         </div>
     </div>
   );

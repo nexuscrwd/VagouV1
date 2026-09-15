@@ -90,7 +90,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     { id: 'busca' as ScreenId, label: 'Busca', icon: Search, isAction: true },
     { id: 'flash' as any, label: 'Relâmpago', icon: Zap, isFlash: true },
     { id: 'mapa' as ScreenId, label: 'Mapa', icon: MapPin },
-    { id: 'agenda' as ScreenId, label: 'Agenda', icon: Calendar },
   ];
 
   const handleTabClick = (tabId: string, isAction?: boolean, isFlash?: boolean) => {
@@ -123,8 +122,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           (!isFlash && !tab.isAction && (
             (currentScreen === tab.id && !(tab.id === 'home' && isFlashActive)) ||
             (tab.id === 'home' && currentScreen === 'lista-ofertas' && !isFlashActive) ||
-            (tab.id === 'home' && currentScreen === 'detalhe-oferta' && !isFlashActive) ||
-            (tab.id === 'agenda' && currentScreen === 'confirmacao')
+            (tab.id === 'home' && currentScreen === 'detalhe-oferta' && !isFlashActive)
           )) ||
           (isFlash && isFlashActive);
 

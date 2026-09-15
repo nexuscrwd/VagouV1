@@ -15,6 +15,49 @@ Este arquivo registra cronologicamente todas as modificações relevantes realiz
 
 ## 📜 Registros de Alterações
 
+### [2026-09-15] — Rodapé Fixo e Persistente para Botões de Confirmação no Agendamento
+- **Tipo:** `[UI / UX / Mobile Optimization]`
+- **Motivo:** Manter os botões de avanço e confirmação do fluxo de agendamento (`SalonBookingModal`) permanentemente visíveis e fixos no rodapé da seção, independentemente da rolagem das listas de serviços, calendário ou tabela de horários.
+- **Arquivos Impactados:**
+  - `src/components/SalonBookingModal.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Extraídos os botões de ação de cada etapa (`service`, `date`, `professionals_and_time`, `confirmation`) do contêiner de rolagem interno (`overflow-y-auto`).
+  - Implementado contêiner de rodapé fixo (`sticky bottom-0 z-20`) com suporte a backdrop blur, borda superior e sombras sutis, garantindo acessibilidade imediata em qualquer altura de rolagem.
+  - Preservado o rigoroso padrão de contraste: botões com fundo verde `#20C933` utilizam tipografia e ícones estritamente brancos (`text-white`).
+  - Validado com 100% de sucesso no `lint_applet` e build de produção `compile_applet`.
+
+
+### [2026-09-15] — Remoção da Aba Agenda da Barra de Navegação Inferior (BottomNav)
+- **Tipo:** `[UI / Navigation / Mobile UX]`
+- **Motivo:** Remoção do botão "Agenda" (`button#nav-agenda`) da barra de navegação inferior (`BottomNav`), centralizando o acesso aos agendamentos no perfil do usuário (`ProfileDrawer` / `Minha Agenda`).
+- **Arquivos Impactados:**
+  - `src/components/BottomNav.tsx`
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Removida a aba `{ id: 'agenda', label: 'Agenda', icon: Calendar }` do array de abas do cliente em `BottomNav.tsx`.
+  - Limpa a checagem de estado ativo `(tab.id === 'agenda' && currentScreen === 'confirmacao')`.
+  - Validado com 100% de sucesso no `lint_applet` e build de produção `compile_applet`.
+
+### [2026-09-15] — Ordenação por Proximidade (Geolocalização), Web Share API e Web Speech API no SearchModal
+- **Tipo:** `[Feature / Web APIs / Mobile UX / GIS]`
+- **Motivo:** Implementação da ordenação por 'Mais Próximos' via Geolocation API, integração da Web Share API nativa para compartilhamento de vagas e reconhecimento de voz (Web Speech API) no SearchModal.
+- **Arquivos Impactados:**
+  - `src/utils/geolocation.ts` (novo módulo de cálculo de distância Haversine e obtenção de coordenadas)
+  - `src/utils/share.ts` (novo módulo de compartilhamento via Web Share API com fallback para Clipboard)
+  - `src/utils/speechRecognition.ts` (novo módulo de escuta de voz em pt-BR via Web Speech API)
+  - `src/components/OfferListScreen.tsx` (ordenação por proximidade em tempo real)
+  - `src/components/HomeScreen.tsx` (integração de coordenadas do dispositivo na ordenação por distância)
+  - `src/components/OfferDetailScreen.tsx` (botão de compartilhamento com Web Share e feedback toast)
+  - `src/components/SearchModal.tsx` (botão de microfone, reconhecimento de voz interativo e busca instantânea)
+  - `metadata.json` (permissões de frame `geolocation` e `microphone`)
+  - `CHANGELOG.md`
+- **Resumo Técnico:**
+  - Criada a função `sortOffersByDistance` com fórmula Haversine e detecção de coordenadas do dispositivo.
+  - Implementado o botão `Share2` em `OfferDetailScreen` conectado à Web Share API nativa com fallback e haptic feedback.
+  - Adicionado o botão de comando de voz `Mic` na barra de pesquisa do `SearchModal` com feedback visual pulsante e preenchimento dinâmico.
+  - Validado com 100% de sucesso em `lint_applet` e build de produção `compile_applet`.
+
 ### [2026-09-15] — Limpeza e Remoção de Elementos Secundários no Drawer de Perfil
 - **Tipo:** `[UI / Cleanup / Mobile UX]`
 - **Motivo:** Remoção de três elementos selecionados no `ProfileDrawer`: o botão do modo parceiro ("Painel do Estabelecimento"), o selo estático de garantia ("Agendamento Imediato Garantido") e o rodapé com versão/logo, simplificando o menu do cliente.

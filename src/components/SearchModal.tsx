@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Search, X, Compass } from 'lucide-react';
+import { Search, X, Compass, Mic, Volume2 } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { RadarOfferCard } from './RadarOfferCard';
+import { VoiceRecognitionSession, isSpeechRecognitionSupported } from '../utils/speechRecognition';
+import { hapticLight, hapticSuccess } from '../utils/haptics';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -23,7 +25,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   onToggleFavorite,
 }) => {
   const [query, setQuery] = useState<string>('');
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const voiceSessionRef = useRef<VoiceRecognitionSession | null>(null);
+
+  // Initialize voice session instance
+  useEffect(() => {
+    voiceSessionRef.current = new VoiceRecognitionSession();
+    return () => {
+      voiceSessionRef.current?.abort();
+    };
+  }, []);
 
   // Auto-focus when modal opens
   useEffect(() => {
@@ -34,6 +47,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       return () => clearTimeout(timer);
     } else {
       setQuery('');
+      setIsListening(false);
+      setVoiceFeedback(null);
+      voiceSessionRef.current?.abort();
     }
   }, [isOpen]);
 
@@ -47,6 +63,51 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  const handleToggleVoiceSearch = () => {
+    hapticLight();
+    if (!voiceSessionRef.current || !isSpeechRecognitionSupported()) {
+      setVoiceFeedback('Reconhecimento de voz não suportado neste navegador.');
+      setTimeout(() => setVoiceFeedback(null), 3000);
+      return;
+    }
+
+    if (isListening) {
+      voiceSessionRef.current.stop();
+      setIsListening(false);
+      setVoiceFeedback(null);
+    } else {
+      setIsListening(true);
+      setVoiceFeedback('Ouvindo... Fale o serviço ou salão');
+
+      const started = voiceSessionRef.current.start({
+        onStart: () => {
+          setIsListening(true);
+        },
+        onResult: (transcript: string, isFinal: boolean) => {
+          setQuery(transcript);
+          if (isFinal) {
+            hapticSuccess();
+            setIsListening(false);
+            setVoiceFeedback(`Buscando por: "${transcript}"`);
+            setTimeout(() => setVoiceFeedback(null), 2500);
+          }
+        },
+        onError: (errMsg: string) => {
+          setIsListening(false);
+          setVoiceFeedback(errMsg);
+          setTimeout(() => setVoiceFeedback(null), 3500);
+        },
+        onEnd: () => {
+          setIsListening(false);
+        },
+      });
+
+      if (!started) {
+        setIsListening(false);
+      }
+    }
+  };
 
   const quickTags = ['Degradê', 'Barba', 'Corte Feminino', 'Unhas em Gel', 'Sobrancelha'];
 
@@ -79,7 +140,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
       <div className="w-full max-w-lg flex flex-col transition-all duration-200 animate-in zoom-in-95">
         
         {/* Floating Search Bar */}
-        <div className="relative bg-[#151A1E] border-2 border-slate-700/80 focus-within:border-[#20C933] rounded p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-1">
+        <div className={`relative bg-[#151A1E] border-2 ${
+          isListening ? 'border-[#20C933] shadow-[0_0_25px_rgba(32,201,51,0.35)]' : 'border-slate-700/80 focus-within:border-[#20C933]'
+        } rounded p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center gap-1 transition-all`}>
           {/* Action Button: Search */}
           <button
             type="button"
@@ -96,9 +159,29 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ex: Barba, Degradê..."
+            placeholder={isListening ? 'Ouvindo sua voz...' : 'Ex: Barba, Degradê...'}
             className="flex-1 bg-transparent py-3 pr-2 text-base sm:text-lg font-medium text-white placeholder-slate-500 focus:outline-none"
           />
+
+          {/* Action Button: Voice Search (Web Speech API) */}
+          <button
+            id="btn-busca-por-voz"
+            type="button"
+            onClick={handleToggleVoiceSearch}
+            className={`p-2.5 rounded transition-all flex items-center justify-center cursor-pointer active:scale-95 ${
+              isListening
+                ? 'bg-[#20C933] text-white shadow-lg animate-pulse'
+                : 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
+            }`}
+            aria-label={isListening ? 'Parar escuta de voz' : 'Pesquisar por comando de voz'}
+            title={isListening ? 'Parar escuta de voz' : 'Pesquisar por voz'}
+          >
+            {isListening ? (
+              <Mic className="w-4 h-4 text-white animate-bounce" />
+            ) : (
+              <Mic className="w-4 h-4 text-slate-300" />
+            )}
+          </button>
 
           {/* Action Button: Clear query or Close modal */}
           {query ? (
@@ -126,6 +209,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({
             </button>
           )}
         </div>
+
+        {/* Voice Feedback Banner */}
+        {voiceFeedback && (
+          <div className="mt-2.5 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-center flex items-center justify-center gap-2 text-[#20C933] animate-fadeIn">
+            {isListening ? <Volume2 className="w-3.5 h-3.5 animate-pulse" /> : null}
+            <span className="font-medium">{voiceFeedback}</span>
+          </div>
+        )}
 
         {/* State 1: When user hasn't typed anything yet */}
         {!query.trim() ? (

@@ -1,7 +1,8 @@
-import React from 'react';
-import { ArrowLeft, Share2, Star, ShieldCheck, Heart, Home } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Share2, Star, ShieldCheck, Heart, Home, Check } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { useTheme } from '../context/ThemeContext';
+import { shareServiceOffer } from '../utils/share';
 
 interface OfferDetailScreenProps {
   offer: ServiceOffer;
@@ -21,9 +22,26 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
   onToggleFavorite,
 }) => {
   const { isDark } = useTheme();
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
+
+  const handleShare = async () => {
+    const result = await shareServiceOffer(offer);
+    if (result.success) {
+      setShareFeedback(result.message);
+      setTimeout(() => setShareFeedback(null), 3000);
+    }
+  };
 
   return (
-    <div className={`flex flex-col min-h-full pb-20 transition-colors ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900'}`}>
+    <div className={`flex flex-col min-h-full pb-20 transition-colors relative ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-900'}`}>
+      {/* Feedback Toast de Compartilhamento */}
+      {shareFeedback && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#20C933] text-white font-medium text-xs px-4 py-2 rounded-full shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-3">
+          <Check className="w-3.5 h-3.5 stroke-[3]" />
+          <span>{shareFeedback}</span>
+        </div>
+      )}
+
       {/* Top Banner Image with Action Overlays */}
       <div className="relative h-64 bg-slate-900">
         <img
@@ -65,7 +83,7 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
             {onToggleFavorite && (
               <button
                 onClick={() => onToggleFavorite(offer.id)}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition ${
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition cursor-pointer active:scale-95 ${
                   isDark ? 'bg-slate-950/80 text-white border border-slate-800 hover:bg-slate-900' : 'bg-white/90 text-slate-800 hover:bg-white'
                 }`}
                 aria-label="Favoritar"
@@ -78,18 +96,13 @@ export const OfferDetailScreen: React.FC<OfferDetailScreenProps> = ({
               </button>
             )}
             <button
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: `${offer.serviceTitle} no Vagou`,
-                    text: `Vaga rápida em ${offer.salonName} por R$ ${offer.price}`,
-                    url: window.location.href,
-                  }).catch(() => {});
-                }
-              }}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition ${
+              id="btn-compartilhar-oferta"
+              onClick={handleShare}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition cursor-pointer active:scale-95 ${
                 isDark ? 'bg-slate-950/80 text-white border border-slate-800 hover:bg-slate-900' : 'bg-white/90 text-slate-800 hover:bg-white'
               }`}
+              title="Compartilhar oferta via WhatsApp, redes ou link"
+              aria-label="Compartilhar oferta"
             >
               <Share2 className="w-4 h-4 text-slate-300" />
             </button>

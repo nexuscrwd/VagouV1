@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, XCircle, SlidersHorizontal, Star, Clock, Heart, Home } from 'lucide-react';
+import { ArrowLeft, XCircle, SlidersHorizontal, Star, Clock, Heart, Home, MapPin } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { OfferListSkeleton } from './SkeletonLoader';
 import { formatSlotDateTime } from '../utils/dateFormatter';
+import { getDeviceCoordinates, sortOffersByDistance, UserCoordinates } from '../utils/geolocation';
+import { hapticLight } from '../utils/haptics';
 
 interface OfferListScreenProps {
   offers: ServiceOffer[];
@@ -23,6 +25,7 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
 }) => {
   const [activeFilter, setActiveFilter] = useState<'distancia' | 'preco' | 'avaliacao' | 'todos'>('todos');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [userCoords, setUserCoords] = useState<UserCoordinates | null>(null);
 
   // Skeleton loading effect
   useEffect(() => {
@@ -32,17 +35,30 @@ export const OfferListScreen: React.FC<OfferListScreenProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const handleFilterChange = (filter: 'distancia' | 'preco' | 'avaliacao') => {
+  const handleFilterChange = async (filter: 'distancia' | 'preco' | 'avaliacao') => {
+    hapticLight();
     setIsLoading(true);
-    setActiveFilter(activeFilter === filter ? 'todos' : filter);
+    const nextFilter = activeFilter === filter ? 'todos' : filter;
+    setActiveFilter(nextFilter);
+
+    if (nextFilter === 'distancia' && !userCoords) {
+      const coords = await getDeviceCoordinates();
+      setUserCoords(coords);
+    }
+
     setTimeout(() => setIsLoading(false), 250);
   };
 
-  const filteredOffers = [...offers].sort((a, b) => {
-    if (activeFilter === 'preco') return a.price - b.price;
-    if (activeFilter === 'avaliacao') return b.rating - a.rating;
-    return 0;
-  });
+  const filteredOffers = React.useMemo(() => {
+    if (activeFilter === 'distancia') {
+      return sortOffersByDistance(offers, userCoords);
+    }
+    return [...offers].sort((a, b) => {
+      if (activeFilter === 'preco') return a.price - b.price;
+      if (activeFilter === 'avaliacao') return b.rating - a.rating;
+      return 0;
+    });
+  }, [offers, activeFilter, userCoords]);
 
   return (
     <div className="flex flex-col min-h-full pb-20 bg-white">

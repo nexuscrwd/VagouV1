@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Compass, X, ArrowLeft, Home, Smartphone, LayoutGrid, Heart, Zap, Filter } from 'lucide-react';
 import { ServiceOffer } from '../types';
 import { InstallBanner } from './InstallBanner';
@@ -8,6 +8,7 @@ import { RadarFullscreenFeed } from './RadarFullscreenFeed';
 import { SalonProfileView } from './SalonProfileView';
 import { VagouLogo } from './VagouLogo';
 import { SalonNavContext } from './BottomNav';
+import { getDeviceCoordinates, sortOffersByDistance, UserCoordinates } from '../utils/geolocation';
 
 interface HomeScreenProps {
   onNavigateToOffers: (query?: string, category?: string) => void;
@@ -68,6 +69,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const [isStoryModalOpen, setIsStoryModalOpen] = useState<boolean>(false);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number>(0);
+
+  const [userCoords, setUserCoords] = useState<UserCoordinates | null>(null);
+
+  // Inicializa geolocalização do dispositivo sob demanda ou em segundo plano
+  useEffect(() => {
+    getDeviceCoordinates().then((coords) => {
+      if (coords) setUserCoords(coords);
+    });
+  }, []);
 
   // Dynamic category tabs (Excluindo relâmpago, que agora está no menu inferior)
   const categories = useMemo(() => {
@@ -136,22 +146,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       );
     }
 
+    if (sortBy === 'distance') {
+      return sortOffersByDistance(list, userCoords);
+    }
+
     list.sort((a, b) => {
       if (sortBy === 'urgency') {
         const timeA = a.expiresInMinutes || 999;
         const timeB = b.expiresInMinutes || 999;
         return timeA - timeB;
-      } else if (sortBy === 'distance') {
-        const distA = a.distanceMeters || parseFloat(a.distance) * 1000 || 999;
-        const distB = b.distanceMeters || parseFloat(b.distance) * 1000 || 999;
-        return distA - distB;
       } else {
         return a.price - b.price;
       }
     });
 
     return list;
-  }, [offers, selectedSalonFilter, selectedCategory, sortBy, currentSegment]);
+  }, [offers, selectedSalonFilter, selectedCategory, sortBy, currentSegment, userCoords]);
 
   const handleOpenStory = (index: number) => {
     setActiveStoryIndex(index);
